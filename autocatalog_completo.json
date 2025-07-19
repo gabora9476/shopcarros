@@ -1,0 +1,91 @@
+{
+  "users": [],
+  "vehicles": [
+    {
+      "id": 1,
+      "year": 2006,
+      "brand": "Chevrolet",
+      "model": "Aveo",
+      "price": "$3.800",
+      "sold": false,
+      "images": [
+        "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=400&fit=crop"
+      ],
+      "details": {
+        "transmission": "automático",
+        "ac": "si",
+        "radio": "si",
+        "mileage": "330.000 KM",
+        "color": "azul",
+        "owners": "2-1",
+        "keys": "1",
+        "tires": "70% de vida",
+        "location": "Caracas",
+        "extras": "×",
+        "notes": "Detalles mínimos de pintura, hay que reemplazar un mozo"
+      },
+      "owner": "ADMIN",
+      "publishDate": "2025-07-19T07:12:36.980Z"
+    },
+    {
+      "id": 2,
+      "year": 2018,
+      "brand": "Toyota",
+      "model": "Corolla",
+      "price": "$15.500",
+      "sold": false,
+      "images": [
+        "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1550355291-bbee04a92027?w=600&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1532974297617-c0f05fe48bff?w=600&h=400&fit=crop"
+      ],
+      "details": {
+        "transmission": "manual",
+        "ac": "si",
+        "radio": "si",
+        "mileage": "85.000 KM",
+        "color": "blanco",
+        "owners": "1",
+        "keys": "2",
+        "tires": "90% de vida",
+        "location": "Valencia",
+        "extras": "Cámara reversa, sensores",
+        "notes": "Excelente estado, mantenimiento al día"
+      },
+      "owner": "ADMIN",
+      "publishDate": "2025-07-19T07:12:36.980Z"
+    },
+    {
+      "id": 3,
+      "year": 2020,
+      "brand": "Ford",
+      "model": "Mustang",
+      "price": "$45.000",
+      "sold": false,
+      "images": [
+        "https://images.unsplash.com/photo-1544829099-b9a0c5303bea?w=600&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=600&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&h=400&fit=crop"
+      ],
+      "details": {
+        "transmission": "automático",
+        "ac": "si",
+        "radio": "si",
+        "mileage": "25.000 KM",
+        "color": "rojo",
+        "owners": "1",
+        "keys": "2",
+        "tires": "95% de vida",
+        "location": "Maracaibo",
+        "extras": "Sistema de sonido premium, asientos de cuero",
+        "notes": "Como nuevo, garantía vigente"
+      },
+      "owner": "ADMIN",
+      "publishDate": "2025-07-19T07:12:36.980Z"
+    }
+  ],
+  "exportDate": "2025-07-19T07:12:55.803Z",
+  "type": "complete"
+}
