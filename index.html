@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCatalog - Vehículos Premium</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-btn, .publish-btn {
+            background: linear-gradient(45deg, #00d4ff, #ff6b35);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .nav-btn:hover, .publish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #444;
+            box-shadow: none;
+        }
+
+        .nav-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #666;
+        }
+
+        .nav-btn.admin {
+            background: linear-gradient(45deg, #ff6b35, #ffd700);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 107, 53, 0.2);
+            border: 1px solid #ff6b35;
+            color: #ff6b35;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 107, 53, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00d4ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .page-content {
+            margin: 40px 0;
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .vehicle-card {
+            background: linear-gradient(145deg, #1a1a1a, #262626);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .vehicle-card.sold:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            position: relative;
+        }
+
+        .vehicle-card:hover .vehicle-image {
+            transform: scale(1.1);
+        }
+
+        .vehicle-card.sold .vehicle-image {
+            filter: grayscale(50%) brightness(0.7);
+        }
+
+        .sold-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(45deg, #ff6b35, #ffd700);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 5;
+            box-shadow: 0 3px 10px rgba(255, 107, 53, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .vehicle-info {
+            padding: 15px;
+        }
+
+        .vehicle-year-brand {
+            font-size: 0.95rem;
+            color: #888;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .vehicle-price {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00d4ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 8px;
+        }
+
+        .vehicle-card.sold .vehicle-price {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d4ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #1a1a1a, #262626);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(145deg, #1a1a1a, #262626);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        .dashboard-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .dashboard-card-title {
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .dashboard-card-body {
+            padding: 15px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+        }
+
+        .btn-edit:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-delete {
+            background: rgba(255, 107, 53, 0.2);
+            color: #ff6b35;
+            border: 1px solid #ff6b35;
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-sold {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border: 1px solid #ffd700;
+        }
+
+        .btn-sold:hover {
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-sold.active {
+            background: linear-gradient(45deg, #ff6b35, #ffd700);
+            color: white;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            background: linear-gradient(145deg, #1a1a1a, #262626);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+        }
+
+        .admin-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab.active {
+            color: #00d4ff;
+            border-bottom-color: #00d4ff;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .data-table th {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Modal Styles */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            display: flex;
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            background: linear-gradient(145deg, #1a1a1a, #262626);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .auth-modal, .publish-modal, .edit-modal {
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            background: linear-gradient(145deg, #1a1a1a, #262626);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #333;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .image-section {
+            flex: 2;
+            position: relative;
+            background: #000;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .image-nav:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+
+        .prev {
+            left: 20px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .next {
+            right: 20px;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .details-section {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 107, 53, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .vehicle-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .detail-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .detail-dots {
+            flex: 1;
+            border-bottom: 2px dotted #444;
+            margin: 0 10px;
+        }
+
+        .price-modal {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00d4ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin: 30px 0;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .thumbnails {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .thumbnail.active,
+        .thumbnail:hover {
+            opacity: 1;
+            border-color: #00d4ff;
+        }
+
+        /* Form Styles */
+        .form-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #00d4ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-weight: 600;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #444;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .form-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #00d4ff, #ff6b35);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .form-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.4);
+        }
+
+        .form-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #444;
+        }
+
+        .form-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #666;
+        }
+
+        .image-upload-area {
+            border: 2px dashed #444;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .image-upload-area:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .image-preview {
+            position: relative;
+            width: 100px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff6b35;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .separator {
+            margin: 20px 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+        }
+
+        .error-message {
+            color: #ff6b35;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: #00d4ff;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                flex-direction: column;
+                width: 98%;
+                height: 95vh;
+            }
+            
+            .image-section {
+                flex: 1;
+            }
+            
+            .details-section {
+                flex: 1;
+                padding: 20px;
+            }
+            
+            .catalog-grid, .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+            }
+            
+            .image-nav {
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+
+            .auth-modal, .publish-modal, .edit-modal {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .admin-tabs {
+                flex-wrap: wrap;
+            }
+
+            .data-table {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">🏎️ AutoCatalog Premium</h1>
+            <div class="user-info">
+                <span id="userWelcome" style="display: none;"></span>
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="catalogBtn" onclick="showSection('catalog')">🏠 Catálogo</button>
+                    <button class="nav-btn secondary" id="dashboardBtn" onclick="showSection('dashboard')" style="display: none;">📊 Mi Dashboard</button>
+                    <button class="nav-btn admin" id="adminBtn" onclick="showSection('admin')" style="display: none;">⚙️ Admin</button>
+                    <button class="publish-btn" onclick="handlePublishClick()">📝 Publicar Vehículo</button>
+                </div>
+                <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display: none;">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sección del Catálogo -->
+        <div id="catalogSection" class="page-section active">
+            <div class="page-content">
+                <div class="catalog-grid" id="catalog">
+                    <!-- Los vehículos se generarán aquí -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección del Dashboard -->
+        <div id="dashboardSection" class="page-section">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">📊 Mi Dashboard</h2>
+                    <p style="color: #888;">Gestiona tus publicaciones de vehículos</p>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalVehicles">0</div>
+                        <div class="stat-label">Vehículos Publicados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeVehicles">0</div>
+                        <div class="stat-label">Activos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="soldVehicles">0</div>
+                        <div class="stat-label">Vendidos</div>
+                    </div>
+                </div>
+
+                <div id="userVehiclesGrid" class="dashboard-grid">
+                    <!-- Las publicaciones del usuario se generarán aquí -->
+                </div>
+
+                <div id="emptyDashboard" class="empty-state" style="display: none;">
+                    <h3>📝 No tienes publicaciones aún</h3>
+                    <p>¡Comienza publicando tu primer vehículo!</p>
+                    <button class="nav-btn" onclick="handlePublishClick()" style="margin-top: 20px;">📝 Publicar Vehículo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección del Admin -->
+        <div id="adminSection" class="page-section">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">⚙️ Panel de Administración</h2>
+                    <p style="color: #888;">Gestión completa del sistema</p>
+                </div>
+
+                <div class="admin-panel">
+                    <div class="admin-tabs">
+                        <button class="admin-tab active" onclick="showAdminTab('users')">👥 Usuarios</button>
+                        <button class="admin-tab" onclick="showAdminTab('vehicles')">🚗 Vehículos</button>
+                        <button class="admin-tab" onclick="showAdminTab('data')">💾 Datos</button>
+                    </div>
+
+                    <div id="adminUsers" class="admin-content active">
+                        <h3>👥 Gestión de Usuarios</h3>
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalUsers">0</div>
+                                <div class="stat-label">Usuarios Registrados</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="activeUsers">0</div>
+                                <div class="stat-label">Usuarios Activos</div>
+                            </div>
+                        </div>
+                        <table class="data-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>RIF</th>
+                                    <th>WhatsApp</th>
+                                    <th>Publicaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="adminVehicles" class="admin-content">
+                        <h3>🚗 Gestión de Vehículos</h3>
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <div class="stat-number" id="adminTotalVehicles">0</div>
+                                <div class="stat-label">Total Vehículos</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="adminActiveVehicles">0</div>
+                                <div class="stat-label">Activos</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="adminSoldVehicles">0</div>
+                                <div class="stat-label">Vendidos</div>
+                            </div>
+                        </div>
+                        <table class="data-table" id="vehiclesTable">
+                            <thead>
+                                <tr>
+                                    <th>Vehículo</th>
+                                    <th>Precio</th>
+                                    <th>Propietario</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vehiclesTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="adminData" class="admin-content">
+                        <h3>💾 Gestión de Datos</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                            <div>
+                                <h4>📤 Exportar Datos</h4>
+                                <button class="form-btn" onclick="exportData('users')">📤 Exportar Usuarios</button>
+                                <button class="form-btn" onclick="exportData('vehicles')">📤 Exportar Vehículos</button>
+                                <button class="form-btn" onclick="exportData('all')">📤 Exportar Todo</button>
+                            </div>
+                            <div>
+                                <h4>📥 Importar Datos</h4>
+                                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                                <button class="form-btn secondary" onclick="document.getElementById('importFile').click()">📥 Importar JSON</button>
+                                <button class="form-btn secondary" onclick="resetData()">🗑️ Limpiar Datos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para detalles del vehículo -->
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="image-section">
+                <img id="mainImage" class="main-image" src="" alt="Vehículo">
+                <button class="image-nav prev" onclick="prevImage()">‹</button>
+                <button class="image-nav next" onclick="nextImage()">›</button>
+                <div class="thumbnails" id="thumbnails"></div>
+            </div>
+            <div class="details-section">
+                <div id="vehicleDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Autenticación -->
+    <div class="overlay" id="authOverlay">
+        <div class="auth-modal">
+            <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+            
+            <!-- Formulario de Login -->
+            <div id="loginForm">
+                <h2 class="form-title">🔐 Iniciar Sesión</h2>
+                <form onsubmit="login(event)">
+                    <div class="form-group">
+                        <label class="form-label">RIF:</label>
+                        <input type="text" class="form-input" id="loginRif" placeholder="Ej: J-12345678-9" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contraseña:</label>
+                        <input type="password" class="form-input" id="loginPassword" placeholder="Tu contraseña" required>
+                    </div>
+                    <button type="submit" class="form-btn">Iniciar Sesión</button>
+                    <button type="button" class="form-btn secondary" onclick="showRegisterForm()">
+                        ¿No tienes cuenta? Regístrate
+                    </button>
+                </form>
+            </div>
+
+            <!-- Formulario de Registro -->
+            <div id="registerForm" style="display: none;">
+                <h2 class="form-title">📝 Crear Cuenta</h2>
+                <form onsubmit="register(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nombre:</label>
+                            <input type="text" class="form-input" id="registerName" placeholder="Tu nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Apellido:</label>
+                            <input type="text" class="form-input" id="registerLastname" placeholder="Tu apellido" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">RIF:</label>
+                        <input type="text" class="form-input" id="registerRif" placeholder="Ej: J-12345678-9" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">WhatsApp:</label>
+                        <input type="tel" class="form-input" id="registerWhatsapp" placeholder="Ej: +58 412 123 4567" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contraseña:</label>
+                        <input type="password" class="form-input" id="registerPassword" placeholder="Mínimo 6 caracteres" required>
+                    </div>
+                    <button type="submit" class="form-btn">Crear Cuenta</button>
+                    <button type="button" class="form-btn secondary" onclick="showLoginForm()">
+                        ¿Ya tienes cuenta? Inicia sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Publicación -->
+    <div class="overlay" id="publishOverlay">
+        <div class="publish-modal">
+            <button class="close-btn" onclick="closePublishModal()">&times;</button>
+            <h2 class="form-title">🚗 Publicar Vehículo</h2>
+            
+            <form onsubmit="publishVehicle(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Año:</label>
+                        <input type="number" class="form-input" id="vehicleYear" min="1990" max="2025" placeholder="2020" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Marca:</label>
+                        <input type="text" class="form-input" id="vehicleBrand" placeholder="Toyota" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Modelo:</label>
+                    <input type="text" class="form-input" id="vehicleModel" placeholder="Corolla" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Precio:</label>
+                    <input type="text" class="form-input" id="vehiclePrice" placeholder="$15.500" required>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🏁 Transmisión:</label>
+                        <select class="form-input" id="vehicleTransmission" required>
+                            <option value="">Seleccionar</option>
+                            <option value="manual">Manual</option>
+                            <option value="automático">Automático</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">❄️ A/A:</label>
+                        <select class="form-input" id="vehicleAC" required>
+                            <option value="">Seleccionar</option>
+                            <option value="si">Sí</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🎛 Radio:</label>
+                        <select class="form-input" id="vehicleRadio" required>
+                            <option value="">Seleccionar</option>
+                            <option value="si">Sí</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🛣️ Recorrido (KM):</label>
+                        <input type="text" class="form-input" id="vehicleMileage" placeholder="85.000 KM" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🎨 Color:</label>
+                        <input type="text" class="form-input" id="vehicleColor" placeholder="Blanco" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🪪 Dueños:</label>
+                        <input type="text" class="form-input" id="vehicleOwners" placeholder="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🔑 Llaves:</label>
+                        <input type="number" class="form-input" id="vehicleKeys" min="1" placeholder="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🛞 Cauchos (% vida):</label>
+                        <input type="text" class="form-input" id="vehicleTires" placeholder="90% de vida" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🌎 Ubicación:</label>
+                    <input type="text" class="form-input" id="vehicleLocation" placeholder="Caracas" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">⚙️ Extras:</label>
+                    <input type="text" class="form-input" id="vehicleExtras" placeholder="Cámara reversa, sensores">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🔬 Notas adicionales:</label>
+                    <textarea class="form-textarea" id="vehicleNotes" placeholder="Detalles importantes del vehículo..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📸 Imágenes del vehículo:</label>
+                    <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
+                        <p>📷 Haz clic para seleccionar imágenes</p>
+                        <p style="font-size: 0.9rem; color: #888; margin-top: 10px;">Máximo 10 imágenes</p>
+                    </div>
+                    <input type="file" id="imageInput" multiple accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                    <div id="imagePreviewGrid" class="image-preview-grid"></div>
+                </div>
+
+                <button type="submit" class="form-btn">🚗 Publicar Vehículo</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Edición -->
+    <div class="overlay" id="editOverlay">
+        <div class="edit-modal">
+            <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            <h2 class="form-title">✏️ Editar Vehículo</h2>
+            
+            <form onsubmit="updateVehicle(event)">
+                <input type="hidden" id="editVehicleId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Año:</label>
+                        <input type="number" class="form-input" id="editVehicleYear" min="1990" max="2025" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Marca:</label>
+                        <input type="text" class="form-input" id="editVehicleBrand" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Modelo:</label>
+                    <input type="text" class="form-input" id="editVehicleModel" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Precio:</label>
+                    <input type="text" class="form-input" id="editVehiclePrice" required>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🏁 Transmisión:</label>
+                        <select class="form-input" id="editVehicleTransmission" required>
+                            <option value="">Seleccionar</option>
+                            <option value="manual">Manual</option>
+                            <option value="automático">Automático</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">❄️ A/A:</label>
+                        <select class="form-input" id="editVehicleAC" required>
+                            <option value="">Seleccionar</option>
+                            <option value="si">Sí</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🎛 Radio:</label>
+                        <select class="form-input" id="editVehicleRadio" required>
+                            <option value="">Seleccionar</option>
+                            <option value="si">Sí</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🛣️ Recorrido (KM):</label>
+                        <input type="text" class="form-input" id="editVehicleMileage" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🎨 Color:</label>
+                        <input type="text" class="form-input" id="editVehicleColor" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🪪 Dueños:</label>
+                        <input type="text" class="form-input" id="editVehicleOwners" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🔑 Llaves:</label>
+                        <input type="number" class="form-input" id="editVehicleKeys" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🛞 Cauchos (% vida):</label>
+                        <input type="text" class="form-input" id="editVehicleTires" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🌎 Ubicación:</label>
+                    <input type="text" class="form-input" id="editVehicleLocation" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">⚙️ Extras:</label>
+                    <input type="text" class="form-input" id="editVehicleExtras">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🔬 Notas adicionales:</label>
+                    <textarea class="form-textarea" id="editVehicleNotes"></textarea>
+                </div>
+
+                <button type="submit" class="form-btn">✏️ Actualizar Vehículo</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Datos iniciales
+        let vehicles = [
+            {
+                id: 1,
+                year: 2006,
+                brand: "Chevrolet",
+                model: "Aveo",
+                price: "$3.800",
+                sold: false,
+                images: [
+                    "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=400&fit=crop"
+                ],
+                details: {
+                    transmission: "automático",
+                    ac: "si",
+                    radio: "si",
+                    mileage: "330.000 KM",
+                    color: "azul",
+                    owners: "2-1",
+                    keys: "1",
+                    tires: "70% de vida",
+                    location: "Caracas",
+                    extras: "×",
+                    notes: "Detalles mínimos de pintura, hay que reemplazar un mozo"
+                },
+                owner: "ADMIN",
+                publishDate: new Date().toISOString()
+            },
+            {
+                id: 2,
+                year: 2018,
+                brand: "Toyota",
+                model: "Corolla",
+                price: "$15.500",
+                sold: false,
+                images: [
+                    "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1550355291-bbee04a92027?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1532974297617-c0f05fe48bff?w=600&h=400&fit=crop"
+                ],
+                details: {
+                    transmission: "manual",
+                    ac: "si",
+                    radio: "si",
+                    mileage: "85.000 KM",
+                    color: "blanco",
+                    owners: "1",
+                    keys: "2",
+                    tires: "90% de vida",
+                    location: "Valencia",
+                    extras: "Cámara reversa, sensores",
+                    notes: "Excelente estado, mantenimiento al día"
+                },
+                owner: "ADMIN",
+                publishDate: new Date().toISOString()
+            },
+            {
+                id: 3,
+                year: 2020,
+                brand: "Ford",
+                model: "Mustang",
+                price: "$45.000",
+                sold: false,
+                images: [
+                    "https://images.unsplash.com/photo-1544829099-b9a0c5303bea?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&h=400&fit=crop"
+                ],
+                details: {
+                    transmission: "automático",
+                    ac: "si",
+                    radio: "si",
+                    mileage: "25.000 KM",
+                    color: "rojo",
+                    owners: "1",
+                    keys: "2",
+                    tires: "95% de vida",
+                    location: "Maracaibo",
+                    extras: "Sistema de sonido premium, asientos de cuero",
+                    notes: "Como nuevo, garantía vigente"
+                },
+                owner: "ADMIN",
+                publishDate: new Date().toISOString()
+            }
+        ];
+
+        // Variables globales
+        let currentVehicle = null;
+        let currentImageIndex = 0;
+        let currentUser = null;
+        let uploadedImages = [];
+        let currentSection = 'catalog';
+
+        // Usuario administrador por defecto
+        const adminUser = {
+            id: 0,
+            name: "Administrador",
+            lastname: "Sistema",
+            rif: "ADMIN",
+            whatsapp: "+58 000 000 0000",
+            password: "admin123",
+            isAdmin: true
+        };
+
+        // Sistema de navegación
+        function showSection(section) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.page-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+
+            // Mostrar sección seleccionada
+            document.getElementById(section + 'Section').classList.add('active');
+            currentSection = section;
+
+            // Actualizar botones de navegación
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('secondary');
+            });
+
+            const activeBtn = document.getElementById(section + 'Btn');
+            if (activeBtn && section !== 'catalog') {
+                activeBtn.classList.add('secondary');
+            }
+
+            // Cargar datos específicos de la sección
+            if (section === 'dashboard') {
+                loadUserDashboard();
+            } else if (section === 'admin') {
+                loadAdminPanel();
+            } else if (section === 'catalog') {
+                renderCatalog();
+            }
+        }
+
+        // Sistema de autenticación
+        function isLoggedIn() {
+            const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            if (user) {
+                currentUser = user;
+                updateUserInterface();
+                return true;
+            }
+            return false;
+        }
+
+        function updateUserInterface() {
+            if (currentUser) {
+                document.getElementById('userWelcome').style.display = 'block';
+                document.getElementById('userWelcome').textContent = `¡Hola, ${currentUser.name}!`;
+                document.getElementById('logoutBtn').style.display = 'block';
+                document.getElementById('dashboardBtn').style.display = 'inline-block';
+                
+                // Mostrar panel admin solo si es administrador
+                if (currentUser.isAdmin) {
+                    document.getElementById('adminBtn').style.display = 'inline-block';
+                }
+            } else {
+                document.getElementById('userWelcome').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('dashboardBtn').style.display = 'none';
+                document.getElementById('adminBtn').style.display = 'none';
+            }
+        }
+
+        function handlePublishClick() {
+            if (isLoggedIn()) {
+                openPublishModal();
+            } else {
+                openAuthModal();
+            }
+        }
+
+        // Funciones de autenticación
+        function openAuthModal() {
+            document.getElementById('authOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            showLoginForm();
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function login(event) {
+            event.preventDefault();
+            
+            const rif = document.getElementById('loginRif').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Verificar admin
+            if (rif === adminUser.rif && password === adminUser.password) {
+                currentUser = adminUser;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUserInterface();
+                closeAuthModal();
+                alert(`¡Bienvenido ${currentUser.name}! Panel de administración activado.`);
+                return;
+            }
+            
+            // Obtener usuarios registrados
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.rif === rif && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                updateUserInterface();
+                closeAuthModal();
+                alert(`¡Bienvenido ${user.name}! Ahora puedes publicar vehículos.`);
+            } else {
+                alert('RIF o contraseña incorrectos');
+            }
+        }
+
+        function register(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const lastname = document.getElementById('registerLastname').value;
+            const rif = document.getElementById('registerRif').value;
+            const whatsapp = document.getElementById('registerWhatsapp').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            // Validaciones
+            if (password.length < 6) {
+                alert('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+            
+            if (rif === adminUser.rif) {
+                alert('Este RIF está reservado para el sistema');
+                return;
+            }
+            
+            // Verificar si el RIF ya existe
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.find(u => u.rif === rif)) {
+                alert('Ya existe una cuenta con este RIF');
+                return;
+            }
+            
+            // Crear nuevo usuario
+            const newUser = {
+                id: Date.now(),
+                name,
+                lastname,
+                rif,
+                whatsapp,
+                password,
+                isAdmin: false
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Iniciar sesión automáticamente
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            updateUserInterface();
+            closeAuthModal();
+            
+            alert(`¡Cuenta creada exitosamente! Bienvenido ${name}.`);
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUserInterface();
+            showSection('catalog');
+            alert('Has cerrado sesión correctamente');
+        }
+
+        // Funciones de publicación
+        function openPublishModal() {
+            document.getElementById('publishOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            resetPublishForm();
+        }
+
+        function closePublishModal() {
+            document.getElementById('publishOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function resetPublishForm() {
+            document.querySelectorAll('#publishOverlay input, #publishOverlay select, #publishOverlay textarea').forEach(input => {
+                input.value = '';
+            });
+            uploadedImages = [];
+            document.getElementById('imagePreviewGrid').innerHTML = '';
+        }
+
+        function handleImageUpload(event) {
+            const files = Array.from(event.target.files);
+            
+            if (uploadedImages.length + files.length > 10) {
+                alert('Máximo 10 imágenes permitidas');
+                return;
+            }
+            
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImages.push(e.target.result);
+                    renderImagePreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderImagePreviews() {
+            const grid = document.getElementById('imagePreviewGrid');
+            grid.innerHTML = '';
+            
+            uploadedImages.forEach((image, index) => {
+                const preview = document.createElement('div');
+                preview.className = 'image-preview';
+                preview.innerHTML = `
+                    <img src="${image}" alt="Preview ${index + 1}">
+                    <button class="remove-image" onclick="removeImage(${index})">&times;</button>
+                `;
+                grid.appendChild(preview);
+            });
+        }
+
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            renderImagePreviews();
+        }
+
+        function publishVehicle(event) {
+            event.preventDefault();
+            
+            if (uploadedImages.length === 0) {
+                alert('Debes subir al menos una imagen del vehículo');
+                return;
+            }
+            
+            // Obtener datos del formulario
+            const newVehicle = {
+                id: Date.now(),
+                year: parseInt(document.getElementById('vehicleYear').value),
+                brand: document.getElementById('vehicleBrand').value,
+                model: document.getElementById('vehicleModel').value,
+                price: document.getElementById('vehiclePrice').value,
+                sold: false,
+                images: [...uploadedImages],
+                details: {
+                    transmission: document.getElementById('vehicleTransmission').value,
+                    ac: document.getElementById('vehicleAC').value,
+                    radio: document.getElementById('vehicleRadio').value,
+                    mileage: document.getElementById('vehicleMileage').value,
+                    color: document.getElementById('vehicleColor').value,
+                    owners: document.getElementById('vehicleOwners').value,
+                    keys: document.getElementById('vehicleKeys').value,
+                    tires: document.getElementById('vehicleTires').value,
+                    location: document.getElementById('vehicleLocation').value,
+                    extras: document.getElementById('vehicleExtras').value || '×',
+                    notes: document.getElementById('vehicleNotes').value || 'Sin notas adicionales'
+                },
+                owner: currentUser.rif,
+                publishDate: new Date().toISOString()
+            };
+            
+            // Agregar vehículo al catálogo
+            vehicles.push(newVehicle);
+            
+            // Guardar en localStorage
+            saveData();
+            
+            // Actualizar la vista
+            renderCatalog();
+            closePublishModal();
+            
+            alert('¡Vehículo publicado exitosamente!');
+        }
+
+        // Funciones del dashboard del usuario
+        function loadUserDashboard() {
+            if (!currentUser) return;
+            
+            const userVehicles = vehicles.filter(v => v.owner === currentUser.rif);
+            const activeVehicles = userVehicles.filter(v => !v.sold);
+            const soldVehicles = userVehicles.filter(v => v.sold);
+            
+            // Actualizar estadísticas
+            document.getElementById('totalVehicles').textContent = userVehicles.length;
+            document.getElementById('activeVehicles').textContent = activeVehicles.length;
+            document.getElementById('soldVehicles').textContent = soldVehicles.length;
+            
+            // Renderizar vehículos del usuario
+            const grid = document.getElementById('userVehiclesGrid');
+            const emptyState = document.getElementById('emptyDashboard');
+            
+            if (userVehicles.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                grid.style.display = 'grid';
+                emptyState.style.display = 'none';
+                
+                grid.innerHTML = '';
+                userVehicles.forEach(vehicle => {
+                    const card = document.createElement('div');
+                    card.className = 'dashboard-card';
+                    
+                    card.innerHTML = `
+                        <div class="dashboard-card-header">
+                            <div class="dashboard-card-title">${vehicle.year} ${vehicle.brand} ${vehicle.model}</div>
+                            <div style="font-size: 1.2rem; color: ${vehicle.sold ? '#ffd700' : '#00d4ff'};">
+                                ${vehicle.sold ? '🏆 VENDIDO' : '🚗 ACTIVO'}
+                            </div>
+                        </div>
+                        <div class="dashboard-card-body">
+                            <img src="${vehicle.images[0]}" alt="${vehicle.brand} ${vehicle.model}" 
+                                 style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <span style="font-size: 1.5rem; font-weight: 900; color: #00d4ff;">${vehicle.price}</span>
+                                <span style="color: #888; font-size: 0.9rem;">📍 ${vehicle.details.location}</span>
+                            </div>
+                            <div style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">
+                                🗓️ Publicado: ${new Date(vehicle.publishDate).toLocaleDateString()}
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-small btn-edit" onclick="openEditModal(${vehicle.id})">✏️ Editar</button>
+                                <button class="btn-small btn-sold ${vehicle.sold ? 'active' : ''}" 
+                                        onclick="toggleSoldStatus(${vehicle.id})">
+                                    ${vehicle.sold ? '↩️ Reactivar' : '💰 Marcar Vendido'}
+                                </button>
+                                <button class="btn-small btn-delete" onclick="deleteVehicle(${vehicle.id})">🗑️ Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // Funciones de gestión de vehículos
+        function toggleSoldStatus(vehicleId) {
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            if (vehicle && vehicle.owner === currentUser.rif) {
+                vehicle.sold = !vehicle.sold;
+                saveData();
+                loadUserDashboard();
+                renderCatalog();
+                
+                const status = vehicle.sold ? 'vendido' : 'reactivado';
+                alert(`¡Vehículo marcado como ${status}!`);
+            }
+        }
+
+        function deleteVehicle(vehicleId) {
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            if (vehicle && (vehicle.owner === currentUser.rif || currentUser.isAdmin)) {
+                if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
+                    vehicles = vehicles.filter(v => v.id !== vehicleId);
+                    saveData();
+                    loadUserDashboard();
+                    renderCatalog();
+                    alert('¡Vehículo eliminado exitosamente!');
+                }
+            }
+        }
+
+        function openEditModal(vehicleId) {
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            if (!vehicle || vehicle.owner !== currentUser.rif) return;
+            
+            // Llenar formulario de edición
+            document.getElementById('editVehicleId').value = vehicle.id;
+            document.getElementById('editVehicleYear').value = vehicle.year;
+            document.getElementById('editVehicleBrand').value = vehicle.brand;
+            document.getElementById('editVehicleModel').value = vehicle.model;
+            document.getElementById('editVehiclePrice').value = vehicle.price;
+            document.getElementById('editVehicleTransmission').value = vehicle.details.transmission;
+            document.getElementById('editVehicleAC').value = vehicle.details.ac;
+            document.getElementById('editVehicleRadio').value = vehicle.details.radio;
+            document.getElementById('editVehicleMileage').value = vehicle.details.mileage;
+            document.getElementById('editVehicleColor').value = vehicle.details.color;
+            document.getElementById('editVehicleOwners').value = vehicle.details.owners;
+            document.getElementById('editVehicleKeys').value = vehicle.details.keys;
+            document.getElementById('editVehicleTires').value = vehicle.details.tires;
+            document.getElementById('editVehicleLocation').value = vehicle.details.location;
+            document.getElementById('editVehicleExtras').value = vehicle.details.extras;
+            document.getElementById('editVehicleNotes').value = vehicle.details.notes;
+            
+            document.getElementById('editOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateVehicle(event) {
+            event.preventDefault();
+            
+            const vehicleId = parseInt(document.getElementById('editVehicleId').value);
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            
+            if (!vehicle || vehicle.owner !== currentUser.rif) return;
+            
+            // Actualizar datos
+            vehicle.year = parseInt(document.getElementById('editVehicleYear').value);
+            vehicle.brand = document.getElementById('editVehicleBrand').value;
+            vehicle.model = document.getElementById('editVehicleModel').value;
+            vehicle.price = document.getElementById('editVehiclePrice').value;
+            vehicle.details.transmission = document.getElementById('editVehicleTransmission').value;
+            vehicle.details.ac = document.getElementById('editVehicleAC').value;
+            vehicle.details.radio = document.getElementById('editVehicleRadio').value;
+            vehicle.details.mileage = document.getElementById('editVehicleMileage').value;
+            vehicle.details.color = document.getElementById('editVehicleColor').value;
+            vehicle.details.owners = document.getElementById('editVehicleOwners').value;
+            vehicle.details.keys = document.getElementById('editVehicleKeys').value;
+            vehicle.details.tires = document.getElementById('editVehicleTires').value;
+            vehicle.details.location = document.getElementById('editVehicleLocation').value;
+            vehicle.details.extras = document.getElementById('editVehicleExtras').value;
+            vehicle.details.notes = document.getElementById('editVehicleNotes').value;
+            
+            saveData();
+            loadUserDashboard();
+            renderCatalog();
+            closeEditModal();
+            
+            alert('¡Vehículo actualizado exitosamente!');
+        }
+
+        // Panel de administración
+        function loadAdminPanel() {
+            if (!currentUser?.isAdmin) return;
+            
+            loadAdminUsers();
+            loadAdminVehicles();
+        }
+
+        function showAdminTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`[onclick="showAdminTab('${tab}')"]`).classList.add('active');
+            document.getElementById('admin' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+        }
+
+        function loadAdminUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Estadísticas
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('activeUsers').textContent = users.filter(u => u.id).length;
+            
+            // Tabla de usuarios
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                const userVehicles = vehicles.filter(v => v.owner === user.rif);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.name} ${user.lastname}</td>
+                    <td>${user.rif}</td>
+                    <td>${user.whatsapp}</td>
+                    <td>${userVehicles.length}</td>
+                    <td class="admin-actions">
+                        <button class="btn-small btn-delete" onclick="deleteUser('${user.rif}')">🗑️ Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function loadAdminVehicles() {
+            const activeVehicles = vehicles.filter(v => !v.sold);
+            const soldVehicles = vehicles.filter(v => v.sold);
+            
+            // Estadísticas
+            document.getElementById('adminTotalVehicles').textContent = vehicles.length;
+            document.getElementById('adminActiveVehicles').textContent = activeVehicles.length;
+            document.getElementById('adminSoldVehicles').textContent = soldVehicles.length;
+            
+            // Tabla de vehículos
+            const tbody = document.getElementById('vehiclesTableBody');
+            tbody.innerHTML = '';
+            
+            vehicles.forEach(vehicle => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${vehicle.year} ${vehicle.brand} ${vehicle.model}</td>
+                    <td>${vehicle.price}</td>
+                    <td>${vehicle.owner}</td>
+                    <td style="color: ${vehicle.sold ? '#ffd700' : '#00d4ff'};">
+                        ${vehicle.sold ? '🏆 VENDIDO' : '🚗 ACTIVO'}
+                    </td>
+                    <td>${new Date(vehicle.publishDate).toLocaleDateString()}</td>
+                    <td class="admin-actions">
+                        <button class="btn-small btn-sold" onclick="adminToggleSold(${vehicle.id})">
+                            ${vehicle.sold ? '↩️' : '💰'}
+                        </button>
+                        <button class="btn-small btn-delete" onclick="deleteVehicle(${vehicle.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteUser(userRif) {
+            if (!currentUser?.isAdmin) return;
+            
+            if (confirm('¿Estás seguro de eliminar este usuario? También se eliminarán todas sus publicaciones.')) {
+                // Eliminar vehículos del usuario
+                vehicles = vehicles.filter(v => v.owner !== userRif);
+                
+                // Eliminar usuario
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const filteredUsers = users.filter(u => u.rif !== userRif);
+                localStorage.setItem('users', JSON.stringify(filteredUsers));
+                
+                saveData();
+                loadAdminPanel();
+                renderCatalog();
+                alert('Usuario y sus publicaciones eliminados exitosamente');
+            }
+        }
+
+        function adminToggleSold(vehicleId) {
+            if (!currentUser?.isAdmin) return;
+            
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            if (vehicle) {
+                vehicle.sold = !vehicle.sold;
+                saveData();
+                loadAdminVehicles();
+                renderCatalog();
+            }
+        }
+
+        // Gestión de datos JSON
+        function exportData(type) {
+            if (!currentUser?.isAdmin) return;
+            
+            let data = {};
+            const timestamp = new Date().toISOString().split('T')[0];
+            
+            switch (type) {
+                case 'users':
+                    data = {
+                        users: JSON.parse(localStorage.getItem('users') || '[]'),
+                        exportDate: new Date().toISOString(),
+                        type: 'users'
+                    };
+                    downloadJSON(data, `autocatalog_usuarios_${timestamp}.json`);
+                    break;
+                case 'vehicles':
+                    data = {
+                        vehicles: vehicles,
+                        exportDate: new Date().toISOString(),
+                        type: 'vehicles'
+                    };
+                    downloadJSON(data, `autocatalog_vehiculos_${timestamp}.json`);
+                    break;
+                case 'all':
+                    data = {
+                        users: JSON.parse(localStorage.getItem('users') || '[]'),
+                        vehicles: vehicles,
+                        exportDate: new Date().toISOString(),
+                        type: 'complete'
+                    };
+                    downloadJSON(data, `autocatalog_completo_${timestamp}.json`);
+                    break;
+            }
+        }
+
+        function downloadJSON(data, filename) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alert(`Datos exportados como ${filename}`);
+        }
+
+        function importData(event) {
+            if (!currentUser?.isAdmin) return;
+            
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm('¿Estás seguro de importar estos datos? Esto sobrescribirá los datos actuales.')) {
+                        if (data.users && Array.isArray(data.users)) {
+                            localStorage.setItem('users', JSON.stringify(data.users));
+                        }
+                        
+                        if (data.vehicles && Array.isArray(data.vehicles)) {
+                            vehicles = data.vehicles;
+                            saveData();
+                        }
+                        
+                        loadAdminPanel();
+                        renderCatalog();
+                        alert('¡Datos importados exitosamente!');
+                    }
+                } catch (error) {
+                    alert('Error al leer el archivo JSON. Verifica que el formato sea correcto.');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Limpiar input
+            event.target.value = '';
+        }
+
+        function resetData() {
+            if (!currentUser?.isAdmin) return;
+            
+            if (confirm('¿ESTÁS SEGURO? Esto eliminará TODOS los datos del sistema (usuarios y vehículos).')) {
+                if (confirm('Esta acción NO se puede deshacer. ¿Continuar?')) {
+                    localStorage.removeItem('users');
+                    localStorage.removeItem('vehicles');
+                    vehicles = [];
+                    loadAdminPanel();
+                    renderCatalog();
+                    alert('Todos los datos han sido eliminados.');
+                }
+            }
+        }
+
+        // Funciones del catálogo original
+        function renderCatalog() {
+            const catalog = document.getElementById('catalog');
+            catalog.innerHTML = '';
+
+            vehicles.forEach(vehicle => {
+                const card = document.createElement('div');
+                card.className = `vehicle-card ${vehicle.sold ? 'sold' : ''}`;
+                card.onclick = () => openModal(vehicle);
+
+                card.innerHTML = `
+                    <div style="position: relative;">
+                        <img src="${vehicle.images[0]}" alt="${vehicle.brand} ${vehicle.model}" class="vehicle-image">
+                        ${vehicle.sold ? '<div class="sold-badge">VENDIDO</div>' : ''}
+                    </div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-year-brand">${vehicle.year} | ${vehicle.brand} - ${vehicle.model}</div>
+                        <div class="vehicle-price">${vehicle.price}</div>
+                    </div>
+                `;
+
+                catalog.appendChild(card);
+            });
+        }
+
+        function openModal(vehicle) {
+            currentVehicle = vehicle;
+            currentImageIndex = 0;
+            
+            document.getElementById('overlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            updateMainImage();
+            renderThumbnails();
+            renderDetails();
+        }
+
+        function closeModal() {
+            document.getElementById('overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateMainImage() {
+            if (currentVehicle) {
+                document.getElementById('mainImage').src = currentVehicle.images[currentImageIndex];
+                
+                // Actualizar thumbnails activos
+                const thumbnails = document.querySelectorAll('.thumbnail');
+                thumbnails.forEach((thumb, index) => {
+                    thumb.classList.toggle('active', index === currentImageIndex);
+                });
+            }
+        }
+
+        function renderThumbnails() {
+            const container = document.getElementById('thumbnails');
+            container.innerHTML = '';
+            
+            currentVehicle.images.forEach((image, index) => {
+                const thumb = document.createElement('img');
+                thumb.src = image;
+                thumb.className = 'thumbnail';
+                thumb.onclick = () => {
+                    currentImageIndex = index;
+                    updateMainImage();
+                };
+                container.appendChild(thumb);
+            });
+        }
+
+        function prevImage() {
+            if (currentVehicle) {
+                currentImageIndex = (currentImageIndex - 1 + currentVehicle.images.length) % currentVehicle.images.length;
+                updateMainImage();
+            }
+        }
+
+        function nextImage() {
+            if (currentVehicle) {
+                currentImageIndex = (currentImageIndex + 1) % currentVehicle.images.length;
+                updateMainImage();
+            }
+        }
+
+        function renderDetails() {
+            const container = document.getElementById('vehicleDetails');
+            const details = currentVehicle.details;
+            
+            container.innerHTML = `
+                <h2 class="vehicle-title">${currentVehicle.year} • ${currentVehicle.brand} ${currentVehicle.model}</h2>
+                
+                ${currentVehicle.sold ? '<div style="text-align: center; padding: 15px; background: linear-gradient(45deg, #ff6b35, #ffd700); border-radius: 10px; margin-bottom: 20px; font-weight: 700;">🏆 VEHÍCULO VENDIDO</div>' : ''}
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🏁</span>
+                    <span class="detail-label">𝗧𝗿𝗮𝗻𝘀𝗺𝗶𝘀𝗶𝗼𝗻:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.transmission}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">❄️</span>
+                    <span class="detail-label">𝗔/𝗔:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.ac}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🎛</span>
+                    <span class="detail-label">𝗥𝗮𝗱𝗶𝗼:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.radio}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🛣️</span>
+                    <span class="detail-label">𝗥𝗲𝗰𝗼𝗿𝗿𝗶𝗱𝗼:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.mileage}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🎨</span>
+                    <span class="detail-label">𝗖𝗼𝗹𝗼𝗿:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.color}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🪪</span>
+                    <span class="detail-label">𝗗𝘂𝗲𝗻‌𝗼𝘀:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.owners}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🔑</span>
+                    <span class="detail-label">𝗟𝗹𝗮𝘃𝗲𝘀:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.keys}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🛞</span>
+                    <span class="detail-label">𝗖𝗮𝘂𝗰𝗵𝗼𝘀:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.tires}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🌎</span>
+                    <span class="detail-label">𝗨𝗯𝗶𝗰𝗮𝗰𝗶𝗼𝗻:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.location}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">⚙️</span>
+                    <span class="detail-label">𝗘𝘅𝘁𝗿𝗮𝘀:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.extras}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">🔬</span>
+                    <span class="detail-label">𝗡𝗼𝘁𝗮:</span>
+                    <div class="detail-dots"></div>
+                    <span>${details.notes}</span>
+                </div>
+                
+                <div class="separator"></div>
+                
+                <div class="detail-item">
+                    <span class="detail-icon">💵</span>
+                    <span class="detail-label">Precio:</span>
+                </div>
+                <div class="price-modal ${currentVehicle.sold ? 'sold' : ''}">${currentVehicle.price}</div>
+            `;
+        }
+
+        // Funciones de almacenamiento
+        function saveData() {
+            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+        }
+
+        function loadData() {
+            const savedVehicles = localStorage.getItem('vehicles');
+            if (savedVehicles) {
+                vehicles = JSON.parse(savedVehicles);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('overlay').style.display === 'flex') {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'ArrowLeft') prevImage();
+                if (e.key === 'ArrowRight') nextImage();
+            }
+            if (document.getElementById('authOverlay').style.display === 'flex') {
+                if (e.key === 'Escape') closeAuthModal();
+            }
+            if (document.getElementById('publishOverlay').style.display === 'flex') {
+                if (e.key === 'Escape') closePublishModal();
+            }
+            if (document.getElementById('editOverlay').style.display === 'flex') {
+                if (e.key === 'Escape') closeEditModal();
+            }
+        });
+
+        // Cerrar modales al hacer click fuera
+        document.getElementById('overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+
+        document.getElementById('authOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeAuthModal();
+        });
+
+        document.getElementById('publishOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closePublishModal();
+        });
+
+        document.getElementById('editOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeEditModal();
+        });
+
+        // Inicializar aplicación
+        function initApp() {
+            // Cargar datos
+            loadData();
+            
+            // Verificar si hay usuario logueado
+            isLoggedIn();
+            
+            // Renderizar catálogo inicial
+            renderCatalog();
+        }
+
+        // Inicializar cuando se carga la página
+        initApp();
+    </script>
+</body>
+</html>
+                                
