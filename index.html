@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">AutoCatalog - Vehículos Premium</title>
+    <title id="siteTitle">AutoVentas - Vehículos Premium</title>
     <!-- Favicon principal -->
-    <link rel="icon" type="image/png" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
-    <!-- Favicon para navegadores antiguos -->
-    <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
-    <!-- Icono para dispositivos Apple (iOS) -->
-    <link rel="apple-touch-icon" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
-    <!-- Color del tema para navegadores móviles -->
-    <meta name="theme-color" content="#00d4ff">
-    <!-- Firebase SDKs -->
+<link rel="icon" type="image/png" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
+
+<!-- Favicon para navegadores antiguos -->
+<link rel="shortcut icon" type="image/png" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
+
+<!-- Icono para dispositivos Apple (iOS) -->
+<link rel="apple-touch-icon" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
+
+<!-- Color del tema para navegadores móviles -->
+<meta name="theme-color" content="#00d4ff">
     
+    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, onSnapshot, query, orderBy, where, limit } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
@@ -1837,7 +1840,7 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div style="text-align: center;">
             <div class="loading-spinner"></div>
-            <div class="loading-text">Cargando AutoCatalog...</div>
+            <div class="loading-text">Cargando AutoVentas...</div>
         </div>
     </div>
 
@@ -1846,7 +1849,7 @@
         <div class="header-content">
             <div class="logo-container">
                 <img id="logoImage" class="logo-image" src="" alt="Logo" style="display: none;">
-                <h1 class="logo" id="logoText">🏎️ AutoCatalog Premium</h1>
+                <h1 class="logo" id="logoText">🏎️ AutoVentas Premium</h1>
             </div>
             <div class="user-info">
                 <span id="userWelcome" style="display: none;"></span>
@@ -2155,7 +2158,7 @@
                                 <h4>🏷️ Información del Sitio</h4>
                                 <div class="form-group">
                                     <label class="form-label">Nombre del Sitio:</label>
-                                    <input type="text" class="form-input" id="siteName" placeholder="AutoCatalog Premium" onchange="updateSiteName()">
+                                    <input type="text" class="form-input" id="siteName" placeholder="AutoVentas Premium" onchange="updateSiteName()">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Logo del Sitio:</label>
@@ -2262,7 +2265,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>© 2025 GStar INK - Todos los derechos reservados | AutoCatalog Premium</p>
+            <p>© 2025 GStar INK - Todos los derechos reservados | AutoVentas Premium</p>
         </div>
     </footer>
 
@@ -2674,7 +2677,7 @@
 
         // Configuración del sitio
         let siteConfig = {
-            siteName: "AutoCatalog Premium",
+            siteName: "AutoVentas Premium",
             primaryColor: "#00d4ff",
             secondaryColor: "#ff6b35",
             logoUrl: "",
@@ -4024,7 +4027,7 @@
                 applySiteConfig();
                 
                 hideLoading();
-                showNotification('AutoCatalog cargado exitosamente', 'success');
+                showNotification('AutoVentas cargado exitosamente', 'success');
                 
             } catch (error) {
                 console.error('Error initializing app:', error);
@@ -4271,7 +4274,7 @@
         }
 
         function updateSiteName() {
-            const siteName = document.getElementById('siteName').value || "AutoCatalog Premium";
+            const siteName = document.getElementById('siteName').value || "AutoVentas Premium";
             siteConfig.siteName = siteName;
             
             document.getElementById('logoText').textContent = `🏎️ ${siteName}`;
