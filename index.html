@@ -4,8 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="siteTitle">AutoCatalog - Vehículos Premium</title>
-    
+    <!-- Favicon principal -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
+    <!-- Favicon para navegadores antiguos -->
+    <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
+    <!-- Icono para dispositivos Apple (iOS) -->
+    <link rel="apple-touch-icon" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
+    <!-- Color del tema para navegadores móviles -->
+    <meta name="theme-color" content="#00d4ff">
     <!-- Firebase SDKs -->
+    
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, onSnapshot, query, orderBy, where, limit } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
