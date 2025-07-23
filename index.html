@@ -207,9 +207,7 @@
             background: linear-gradient(45deg, #2d2d2d, #4a4a4a);
             border-bottom: 2px solid var(--secondary-color);
         }
-
         /* Search and Filter Section */
-/* Search and Filter Section */
         .search-filter-section {
             background: rgba(26, 26, 26, 0.95);
             border-bottom: 1px solid var(--border-color);
@@ -412,32 +410,332 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .search-filter-section {
-                top: 70px; /* Altura del header en móvil */
-            }
+        /* Visualización 360° */
+        .view-360-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+            cursor: grab;
+            user-select: none;
+        }
 
-            .search-content.expanded {
-                max-height: 600px;
-            }
+        .view-360-container.dragging {
+            cursor: grabbing;
+        }
 
-            .search-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        .view-360-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            transition: none;
+        }
 
-            .search-input {
-                min-width: auto;
-            }
+        .view-360-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 15px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
 
-            .sort-controls {
-                justify-content: center;
-            }
+        .view-360-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
 
-            .filter-controls {
-                grid-template-columns: 1fr;
-            }
+        .view-360-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .view-360-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Puntos de detalles */
+        .detail-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            animation: pulse-point 2s infinite;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            z-index: 10;
+        }
+
+        .detail-point:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            animation: none;
+        }
+
+        @keyframes pulse-point {
+            0% { box-shadow: 0 0 15px rgba(0, 212, 255, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(0, 212, 255, 0.8); }
+            100% { box-shadow: 0 0 15px rgba(0, 212, 255, 0.5); }
+        }
+
+        .detail-point-label {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .detail-point:hover .detail-point-label {
+            opacity: 1;
+        }
+
+        /* Modal de detalle */
+        .detail-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .detail-modal-content {
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .detail-modal-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .detail-modal-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Switch de vista */
+        .view-switch {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .view-switch-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .view-switch-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .view-switch-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+            color: white;
+        }
+        /* Configuración 360° */
+        .config-360-section {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .config-360-title {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .images-360-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .image-360-preview {
+            position: relative;
+            width: 80px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .image-360-preview:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .image-360-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-360-preview .frame-number {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .detail-points-config {
+            margin-top: 20px;
+        }
+
+        .detail-point-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .detail-point-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .remove-detail-point {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .remove-detail-point:hover {
+            background: var(--error-color);
+            transform: scale(1.1);
+        }
+
+        /* Pro Badge */
+        .pro-badge {
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
+            animation: glow-pro 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-pro {
+            from { box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3); }
+            to { box-shadow: 0 3px 20px rgba(255, 215, 0, 0.6); }
+        }
+
+        /* Loading 360 */
+        .loading-360 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--primary-color);
+            z-index: 5;
+        }
+
+        .loading-360-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
         }
 
         /* Navigation Buttons */
@@ -548,6 +846,7 @@
             gap: 30px;
             margin-bottom: 40px;
         }
+
         /* Vehicle Cards */
         .catalog-grid {
             display: grid;
@@ -741,7 +1040,7 @@
         .empty-state p {
             margin-bottom: 20px;
         }
-/* Footer Styles */
+        /* Footer Styles */
         .social-section {
             background: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
             padding: 40px 0;
@@ -972,6 +1271,7 @@
             margin-top: 20px;
             flex-wrap: wrap;
         }
+
         .btn-small {
             padding: 8px 15px;
             border: none;
@@ -1171,7 +1471,6 @@
             text-decoration: underline;
             color: #20c55e;
         }
-
         /* Customization Styles */
         .customization-grid {
             display: grid;
@@ -1250,7 +1549,7 @@
             font-weight: 600;
         }
 
-/* Modal Styles */
+        /* Modal Styles */
         .overlay {
             position: fixed;
             top: 0;
@@ -1552,6 +1851,7 @@
             background: var(--bg-card);
             color: white;
         }
+
         .form-btn {
             width: 100%;
             padding: 18px;
@@ -1601,7 +1901,6 @@
             background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
             border-radius: 2px;
         }
-
         /* Image Upload Styles */
         .image-upload-area {
             border: 2px dashed var(--border-light);
@@ -1784,6 +2083,60 @@
 
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
+            .search-filter-section {
+                top: 70px; /* Altura del header en móvil */
+            }
+
+            .search-content.expanded {
+                max-height: 600px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                min-width: auto;
+            }
+
+            .sort-controls {
+                justify-content: center;
+            }
+
+            .filter-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .view-360-controls {
+                bottom: 10px;
+                padding: 8px 12px;
+            }
+
+            .view-360-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .detail-point {
+                width: 25px;
+                height: 25px;
+            }
+
+            .detail-modal-content {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .images-360-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+
+            .image-360-preview {
+                width: 60px;
+                height: 45px;
+            }
+
             .modal {
                 flex-direction: column;
                 width: 98%;
@@ -1846,23 +2199,6 @@
             .image-preview {
                 width: 100px;
                 height: 75px;
-            }
-
-            .search-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-input {
-                min-width: auto;
-            }
-
-            .sort-controls {
-                justify-content: center;
-            }
-
-            .filter-controls {
-                grid-template-columns: 1fr;
             }
 
             .nav-buttons {
@@ -1964,8 +2300,7 @@
             </div>
         </div>
     </header>
-
-<!-- Search and Filter Section -->
+    <!-- Search and Filter Section -->
     <div class="search-filter-section" id="searchFilterSection">
         <div class="search-filter-container">
             <!-- Toggle Button -->
@@ -2394,7 +2729,30 @@
                 <button class="image-nav next" onclick="nextImage()">›</button>
                 <div class="thumbnails" id="thumbnails"></div>
             </div>
+            <!-- Vista 360° -->
+            <div class="view-360-container" id="view360Container" style="display: none;">
+                <div class="loading-360" id="loading360">
+                    <div class="loading-360-spinner"></div>
+                    <div>Cargando vista 360°...</div>
+                </div>
+                <img id="view360Image" class="view-360-image" src="" alt="Vista 360°">
+                <!-- Los puntos de detalle se agregarán dinámicamente aquí -->
+                <div class="view-360-controls">
+                    <button class="view-360-btn" onclick="autoRotate360()">▶️ Auto</button>
+                    <button class="view-360-btn" onclick="resetView360()">🔄 Reset</button>
+                    <button class="view-360-btn" onclick="toggleFullscreen360()">⛶ Pantalla</button>
+                </div>
+            </div>
             <div class="details-section">
+                <!-- Switch de Vista -->
+                <div class="view-switch" id="viewSwitch" style="display: none;">
+                    <button class="view-switch-btn active" onclick="switchView('gallery')" id="galleryViewBtn">
+                        📸 Galería
+                    </button>
+                    <button class="view-switch-btn" onclick="switchView('360')" id="view360Btn">
+                        🔄 Vista 360°
+                    </button>
+                </div>
                 <div id="vehicleDetails"></div>
                 <div class="contact-section">
                     <button class="contact-btn" id="contactBtn" onclick="contactOwner()">
@@ -2403,6 +2761,16 @@
                     <p class="contact-note">Te conectaremos directamente con el vendedor via WhatsApp</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalle -->
+    <div class="detail-modal" id="detailModal">
+        <div class="detail-modal-content">
+            <button class="close-btn" onclick="closeDetailModal()">&times;</button>
+            <img id="detailModalImage" class="detail-modal-image" src="" alt="Detalle">
+            <h3 id="detailModalTitle" class="detail-modal-title">Detalle del Vehículo</h3>
+            <p id="detailModalDescription" class="detail-modal-description">Descripción del detalle</p>
         </div>
     </div>
 
@@ -2529,7 +2897,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal de Publicación -->
     <div class="overlay" id="publishOverlay">
         <div class="publish-modal">
@@ -2645,10 +3012,41 @@
                     <div id="imagePreviewGrid" class="image-preview-grid"></div>
                 </div>
 
+                <!-- Sección Vista 360° (Solo para Admin y Pro) -->
+                <div class="config-360-section" id="config360Section" style="display: none;">
+                    <h3 class="config-360-title">
+                        🔄 Configuración Vista 360°
+                        <span class="pro-badge" id="proBadge">✨ PRO</span>
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📸 Imágenes 360° (24-36 frames):</label>
+                        <div class="image-upload-area" onclick="document.getElementById('images360Input').click()">
+                            <p>🔄 Seleccionar secuencia de imágenes 360°</p>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">
+                                Toma fotos cada 10-15° alrededor del vehículo
+                            </p>
+                        </div>
+                        <input type="file" id="images360Input" multiple accept="image/*" style="display: none;" onchange="handleImages360Upload(event)">
+                        <div id="images360Grid" class="images-360-grid"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">📍 Puntos de Detalle:</label>
+                        <button type="button" class="form-btn secondary" onclick="addDetailPoint()">
+                            ➕ Agregar Punto de Detalle
+                        </button>
+                        <div id="detailPointsContainer" class="detail-points-config">
+                            <!-- Los puntos de detalle se agregarán aquí -->
+                        </div>
+                    </div>
+                </div>
+
                 <button type="submit" class="form-btn" id="publishSubmitBtn">🚗 Publicar Vehículo</button>
             </form>
         </div>
     </div>
+
     <!-- Modal de Edición -->
     <div class="overlay" id="editOverlay">
         <div class="edit-modal">
@@ -2777,6 +3175,18 @@
             sort: 'newest'
         };
 
+        // Variables globales para Vista 360°
+        let currentView = 'gallery';
+        let view360Data = null;
+        let current360Frame = 0;
+        let isRotating = false;
+        let rotationInterval = null;
+        let isDragging360 = false;
+        let dragStartX = 0;
+        let dragStartFrame = 0;
+        let uploaded360Images = [];
+        let detailPoints = [];
+
         // Usuario administrador por defecto
         const adminUser = {
             id: "ADMIN",
@@ -2803,7 +3213,6 @@
                 tiktok: ""
             }
         };
-
         // Funciones de utilidad Firebase
         function showLoading() {
             document.getElementById('loadingOverlay').style.display = 'flex';
@@ -2989,6 +3398,7 @@
                 throw error;
             }
         }
+
         // Funciones Firebase para configuración
         async function loadConfigFromFirebase() {
             try {
@@ -3169,7 +3579,6 @@
                 openAuthModal();
             }
         }
-
         // Funciones de autenticación
         function openAuthModal() {
             document.getElementById('authOverlay').style.display = 'flex';
@@ -3282,7 +3691,6 @@
             showNotification('Has cerrado sesión correctamente', 'info');
         }
 
-        // Sistema de búsqueda y filtros
         // Funciones del panel de búsqueda desplegable
         let searchPanelExpanded = false;
 
@@ -3342,7 +3750,7 @@
             applyFilters();
         }
 
-function clearAllFilters() {
+        function clearAllFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('brandFilter').value = '';
             document.getElementById('modelFilter').value = '';
@@ -3369,7 +3777,7 @@ function clearAllFilters() {
             showNotification('Filtros limpiados exitosamente', 'info');
         }
 
-function applyFilters() {
+        function applyFilters() {
             currentFilters.brand = document.getElementById('brandFilter').value;
             currentFilters.model = document.getElementById('modelFilter').value;
             currentFilters.year = document.getElementById('yearFilter').value;
@@ -3379,7 +3787,7 @@ function applyFilters() {
             autoExpandSearchIfFiltered();
         }
 
-function setSortOrder(order) {
+        function setSortOrder(order) {
             currentFilters.sort = order;
             
             document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
@@ -3473,8 +3881,9 @@ function setSortOrder(order) {
                 }
             });
         }
-// Funciones del catálogo
-function renderCatalog() {
+
+        // Funciones del catálogo
+        function renderCatalog() {
             const catalog = document.getElementById('catalog');
             const featuredSection = document.getElementById('featuredSection');
             const featuredGrid = document.getElementById('featuredGrid');
@@ -3517,10 +3926,13 @@ function renderCatalog() {
             card.className = `vehicle-card ${vehicle.sold ? 'sold' : ''} ${isFeatured ? 'featured' : ''}`;
             card.onclick = () => openModal(vehicle);
 
+            const has360 = vehicle.view360Data && vehicle.view360Data.images && vehicle.view360Data.images.length > 0;
+
             card.innerHTML = `
                 <div style="position: relative;">
                     <img src="${vehicle.images[0]}" alt="${vehicle.brand} ${vehicle.model}" class="vehicle-image">
                     ${vehicle.sold ? '<div class="sold-badge">VENDIDO</div>' : ''}
+                    ${has360 ? '<div style="position: absolute; top: 15px; left: 15px; background: linear-gradient(45deg, #ffd700, #ff8c00); color: white; padding: 5px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);">🔄 360°</div>' : ''}
                 </div>
                 <div class="vehicle-info">
                     <div class="vehicle-year-brand">${vehicle.year} | ${vehicle.brand} - ${vehicle.model}</div>
@@ -3531,17 +3943,30 @@ function renderCatalog() {
 
             return card;
         }
-
         function openModal(vehicle) {
             currentVehicle = vehicle;
             currentImageIndex = 0;
+            currentView = 'gallery';
             
             document.getElementById('overlay').style.display = 'flex';
             document.body.style.overflow = 'hidden';
             
             updateMainImage();
             renderThumbnails();
-            renderDetails();
+            renderDetailsWithView360();
+            
+            // Resetear vista 360° si existe
+            if (vehicle.view360Data) {
+                view360Data = vehicle.view360Data;
+                current360Frame = 0;
+                
+                if (isRotating) {
+                    clearInterval(rotationInterval);
+                    isRotating = false;
+                    const autoBtn = document.querySelector('[onclick="autoRotate360()"]');
+                    if (autoBtn) autoBtn.innerHTML = '▶️ Auto';
+                }
+            }
         }
 
         function closeModal() {
@@ -3590,13 +4015,31 @@ function renderCatalog() {
             }
         }
 
-        function renderDetails() {
+        function renderDetailsWithView360() {
             const container = document.getElementById('vehicleDetails');
             
+            // Verificar si el vehículo tiene vista 360°
+            const has360View = currentVehicle.view360Data && 
+                               currentVehicle.view360Data.images && 
+                               currentVehicle.view360Data.images.length > 0;
+            
+            // Mostrar/ocultar switch de vista
+            const viewSwitch = document.getElementById('viewSwitch');
+            if (has360View) {
+                viewSwitch.style.display = 'flex';
+                view360Data = currentVehicle.view360Data;
+            } else {
+                viewSwitch.style.display = 'none';
+                view360Data = null;
+            }
+            
+            // Generar contenido de detalles
             container.innerHTML = `
                 <h2 class="vehicle-title">${currentVehicle.year} • ${currentVehicle.brand} ${currentVehicle.model}</h2>
                 
                 ${currentVehicle.sold ? '<div style="text-align: center; padding: 15px; background: linear-gradient(45deg, var(--secondary-color), var(--accent-color)); border-radius: 10px; margin-bottom: 20px; font-weight: 700;">🏆 VEHÍCULO VENDIDO</div>' : ''}
+                
+                ${has360View ? '<div style="text-align: center; padding: 10px; background: linear-gradient(45deg, #ffd700, #ff8c00); border-radius: 10px; margin-bottom: 20px; font-weight: 700; color: white;">🔄 ¡Vista 360° Disponible!</div>' : ''}
                 
                 <div class="detail-item">
                     <span class="detail-icon">🏁</span>
@@ -3696,11 +4139,265 @@ function renderCatalog() {
             window.open(whatsappUrl, '_blank');
         }
 
-        // Funciones de publicación
+        // Funciones de Vista 360°
+        function switchView(view) {
+            currentView = view;
+            
+            const imageSection = document.querySelector('.image-section');
+            const view360Container = document.getElementById('view360Container');
+            const galleryBtn = document.getElementById('galleryViewBtn');
+            const view360Btn = document.getElementById('view360Btn');
+            
+            if (view === 'gallery') {
+                imageSection.style.display = 'block';
+                view360Container.style.display = 'none';
+                galleryBtn.classList.add('active');
+                view360Btn.classList.remove('active');
+            } else if (view === '360') {
+                imageSection.style.display = 'none';
+                view360Container.style.display = 'block';
+                galleryBtn.classList.remove('active');
+                view360Btn.classList.add('active');
+                
+                if (view360Data) {
+                    init360View();
+                }
+            }
+        }
+
+        function init360View() {
+            if (!view360Data || !view360Data.images || view360Data.images.length === 0) {
+                document.getElementById('loading360').innerHTML = '<div>❌ Vista 360° no disponible</div>';
+                return;
+            }
+            
+            document.getElementById('loading360').style.display = 'none';
+            
+            const view360Image = document.getElementById('view360Image');
+            view360Image.src = view360Data.images[0];
+            current360Frame = 0;
+            
+            // Configurar eventos de arrastre
+            setup360DragEvents();
+            
+            // Renderizar puntos de detalle
+            render360DetailPoints();
+        }
+
+        function setup360DragEvents() {
+            const container = document.getElementById('view360Container');
+            
+            container.addEventListener('mousedown', start360Drag);
+            container.addEventListener('mousemove', handle360Drag);
+            container.addEventListener('mouseup', end360Drag);
+            container.addEventListener('mouseleave', end360Drag);
+            
+            // Touch events para móviles
+            container.addEventListener('touchstart', start360Touch);
+            container.addEventListener('touchmove', handle360Touch);
+            container.addEventListener('touchend', end360Drag);
+        }
+
+        function start360Drag(e) {
+            if (!view360Data) return;
+            
+            isDragging360 = true;
+            dragStartX = e.clientX;
+            dragStartFrame = current360Frame;
+            
+            document.getElementById('view360Container').classList.add('dragging');
+            e.preventDefault();
+        }
+
+        function start360Touch(e) {
+            if (!view360Data) return;
+            
+            isDragging360 = true;
+            dragStartX = e.touches[0].clientX;
+            dragStartFrame = current360Frame;
+            
+            document.getElementById('view360Container').classList.add('dragging');
+            e.preventDefault();
+        }
+
+        function handle360Drag(e) {
+            if (!isDragging360 || !view360Data) return;
+            
+            const deltaX = e.clientX - dragStartX;
+            const sensitivity = 3; // Ajustar sensibilidad
+            const frameChange = Math.floor(deltaX / sensitivity);
+            
+            let newFrame = (dragStartFrame + frameChange) % view360Data.images.length;
+            if (newFrame < 0) newFrame = view360Data.images.length + newFrame;
+            
+            if (newFrame !== current360Frame) {
+                current360Frame = newFrame;
+                update360Frame();
+            }
+            
+            e.preventDefault();
+        }
+
+        function handle360Touch(e) {
+            if (!isDragging360 || !view360Data) return;
+            
+            const deltaX = e.touches[0].clientX - dragStartX;
+            const sensitivity = 3;
+            const frameChange = Math.floor(deltaX / sensitivity);
+            
+            let newFrame = (dragStartFrame + frameChange) % view360Data.images.length;
+            if (newFrame < 0) newFrame = view360Data.images.length + newFrame;
+            
+            if (newFrame !== current360Frame) {
+                current360Frame = newFrame;
+                update360Frame();
+            }
+            
+            e.preventDefault();
+        }
+
+        function end360Drag() {
+            isDragging360 = false;
+            document.getElementById('view360Container').classList.remove('dragging');
+        }
+
+        function update360Frame() {
+            if (!view360Data || !view360Data.images[current360Frame]) return;
+            
+            const view360Image = document.getElementById('view360Image');
+            view360Image.src = view360Data.images[current360Frame];
+            
+            // Actualizar visibilidad de puntos de detalle
+            updateDetailPointsVisibility();
+        }
+
+        function autoRotate360() {
+            if (!view360Data) return;
+            
+            if (isRotating) {
+                clearInterval(rotationInterval);
+                isRotating = false;
+                document.querySelector('[onclick="autoRotate360()"]').innerHTML = '▶️ Auto';
+            } else {
+                isRotating = true;
+                document.querySelector('[onclick="autoRotate360()"]').innerHTML = '⏸️ Parar';
+                
+                rotationInterval = setInterval(() => {
+                    current360Frame = (current360Frame + 1) % view360Data.images.length;
+                    update360Frame();
+                }, 150);
+            }
+        }
+
+        function resetView360() {
+            current360Frame = 0;
+            update360Frame();
+            
+            if (isRotating) {
+                clearInterval(rotationInterval);
+                isRotating = false;
+                document.querySelector('[onclick="autoRotate360()"]').innerHTML = '▶️ Auto';
+            }
+        }
+
+        function toggleFullscreen360() {
+            const container = document.getElementById('view360Container');
+            
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.log('Error entering fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        function render360DetailPoints() {
+            if (!view360Data || !view360Data.detailPoints) return;
+            
+            const container = document.getElementById('view360Container');
+            
+            // Limpiar puntos existentes
+            const existingPoints = container.querySelectorAll('.detail-point');
+            existingPoints.forEach(point => point.remove());
+            
+            // Crear nuevos puntos
+            view360Data.detailPoints.forEach((point, index) => {
+                const pointElement = document.createElement('div');
+                pointElement.className = 'detail-point';
+                pointElement.style.left = point.x + '%';
+                pointElement.style.top = point.y + '%';
+                pointElement.style.display = 'none'; // Inicialmente oculto
+                
+                const label = document.createElement('div');
+                label.className = 'detail-point-label';
+                label.textContent = point.title;
+                pointElement.appendChild(label);
+                
+                pointElement.onclick = () => showDetailModal(point);
+                
+                container.appendChild(pointElement);
+            });
+            
+            updateDetailPointsVisibility();
+        }
+
+        function updateDetailPointsVisibility() {
+            if (!view360Data || !view360Data.detailPoints) return;
+            
+            const points = document.querySelectorAll('.detail-point');
+            
+            view360Data.detailPoints.forEach((point, index) => {
+                const pointElement = points[index];
+                if (pointElement) {
+                    // Mostrar punto solo en el frame correspondiente (con margen de ±2 frames)
+                    const frameDiff = Math.abs(current360Frame - point.frame);
+                    const frameRange = Math.min(2, Math.floor(view360Data.images.length * 0.1));
+                    
+                    if (frameDiff <= frameRange || frameDiff >= (view360Data.images.length - frameRange)) {
+                        pointElement.style.display = 'block';
+                    } else {
+                        pointElement.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function showDetailModal(point) {
+            const modal = document.getElementById('detailModal');
+            const image = document.getElementById('detailModalImage');
+            const title = document.getElementById('detailModalTitle');
+            const description = document.getElementById('detailModalDescription');
+            
+            if (point.image) {
+                image.src = point.image;
+                image.style.display = 'block';
+            } else {
+                image.style.display = 'none';
+            }
+            
+            title.textContent = point.title;
+            description.textContent = point.description;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        // Funciones de publicación con vista 360°
         function openPublishModal() {
             document.getElementById('publishOverlay').style.display = 'flex';
             document.body.style.overflow = 'hidden';
             resetPublishForm();
+            
+            // Mostrar sección 360° si el usuario es admin o PRO
+            const config360Section = document.getElementById('config360Section');
+            if (currentUser && (currentUser.isAdmin || currentUser.isPro)) {
+                config360Section.style.display = 'block';
+            } else {
+                config360Section.style.display = 'none';
+            }
         }
 
         function closePublishModal() {
@@ -3713,7 +4410,11 @@ function renderCatalog() {
                 input.value = '';
             });
             uploadedImages = [];
+            uploaded360Images = [];
+            detailPoints = [];
             document.getElementById('imagePreviewGrid').innerHTML = '';
+            document.getElementById('images360Grid').innerHTML = '';
+            document.getElementById('detailPointsContainer').innerHTML = '';
         }
 
         async function handleImageUpload(event) {
@@ -3740,6 +4441,50 @@ function renderCatalog() {
             }
         }
 
+        async function handleImages360Upload(event) {
+            const files = Array.from(event.target.files);
+            
+            if (files.length < 8 || files.length > 36) {
+                showNotification('Necesitas entre 8 y 36 imágenes para la vista 360°', 'error');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                // Ordenar archivos por nombre para mantener secuencia
+                files.sort((a, b) => a.name.localeCompare(b.name));
+                
+                uploaded360Images = [];
+                for (const file of files) {
+                    const imageUrl = await uploadImageToFirebase(file);
+                    uploaded360Images.push(imageUrl);
+                }
+                
+                render360ImagePreviews();
+                hideLoading();
+                showNotification(`Vista 360° configurada con ${files.length} imágenes`, 'success');
+            } catch (error) {
+                hideLoading();
+                showNotification('Error al subir imágenes 360°', 'error');
+            }
+        }
+
+        function render360ImagePreviews() {
+            const grid = document.getElementById('images360Grid');
+            grid.innerHTML = '';
+            
+            uploaded360Images.forEach((imageUrl, index) => {
+                const preview = document.createElement('div');
+                preview.className = 'image-360-preview';
+                preview.innerHTML = `
+                    <img src="${imageUrl}" alt="Frame ${index + 1}">
+                    <div class="frame-number">${index + 1}</div>
+                `;
+                grid.appendChild(preview);
+            });
+        }
+
         function renderImagePreviews() {
             const grid = document.getElementById('imagePreviewGrid');
             grid.innerHTML = '';
@@ -3758,6 +4503,95 @@ function renderCatalog() {
         function removeImage(index) {
             uploadedImages.splice(index, 1);
             renderImagePreviews();
+        }
+
+        function addDetailPoint() {
+            if (uploaded360Images.length === 0) {
+                showNotification('Primero sube las imágenes 360°', 'error');
+                return;
+            }
+            
+            const pointId = detailPoints.length;
+            const point = {
+                id: pointId,
+                title: '',
+                description: '',
+                frame: 0,
+                x: 50,
+                y: 50,
+                image: ''
+            };
+            
+            detailPoints.push(point);
+            renderDetailPointConfig(point);
+        }
+
+        function renderDetailPointConfig(point) {
+            const container = document.getElementById('detailPointsContainer');
+            const pointDiv = document.createElement('div');
+            pointDiv.className = 'detail-point-item';
+            pointDiv.innerHTML = `
+                <button class="remove-detail-point" onclick="removeDetailPoint(${point.id})">&times;</button>
+                <div class="form-group">
+                    <label class="form-label">📍 Título del punto:</label>
+                    <input type="text" class="form-input" placeholder="Ej: Motor" onchange="updateDetailPoint(${point.id}, 'title', this.value)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📝 Descripción:</label>
+                    <textarea class="form-textarea" placeholder="Detalles sobre este punto..." onchange="updateDetailPoint(${point.id}, 'description', this.value)"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">🎯 Frame (0-${uploaded360Images.length - 1}):</label>
+                        <input type="number" class="form-input" min="0" max="${uploaded360Images.length - 1}" value="0" onchange="updateDetailPoint(${point.id}, 'frame', parseInt(this.value))">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📐 Posición X (%):</label>
+                        <input type="number" class="form-input" min="0" max="100" value="50" onchange="updateDetailPoint(${point.id}, 'x', parseInt(this.value))">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">📐 Posición Y (%):</label>
+                        <input type="number" class="form-input" min="0" max="100" value="50" onchange="updateDetailPoint(${point.id}, 'y', parseInt(this.value))">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📸 Imagen adicional:</label>
+                        <input type="file" class="form-input" accept="image/*" onchange="uploadDetailPointImage(${point.id}, this)">
+                    </div>
+                </div>
+            `;
+            container.appendChild(pointDiv);
+        }
+
+        function updateDetailPoint(id, field, value) {
+            const point = detailPoints.find(p => p.id === id);
+            if (point) {
+                point[field] = value;
+            }
+        }
+
+        async function uploadDetailPointImage(pointId, input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            try {
+                showLoading();
+                const imageUrl = await uploadImageToFirebase(file);
+                updateDetailPoint(pointId, 'image', imageUrl);
+                hideLoading();
+                showNotification('Imagen del punto subida exitosamente', 'success');
+            } catch (error) {
+                hideLoading();
+                showNotification('Error al subir imagen del punto', 'error');
+            }
+        }
+
+        function removeDetailPoint(id) {
+            detailPoints = detailPoints.filter(p => p.id !== id);
+            const container = document.getElementById('detailPointsContainer');
+            container.innerHTML = '';
+            detailPoints.forEach(point => renderDetailPointConfig(point));
         }
 
         async function publishVehicle(event) {
@@ -3798,6 +4632,14 @@ function renderCatalog() {
                 publicationMessage: ''
             };
             
+            // Agregar vista 360° si está disponible
+            if (uploaded360Images.length > 0 && (currentUser.isAdmin || currentUser.isPro)) {
+                newVehicle.view360Data = {
+                    images: [...uploaded360Images],
+                    detailPoints: [...detailPoints]
+                };
+            }
+            
             try {
                 await saveVehicleToFirebase(newVehicle);
                 renderCatalog();
@@ -3810,6 +4652,24 @@ function renderCatalog() {
             }
         }
 
+        // Función para crear usuarios Pro (solo admin)
+        async function promoteUserToPro(userId) {
+            if (!currentUser?.isAdmin) return;
+            
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            const confirmPromotion = confirm(`¿Quieres promocionar a ${user.name} ${user.lastname} a usuario PRO?\n\nEsto le dará acceso a crear vistas 360°.`);
+            if (confirmPromotion) {
+                try {
+                    await updateUserInFirebase(userId, { isPro: true });
+                    showNotification(`${user.name} ha sido promocionado a usuario PRO`, 'success');
+                    loadAdminUsers();
+                } catch (error) {
+                    showNotification('Error al promocionar usuario', 'error');
+                }
+            }
+        }
         // Funciones del dashboard del usuario
         async function loadUserDashboard() {
             if (!currentUser) return;
@@ -3859,6 +4719,8 @@ function renderCatalog() {
                             statusColor = 'var(--primary-color)';
                     }
                     
+                    const has360 = vehicle.view360Data && vehicle.view360Data.images && vehicle.view360Data.images.length > 0;
+                    
                     card.innerHTML = `
                         <div class="dashboard-card-header">
                             <div class="dashboard-card-title">${vehicle.year} ${vehicle.brand} ${vehicle.model}</div>
@@ -3867,8 +4729,11 @@ function renderCatalog() {
                             </div>
                         </div>
                         <div class="dashboard-card-body">
-                            <img src="${vehicle.images[0]}" alt="${vehicle.brand} ${vehicle.model}" 
-                                 style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                            <div style="position: relative;">
+                                <img src="${vehicle.images[0]}" alt="${vehicle.brand} ${vehicle.model}" 
+                                     style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                                ${has360 ? '<div style="position: absolute; top: 10px; left: 10px; background: linear-gradient(45deg, #ffd700, #ff8c00); color: white; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700;">🔄 360°</div>' : ''}
+                            </div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <span style="font-size: 1.5rem; font-weight: 900; color: var(--primary-color);">${vehicle.price}</span>
                                 <span style="color: var(--text-muted); font-size: 0.9rem;">📍 ${vehicle.location}</span>
@@ -3899,6 +4764,7 @@ function renderCatalog() {
                 });
             }
         }
+
         // Funciones de gestión de vehículos
         async function toggleSoldStatus(vehicleId) {
             const vehicle = vehicles.find(v => v.id === vehicleId);
@@ -4071,8 +4937,11 @@ function renderCatalog() {
                         break;
                 }
                 
+                const userBadges = [];
+                if (user.isPro) userBadges.push('<span class="pro-badge" style="font-size: 0.7rem; margin-left: 5px;">✨ PRO</span>');
+                
                 row.innerHTML = `
-                    <td>${user.name} ${user.lastname}</td>
+                    <td>${user.name} ${user.lastname}${userBadges.join('')}</td>
                     <td>${user.rif}</td>
                     <td>
                         <a href="https://wa.me/${user.whatsapp.replace(/\D/g, '')}" target="_blank" class="whatsapp-link">
@@ -4086,6 +4955,7 @@ function renderCatalog() {
                         <button class="btn-small btn-edit" onclick="openVerificationModal('${user.id}')">
                             ${user.verificationStatus === 'pending' ? '👁️ Revisar' : '✏️ Cambiar'}
                         </button>
+                        ${!user.isPro ? `<button class="btn-small btn-featured" onclick="promoteUserToPro('${user.id}')">✨ PRO</button>` : ''}
                         <button class="btn-small btn-delete" onclick="deleteUser('${user.id}')">🗑️</button>
                     </td>
                 `;
@@ -4108,8 +4978,13 @@ function renderCatalog() {
             
             vehicles.forEach(vehicle => {
                 const row = document.createElement('tr');
+                const has360 = vehicle.view360Data && vehicle.view360Data.images && vehicle.view360Data.images.length > 0;
+                
                 row.innerHTML = `
-                    <td>${vehicle.year} ${vehicle.brand} ${vehicle.model}</td>
+                    <td>
+                        ${vehicle.year} ${vehicle.brand} ${vehicle.model}
+                        ${has360 ? '<span style="background: linear-gradient(45deg, #ffd700, #ff8c00); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.7rem; margin-left: 5px;">🔄</span>' : ''}
+                    </td>
                     <td>${vehicle.price}</td>
                     <td>${vehicle.owner}</td>
                     <td style="color: ${vehicle.sold ? 'var(--accent-color)' : 'var(--success-color)'};">
@@ -4130,7 +5005,6 @@ function renderCatalog() {
                 tbody.appendChild(row);
             });
         }
-
         function loadAdminPublications() {
             const pendingPublications = vehicles.filter(v => v.publicationStatus === 'pending');
             const approvedPublications = vehicles.filter(v => v.publicationStatus === 'approved');
@@ -4237,233 +5111,6 @@ function renderCatalog() {
             }
         }
 
-        function resetColors() {
-            siteConfig.primaryColor = "#00d4ff";
-            siteConfig.secondaryColor = "#ff6b35";
-            
-            document.getElementById('primaryColor').value = siteConfig.primaryColor;
-            document.getElementById('secondaryColor').value = siteConfig.secondaryColor;
-            
-            applySiteConfig();
-            showNotification('Colores restablecidos', 'success');
-        }
-
-        async function handleLogoUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (!file.type.startsWith('image/')) {
-                showNotification('Por favor selecciona un archivo de imagen válido', 'error');
-                return;
-            }
-            
-            try {
-                showLoading();
-                const logoUrl = await uploadLogoToFirebase(file);
-                siteConfig.logoUrl = logoUrl;
-                applySiteConfig();
-                hideLoading();
-                showNotification('Logo actualizado exitosamente', 'success');
-            } catch (error) {
-                hideLoading();
-                showNotification('Error al subir el logo', 'error');
-            }
-        }
-
-        function removeLogo() {
-            siteConfig.logoUrl = "";
-            applySiteConfig();
-            document.getElementById('logoUpload').value = '';
-            showNotification('Logo removido exitosamente', 'success');
-        }
-
-        function setBannerStyle(styleIndex) {
-            const header = document.getElementById('headerElement');
-            header.className = 'header';
-            
-            if (styleIndex > 0) {
-                header.classList.add(`banner-style-${styleIndex}`);
-            }
-            
-            siteConfig.bannerStyle = styleIndex;
-            
-            // Actualizar botones de estilo
-            document.querySelectorAll('.banner-option').forEach((btn, index) => {
-                btn.classList.toggle('active', index === styleIndex);
-            });
-            
-            showNotification(`Estilo de banner ${styleIndex + 1} aplicado`, 'success');
-        }
-
-        async function loadCustomization() {
-            try {
-                await loadConfigFromFirebase();
-                loadCustomizationPanel();
-                showNotification('Configuración cargada exitosamente', 'success');
-            } catch (error) {
-                showNotification('Error al cargar configuración', 'error');
-            }
-        }
-
-        function resetCustomization() {
-            if (confirm('¿Estás seguro de que quieres restablecer toda la configuración?\n\nEsto incluye colores, logo, nombre del sitio y redes sociales.')) {
-                siteConfig = {
-                    siteName: "AutoVentas Premium",
-                    primaryColor: "#00d4ff",
-                    secondaryColor: "#ff6b35",
-                    logoUrl: "",
-                    bannerStyle: 0,
-                    socialLinks: {
-                        instagram: "",
-                        facebook: "",
-                        tiktok: ""
-                    }
-                };
-                
-                loadCustomizationPanel();
-                applySiteConfig();
-                showNotification('Configuración restablecida exitosamente', 'success');
-            }
-        }
-
-        // Funciones de exportación de datos
-        function exportData(type) {
-            let data = [];
-            let filename = '';
-            
-            switch(type) {
-                case 'users':
-                    data = users.map(user => ({
-                        nombre: user.name,
-                        apellido: user.lastname,
-                        rif: user.rif,
-                        whatsapp: user.whatsapp,
-                        estado: user.verificationStatus,
-                        fecha_registro: new Date(user.registrationDate).toLocaleDateString(),
-                        vehiculos_publicados: vehicles.filter(v => v.owner === user.rif).length
-                    }));
-                    filename = 'usuarios_autoventas.json';
-                    break;
-                    
-                case 'vehicles':
-                    data = vehicles.map(vehicle => ({
-                        año: vehicle.year,
-                        marca: vehicle.brand,
-                        modelo: vehicle.model,
-                        precio: vehicle.price,
-                        propietario: vehicle.owner,
-                        ubicacion: vehicle.location,
-                        estado_publicacion: vehicle.publicationStatus,
-                        vendido: vehicle.sold ? 'Sí' : 'No',
-                        destacado: vehicle.featured ? 'Sí' : 'No',
-                        fecha_publicacion: new Date(vehicle.publishDate).toLocaleDateString()
-                    }));
-                    filename = 'vehiculos_autoventas.json';
-                    break;
-                    
-                case 'all':
-                    data = {
-                        usuarios: users,
-                        vehiculos: vehicles,
-                        configuracion: siteConfig,
-                        fecha_exportacion: new Date().toISOString()
-                    };
-                    filename = 'backup_completo_autoventas.json';
-                    break;
-            }
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showNotification(`Datos exportados exitosamente: ${filename}`, 'success');
-        }
-
-        function backupFirebaseData() {
-            const confirmBackup = confirm('¿Quieres crear un backup completo de todos los datos de Firebase?\n\nEsto descargará un archivo con toda la información.');
-            if (confirmBackup) {
-                exportData('all');
-            }
-        }
-
-        function clearFirebaseData() {
-            const confirmClear = confirm('⚠️ ADVERTENCIA ⚠️\n\n¿Estás ABSOLUTAMENTE SEGURO de que quieres eliminar TODOS los datos de Firebase?\n\nEsta acción es IRREVERSIBLE y eliminará:\n- Todos los usuarios\n- Todos los vehículos\n- Toda la configuración\n\nEscribe "ELIMINAR TODO" para confirmar:');
-            
-            if (confirmClear) {
-                const confirmation = prompt('Escribe exactamente "ELIMINAR TODO" para confirmar:');
-                if (confirmation === 'ELIMINAR TODO') {
-                    showNotification('Esta función está deshabilitada por seguridad. Para limpiar Firebase, hazlo manualmente desde la consola de Firebase.', 'warning');
-                } else {
-                    showNotification('Confirmación incorrecta. Operación cancelada.', 'info');
-                }
-            }
-        }
-        
-        // Event listeners y funciones de inicialización
-        document.addEventListener('keydown', (e) => {
-            if (document.getElementById('overlay').style.display === 'flex') {
-                if (e.key === 'Escape') closeModal();
-                if (e.key === 'ArrowLeft') prevImage();
-                if (e.key === 'ArrowRight') nextImage();
-            }
-            
-            const overlays = ['authOverlay', 'publishOverlay', 'editOverlay', 'verificationOverlay', 'publicationVerificationOverlay'];
-            overlays.forEach(overlayId => {
-                if (document.getElementById(overlayId).style.display === 'flex' && e.key === 'Escape') {
-                    document.getElementById(overlayId).style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        });
-
-        // Cerrar modales al hacer click fuera
-        ['overlay', 'authOverlay', 'publishOverlay', 'editOverlay', 'verificationOverlay', 'publicationVerificationOverlay'].forEach(overlayId => {
-            document.getElementById(overlayId).addEventListener('click', (e) => {
-                if (e.target === e.currentTarget) {
-                    e.currentTarget.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        });
-
-        // Inicializar aplicación
-        async function initApp() {
-            try {
-                showLoading();
-                
-                if (!window.db) {
-                    throw new Error('Firebase no está inicializado correctamente');
-                }
-                
-                await loadConfigFromFirebase();
-                await loadVehiclesFromFirebase();
-                await loadUsersFromFirebase();
-                
-                isLoggedIn();
-                applySiteConfig();
-                
-                hideLoading();
-                showNotification('AutoVentas cargado exitosamente', 'success');
-                
-            } catch (error) {
-                console.error('Error initializing app:', error);
-                hideLoading();
-                showNotification('Error al cargar la aplicación. Verifica la configuración de Firebase.', 'error');
-            }
-        }
-
-        // Inicializar cuando Firebase esté listo
-        window.addEventListener('load', () => {
-            setTimeout(initApp, 1000);
-        });
-
-        // Funciones adicionales para completar funcionalidad
         async function toggleFeatured(vehicleId) {
             if (!currentUser?.isAdmin) return;
             
@@ -4485,6 +5132,38 @@ function renderCatalog() {
             await toggleSoldStatus(vehicleId);
         }
 
+        // Event listeners y funciones de inicialización
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('overlay').style.display === 'flex') {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'ArrowLeft' && currentView === 'gallery') prevImage();
+                if (e.key === 'ArrowRight' && currentView === 'gallery') nextImage();
+            }
+            
+            if (document.getElementById('detailModal').style.display === 'flex') {
+                if (e.key === 'Escape') closeDetailModal();
+            }
+            
+            const overlays = ['authOverlay', 'publishOverlay', 'editOverlay', 'verificationOverlay', 'publicationVerificationOverlay'];
+            overlays.forEach(overlayId => {
+                if (document.getElementById(overlayId).style.display === 'flex' && e.key === 'Escape') {
+                    document.getElementById(overlayId).style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+
+        // Cerrar modales al hacer click fuera
+        ['overlay', 'authOverlay', 'publishOverlay', 'editOverlay', 'verificationOverlay', 'publicationVerificationOverlay', 'detailModal'].forEach(overlayId => {
+            document.getElementById(overlayId).addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    e.currentTarget.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+
+        // Funciones de verificación
         function openVerificationModal(userId) {
             const user = users.find(u => u.id === userId);
             if (!user) return;
@@ -4496,7 +5175,7 @@ function renderCatalog() {
                 <h3>📋 Información del Usuario</h3>
                 <div class="info-item">
                     <span class="info-label">👤 Nombre:</span>
-                    <span class="info-value">${user.name} ${user.lastname}</span>
+                    <span class="info-value">${user.name} ${user.lastname}${user.isPro ? ' <span class="pro-badge">✨ PRO</span>' : ''}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">🆔 RIF:</span>
@@ -4607,7 +5286,8 @@ function renderCatalog() {
                 window.open(whatsappUrl, '_blank');
             }
         }
-// Funciones de verificación de publicaciones
+
+        // Funciones de verificación de publicaciones
         function openPublicationVerificationModal(vehicleId) {
             const vehicle = vehicles.find(v => v.id === vehicleId);
             if (!vehicle) return;
@@ -4656,6 +5336,12 @@ function renderCatalog() {
                     <span class="info-label">📸 Imágenes:</span>
                     <span class="info-value">${vehicle.images.length} imagen(es)</span>
                 </div>
+                ${vehicle.view360Data && vehicle.view360Data.images && vehicle.view360Data.images.length > 0 ? `
+                <div class="info-item">
+                    <span class="info-label">🔄 Vista 360°:</span>
+                    <span class="info-value" style="color: var(--accent-color);">✨ Disponible (${vehicle.view360Data.images.length} frames)</span>
+                </div>
+                ` : ''}
                 ${vehicle.publicationMessage ? `
                 <div class="info-item">
                     <span class="info-label">💬 Último mensaje:</span>
@@ -4732,8 +5418,8 @@ function renderCatalog() {
                 showNotification('Error al rechazar publicación', 'error');
             }
         }
-        
-// Funciones rápidas de aprobación/rechazo
+
+        // Funciones rápidas de aprobación/rechazo
         async function approvePublicationDirect(vehicleId) {
             const vehicle = vehicles.find(v => v.id === vehicleId);
             if (!vehicle) return;
@@ -4906,6 +5592,189 @@ function renderCatalog() {
                 showNotification('Error al guardar configuración', 'error');
             }
         }
+
+        function resetColors() {
+            siteConfig.primaryColor = "#00d4ff";
+            siteConfig.secondaryColor = "#ff6b35";
+            
+            document.getElementById('primaryColor').value = siteConfig.primaryColor;
+            document.getElementById('secondaryColor').value = siteConfig.secondaryColor;
+            
+            applySiteConfig();
+            showNotification('Colores restablecidos', 'success');
+        }
+
+        async function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showNotification('Por favor selecciona un archivo de imagen válido', 'error');
+                return;
+            }
+            
+            try {
+                showLoading();
+                const logoUrl = await uploadLogoToFirebase(file);
+                siteConfig.logoUrl = logoUrl;
+                applySiteConfig();
+                hideLoading();
+                showNotification('Logo actualizado exitosamente', 'success');
+            } catch (error) {
+                hideLoading();
+                showNotification('Error al subir el logo', 'error');
+            }
+        }
+
+        function removeLogo() {
+            siteConfig.logoUrl = "";
+            applySiteConfig();
+            document.getElementById('logoUpload').value = '';
+            showNotification('Logo removido exitosamente', 'success');
+        }
+
+        async function loadCustomization() {
+            try {
+                await loadConfigFromFirebase();
+                loadCustomizationPanel();
+                showNotification('Configuración cargada exitosamente', 'success');
+            } catch (error) {
+                showNotification('Error al cargar configuración', 'error');
+            }
+        }
+
+        function resetCustomization() {
+            if (confirm('¿Estás seguro de que quieres restablecer toda la configuración?\n\nEsto incluye colores, logo, nombre del sitio y redes sociales.')) {
+                siteConfig = {
+                    siteName: "AutoVentas Premium",
+                    primaryColor: "#00d4ff",
+                    secondaryColor: "#ff6b35",
+                    logoUrl: "",
+                    bannerStyle: 0,
+                    socialLinks: {
+                        instagram: "",
+                        facebook: "",
+                        tiktok: ""
+                    }
+                };
+                
+                loadCustomizationPanel();
+                applySiteConfig();
+                showNotification('Configuración restablecida exitosamente', 'success');
+            }
+        }
+
+        // Funciones de exportación de datos
+        function exportData(type) {
+            let data = [];
+            let filename = '';
+            
+            switch(type) {
+                case 'users':
+                    data = users.map(user => ({
+                        nombre: user.name,
+                        apellido: user.lastname,
+                        rif: user.rif,
+                        whatsapp: user.whatsapp,
+                        estado: user.verificationStatus,
+                        es_pro: user.isPro ? 'Sí' : 'No',
+                        fecha_registro: new Date(user.registrationDate).toLocaleDateString(),
+                        vehiculos_publicados: vehicles.filter(v => v.owner === user.rif).length
+                    }));
+                    filename = 'usuarios_autoventas.json';
+                    break;
+                    
+                case 'vehicles':
+                    data = vehicles.map(vehicle => ({
+                        año: vehicle.year,
+                        marca: vehicle.brand,
+                        modelo: vehicle.model,
+                        precio: vehicle.price,
+                        propietario: vehicle.owner,
+                        ubicacion: vehicle.location,
+                        estado_publicacion: vehicle.publicationStatus,
+                        vendido: vehicle.sold ? 'Sí' : 'No',
+                        destacado: vehicle.featured ? 'Sí' : 'No',
+                        vista_360: vehicle.view360Data && vehicle.view360Data.images && vehicle.view360Data.images.length > 0 ? 'Sí' : 'No',
+                        fecha_publicacion: new Date(vehicle.publishDate).toLocaleDateString()
+                    }));
+                    filename = 'vehiculos_autoventas.json';
+                    break;
+                    
+                case 'all':
+                    data = {
+                        usuarios: users,
+                        vehiculos: vehicles,
+                        configuracion: siteConfig,
+                        fecha_exportacion: new Date().toISOString()
+                    };
+                    filename = 'backup_completo_autoventas.json';
+                    break;
+            }
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification(`Datos exportados exitosamente: ${filename}`, 'success');
+        }
+
+        function backupFirebaseData() {
+            const confirmBackup = confirm('¿Quieres crear un backup completo de todos los datos de Firebase?\n\nEsto descargará un archivo con toda la información.');
+            if (confirmBackup) {
+                exportData('all');
+            }
+        }
+
+        function clearFirebaseData() {
+            const confirmClear = confirm('⚠️ ADVERTENCIA ⚠️\n\n¿Estás ABSOLUTAMENTE SEGURO de que quieres eliminar TODOS los datos de Firebase?\n\nEsta acción es IRREVERSIBLE y eliminará:\n- Todos los usuarios\n- Todos los vehículos\n- Toda la configuración\n\nEscribe "ELIMINAR TODO" para confirmar:');
+            
+            if (confirmClear) {
+                const confirmation = prompt('Escribe exactamente "ELIMINAR TODO" para confirmar:');
+                if (confirmation === 'ELIMINAR TODO') {
+                    showNotification('Esta función está deshabilitada por seguridad. Para limpiar Firebase, hazlo manualmente desde la consola de Firebase.', 'warning');
+                } else {
+                    showNotification('Confirmación incorrecta. Operación cancelada.', 'info');
+                }
+            }
+        }
+
+        // Inicializar aplicación
+        async function initApp() {
+            try {
+                showLoading();
+                
+                if (!window.db) {
+                    throw new Error('Firebase no está inicializado correctamente');
+                }
+                
+                await loadConfigFromFirebase();
+                await loadVehiclesFromFirebase();
+                await loadUsersFromFirebase();
+                
+                isLoggedIn();
+                applySiteConfig();
+                
+                hideLoading();
+                showNotification('🚗 AutoVentas con Vista 360° cargado exitosamente', 'success');
+                
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                hideLoading();
+                showNotification('Error al cargar la aplicación. Verifica la configuración de Firebase.', 'error');
+            }
+        }
+
+        // Inicializar cuando Firebase esté listo
+        window.addEventListener('load', () => {
+            setTimeout(initApp, 1000);
+        });
 
     </script>
 </body>
