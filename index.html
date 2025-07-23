@@ -209,17 +209,69 @@
         }
 
         /* Search and Filter Section */
+/* Search and Filter Section */
         .search-filter-section {
-            background: rgba(26, 26, 26, 0.9);
-            padding: 20px 0;
+            background: rgba(26, 26, 26, 0.95);
             border-bottom: 1px solid var(--border-color);
             backdrop-filter: blur(10px);
+            position: sticky;
+            top: 77px; /* Altura del header */
+            z-index: 90;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
         }
 
         .search-filter-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
+        }
+
+        /* Toggle Button */
+        .search-toggle-btn {
+            width: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .search-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-medium);
+        }
+
+        .search-toggle-btn .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .search-toggle-btn.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Search Content */
+        .search-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            padding: 0 20px;
+        }
+
+        .search-content.expanded {
+            max-height: 500px;
+            opacity: 1;
+            padding: 20px;
         }
 
         .search-bar {
@@ -262,12 +314,14 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .clear-search-btn:hover {
             background: rgba(255, 107, 53, 0.3);
             transform: translateY(-2px);
         }
+
         /* Filter Controls */
         .filter-controls {
             display: grid;
@@ -314,6 +368,7 @@
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
+            padding-bottom: 10px;
         }
 
         .sort-btn {
@@ -337,6 +392,52 @@
         .sort-btn:hover {
             background: rgba(0, 212, 255, 0.3);
             color: white;
+        }
+
+        /* Search Stats */
+        .search-stats {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .search-filter-section {
+                top: 70px; /* Altura del header en móvil */
+            }
+
+            .search-content.expanded {
+                max-height: 600px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                min-width: auto;
+            }
+
+            .sort-controls {
+                justify-content: center;
+            }
+
+            .filter-controls {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Navigation Buttons */
@@ -1864,50 +1965,64 @@
         </div>
     </header>
 
-    <!-- Search and Filter Section -->
+<!-- Search and Filter Section -->
     <div class="search-filter-section" id="searchFilterSection">
         <div class="search-filter-container">
-            <div class="search-bar">
-                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar por marca, modelo o año..." onkeyup="handleSearch()">
-                <button class="clear-search-btn" onclick="clearSearch()">🗑️ Limpiar</button>
-            </div>
+            <!-- Toggle Button -->
+            <button class="search-toggle-btn" id="searchToggleBtn" onclick="toggleSearchPanel()">
+                <span>🔍 Buscar y Filtrar Vehículos</span>
+                <span class="toggle-icon">▼</span>
+            </button>
             
-            <div class="filter-controls">
-                <div class="filter-group">
-                    <label class="filter-label">🏭 Marca</label>
-                    <select class="filter-select" id="brandFilter" onchange="applyFilters()">
-                        <option value="">Todas las marcas</option>
-                    </select>
+            <!-- Search Content -->
+            <div class="search-content" id="searchContent">
+                <!-- Search Stats -->
+                <div class="search-stats" id="searchStats" style="display: none;">
+                    Mostrando <span id="resultsCount">0</span> vehículos
                 </div>
                 
-                <div class="filter-group">
-                    <label class="filter-label">🚗 Modelo</label>
-                    <select class="filter-select" id="modelFilter" onchange="applyFilters()">
-                        <option value="">Todos los modelos</option>
-                    </select>
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar por marca, modelo o año..." onkeyup="handleSearch()">
+                    <button class="clear-search-btn" onclick="clearSearch()">🗑️ Limpiar</button>
                 </div>
                 
-                <div class="filter-group">
-                    <label class="filter-label">📅 Año</label>
-                    <select class="filter-select" id="yearFilter" onchange="applyFilters()">
-                        <option value="">Todos los años</option>
-                    </select>
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label class="filter-label">🏭 Marca</label>
+                        <select class="filter-select" id="brandFilter" onchange="applyFilters()">
+                            <option value="">Todas las marcas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">🚗 Modelo</label>
+                        <select class="filter-select" id="modelFilter" onchange="applyFilters()">
+                            <option value="">Todos los modelos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">📅 Año</label>
+                        <select class="filter-select" id="yearFilter" onchange="applyFilters()">
+                            <option value="">Todos los años</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">💰 Precio Máximo</label>
+                        <input type="number" class="filter-input" id="priceFilter" placeholder="Ej: 50000" onchange="applyFilters()">
+                    </div>
                 </div>
                 
-                <div class="filter-group">
-                    <label class="filter-label">💰 Precio Máximo</label>
-                    <input type="number" class="filter-input" id="priceFilter" placeholder="Ej: 50000" onchange="applyFilters()">
+                <div class="sort-controls">
+                    <span style="color: var(--text-secondary); font-weight: 600; margin-right: 15px;">📊 Ordenar por:</span>
+                    <button class="sort-btn active" onclick="setSortOrder('newest')" id="sortNewest">🆕 Más recientes</button>
+                    <button class="sort-btn" onclick="setSortOrder('oldest')" id="sortOldest">📅 Más antiguos</button>
+                    <button class="sort-btn" onclick="setSortOrder('price-low')" id="sortPriceLow">💰 Menor precio</button>
+                    <button class="sort-btn" onclick="setSortOrder('price-high')" id="sortPriceHigh">💎 Mayor precio</button>
+                    <button class="sort-btn" onclick="setSortOrder('year-new')" id="sortYearNew">🚗 Año reciente</button>
+                    <button class="sort-btn" onclick="setSortOrder('year-old')" id="sortYearOld">🕰️ Año antiguo</button>
                 </div>
-            </div>
-            
-            <div class="sort-controls">
-                <span style="color: var(--text-secondary); font-weight: 600; margin-right: 15px;">📊 Ordenar por:</span>
-                <button class="sort-btn active" onclick="setSortOrder('newest')" id="sortNewest">🆕 Más recientes</button>
-                <button class="sort-btn" onclick="setSortOrder('oldest')" id="sortOldest">📅 Más antiguos</button>
-                <button class="sort-btn" onclick="setSortOrder('price-low')" id="sortPriceLow">💰 Menor precio</button>
-                <button class="sort-btn" onclick="setSortOrder('price-high')" id="sortPriceHigh">💎 Mayor precio</button>
-                <button class="sort-btn" onclick="setSortOrder('year-new')" id="sortYearNew">🚗 Año reciente</button>
-                <button class="sort-btn" onclick="setSortOrder('year-old')" id="sortYearOld">🕰️ Año antiguo</button>
             </div>
         </div>
     </div>
@@ -3168,6 +3283,53 @@
         }
 
         // Sistema de búsqueda y filtros
+        // Funciones del panel de búsqueda desplegable
+        let searchPanelExpanded = false;
+
+        function toggleSearchPanel() {
+            const toggleBtn = document.getElementById('searchToggleBtn');
+            const searchContent = document.getElementById('searchContent');
+            
+            searchPanelExpanded = !searchPanelExpanded;
+            
+            if (searchPanelExpanded) {
+                searchContent.classList.add('expanded');
+                toggleBtn.classList.add('active');
+                updateSearchStats();
+            } else {
+                searchContent.classList.remove('expanded');
+                toggleBtn.classList.remove('active');
+            }
+        }
+
+        function updateSearchStats() {
+            const filteredVehicles = filterVehicles(vehicles);
+            const statsDiv = document.getElementById('searchStats');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            resultsCount.textContent = filteredVehicles.length;
+            
+            if (searchPanelExpanded) {
+                statsDiv.style.display = 'block';
+            } else {
+                statsDiv.style.display = 'none';
+            }
+        }
+
+        function autoExpandSearchIfFiltered() {
+            const hasActiveFilters = 
+                currentFilters.search || 
+                currentFilters.brand || 
+                currentFilters.model || 
+                currentFilters.year || 
+                currentFilters.price ||
+                currentFilters.sort !== 'newest';
+            
+            if (hasActiveFilters && !searchPanelExpanded) {
+                toggleSearchPanel();
+            }
+        }
+
         function handleSearch() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             currentFilters.search = searchTerm;
@@ -3180,7 +3342,7 @@
             applyFilters();
         }
 
-        function clearAllFilters() {
+function clearAllFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('brandFilter').value = '';
             document.getElementById('modelFilter').value = '';
@@ -3197,25 +3359,48 @@
             };
             
             setSortOrder('newest');
-            applyFilters();
+            renderCatalog();
+            
+            // Colapsar el panel si no hay filtros
+            if (searchPanelExpanded) {
+                toggleSearchPanel();
+            }
+            
+            showNotification('Filtros limpiados exitosamente', 'info');
         }
 
-        function applyFilters() {
+function applyFilters() {
             currentFilters.brand = document.getElementById('brandFilter').value;
             currentFilters.model = document.getElementById('modelFilter').value;
             currentFilters.year = document.getElementById('yearFilter').value;
             currentFilters.price = document.getElementById('priceFilter').value;
             
             renderCatalog();
+            autoExpandSearchIfFiltered();
         }
 
-        function setSortOrder(order) {
+function setSortOrder(order) {
             currentFilters.sort = order;
             
             document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('sort' + order.charAt(0).toUpperCase() + order.slice(1).replace('-', '')).classList.add('active');
+            
+            // Mapear nombres de botones
+            const buttonMap = {
+                'newest': 'sortNewest',
+                'oldest': 'sortOldest',
+                'price-low': 'sortPriceLow',
+                'price-high': 'sortPriceHigh',
+                'year-new': 'sortYearNew',
+                'year-old': 'sortYearOld'
+            };
+            
+            const buttonId = buttonMap[order];
+            if (buttonId) {
+                document.getElementById(buttonId).classList.add('active');
+            }
             
             renderCatalog();
+            autoExpandSearchIfFiltered();
         }
 
         function updateFilterOptions() {
@@ -3289,7 +3474,7 @@
             });
         }
 // Funciones del catálogo
-        function renderCatalog() {
+function renderCatalog() {
             const catalog = document.getElementById('catalog');
             const featuredSection = document.getElementById('featuredSection');
             const featuredGrid = document.getElementById('featuredGrid');
@@ -3298,6 +3483,9 @@
             const filteredVehicles = filterVehicles(vehicles);
             const featuredVehicles = filteredVehicles.filter(v => v.featured && !v.sold);
             const regularVehicles = filteredVehicles.filter(v => !v.featured);
+            
+            // Actualizar estadísticas de búsqueda
+            updateSearchStats();
             
             // Renderizar destacados
             if (featuredVehicles.length > 0) {
@@ -3317,8 +3505,10 @@
                     catalog.appendChild(createVehicleCard(vehicle, false));
                 });
                 emptyCatalog.style.display = 'none';
-            } else {
+            } else if (filteredVehicles.length === 0) {
                 emptyCatalog.style.display = 'block';
+            } else {
+                emptyCatalog.style.display = 'none';
             }
         }
 
