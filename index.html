@@ -4029,6 +4029,192 @@
             });
         }
 
+        // Funciones restantes del panel de administración
+        async function deleteUser(userId) {
+            if (!currentUser?.isAdmin) return;
+            
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            if (confirm(`¿Estás seguro de que quieres eliminar el usuario ${user.name} ${user.lastname}?\n\nEsta acción no se puede deshacer.`)) {
+                try {
+                    await deleteUserFromFirebase(userId);
+                    loadAdminUsers();
+                    showNotification(`Usuario ${user.name} eliminado exitosamente`, 'success');
+                } catch (error) {
+                    showNotification('Error al eliminar usuario', 'error');
+                }
+            }
+        }
+
+        function resetColors() {
+            siteConfig.primaryColor = "#00d4ff";
+            siteConfig.secondaryColor = "#ff6b35";
+            
+            document.getElementById('primaryColor').value = siteConfig.primaryColor;
+            document.getElementById('secondaryColor').value = siteConfig.secondaryColor;
+            
+            applySiteConfig();
+            showNotification('Colores restablecidos', 'success');
+        }
+
+        async function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showNotification('Por favor selecciona un archivo de imagen válido', 'error');
+                return;
+            }
+            
+            try {
+                showLoading();
+                const logoUrl = await uploadLogoToFirebase(file);
+                siteConfig.logoUrl = logoUrl;
+                applySiteConfig();
+                hideLoading();
+                showNotification('Logo actualizado exitosamente', 'success');
+            } catch (error) {
+                hideLoading();
+                showNotification('Error al subir el logo', 'error');
+            }
+        }
+
+        function removeLogo() {
+            siteConfig.logoUrl = "";
+            applySiteConfig();
+            document.getElementById('logoUpload').value = '';
+            showNotification('Logo removido exitosamente', 'success');
+        }
+
+        function setBannerStyle(styleIndex) {
+            const header = document.getElementById('headerElement');
+            header.className = 'header';
+            
+            if (styleIndex > 0) {
+                header.classList.add(`banner-style-${styleIndex}`);
+            }
+            
+            siteConfig.bannerStyle = styleIndex;
+            
+            // Actualizar botones de estilo
+            document.querySelectorAll('.banner-option').forEach((btn, index) => {
+                btn.classList.toggle('active', index === styleIndex);
+            });
+            
+            showNotification(`Estilo de banner ${styleIndex + 1} aplicado`, 'success');
+        }
+
+        async function loadCustomization() {
+            try {
+                await loadConfigFromFirebase();
+                loadCustomizationPanel();
+                showNotification('Configuración cargada exitosamente', 'success');
+            } catch (error) {
+                showNotification('Error al cargar configuración', 'error');
+            }
+        }
+
+        function resetCustomization() {
+            if (confirm('¿Estás seguro de que quieres restablecer toda la configuración?\n\nEsto incluye colores, logo, nombre del sitio y redes sociales.')) {
+                siteConfig = {
+                    siteName: "AutoVentas Premium",
+                    primaryColor: "#00d4ff",
+                    secondaryColor: "#ff6b35",
+                    logoUrl: "",
+                    bannerStyle: 0,
+                    socialLinks: {
+                        instagram: "",
+                        facebook: "",
+                        tiktok: ""
+                    }
+                };
+                
+                loadCustomizationPanel();
+                applySiteConfig();
+                showNotification('Configuración restablecida exitosamente', 'success');
+            }
+        }
+
+        // Funciones de exportación de datos
+        function exportData(type) {
+            let data = [];
+            let filename = '';
+            
+            switch(type) {
+                case 'users':
+                    data = users.map(user => ({
+                        nombre: user.name,
+                        apellido: user.lastname,
+                        rif: user.rif,
+                        whatsapp: user.whatsapp,
+                        estado: user.verificationStatus,
+                        fecha_registro: new Date(user.registrationDate).toLocaleDateString(),
+                        vehiculos_publicados: vehicles.filter(v => v.owner === user.rif).length
+                    }));
+                    filename = 'usuarios_autoventas.json';
+                    break;
+                    
+                case 'vehicles':
+                    data = vehicles.map(vehicle => ({
+                        año: vehicle.year,
+                        marca: vehicle.brand,
+                        modelo: vehicle.model,
+                        precio: vehicle.price,
+                        propietario: vehicle.owner,
+                        ubicacion: vehicle.location,
+                        estado_publicacion: vehicle.publicationStatus,
+                        vendido: vehicle.sold ? 'Sí' : 'No',
+                        destacado: vehicle.featured ? 'Sí' : 'No',
+                        fecha_publicacion: new Date(vehicle.publishDate).toLocaleDateString()
+                    }));
+                    filename = 'vehiculos_autoventas.json';
+                    break;
+                    
+                case 'all':
+                    data = {
+                        usuarios: users,
+                        vehiculos: vehicles,
+                        configuracion: siteConfig,
+                        fecha_exportacion: new Date().toISOString()
+                    };
+                    filename = 'backup_completo_autoventas.json';
+                    break;
+            }
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification(`Datos exportados exitosamente: ${filename}`, 'success');
+        }
+
+        function backupFirebaseData() {
+            const confirmBackup = confirm('¿Quieres crear un backup completo de todos los datos de Firebase?\n\nEsto descargará un archivo con toda la información.');
+            if (confirmBackup) {
+                exportData('all');
+            }
+        }
+
+        function clearFirebaseData() {
+            const confirmClear = confirm('⚠️ ADVERTENCIA ⚠️\n\n¿Estás ABSOLUTAMENTE SEGURO de que quieres eliminar TODOS los datos de Firebase?\n\nEsta acción es IRREVERSIBLE y eliminará:\n- Todos los usuarios\n- Todos los vehículos\n- Toda la configuración\n\nEscribe "ELIMINAR TODO" para confirmar:');
+            
+            if (confirmClear) {
+                const confirmation = prompt('Escribe exactamente "ELIMINAR TODO" para confirmar:');
+                if (confirmation === 'ELIMINAR TODO') {
+                    showNotification('Esta función está deshabilitada por seguridad. Para limpiar Firebase, hazlo manualmente desde la consola de Firebase.', 'warning');
+                } else {
+                    showNotification('Confirmación incorrecta. Operación cancelada.', 'info');
+                }
+            }
+        }
+        
         // Event listeners y funciones de inicialización
         document.addEventListener('keydown', (e) => {
             if (document.getElementById('overlay').style.display === 'flex') {
@@ -4223,6 +4409,193 @@
         }
 
         function sendVerificationWhatsApp(phoneNumber, message, status) {
+            const fullMessage = `${status}\n\n${message}\n\n--\n${siteConfig.siteName}`;
+            const whatsappUrl = `https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${encodeURIComponent(fullMessage)}`;
+            
+            const sendNow = confirm('¿Quieres enviar la notificación por WhatsApp ahora?');
+            if (sendNow) {
+                window.open(whatsappUrl, '_blank');
+            }
+        }
+// Funciones de verificación de publicaciones
+        function openPublicationVerificationModal(vehicleId) {
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            if (!vehicle) return;
+            
+            currentPublicationToVerify = vehicle;
+            
+            const publicationInfo = document.getElementById('publicationVerificationInfo');
+            publicationInfo.innerHTML = `
+                <h3>🚗 Información de la Publicación</h3>
+                <div class="info-item">
+                    <span class="info-label">🚗 Vehículo:</span>
+                    <span class="info-value">${vehicle.year} ${vehicle.brand} ${vehicle.model}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">💰 Precio:</span>
+                    <span class="info-value">${vehicle.price}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">👤 Propietario:</span>
+                    <span class="info-value">${vehicle.owner}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">📱 WhatsApp:</span>
+                    <span class="info-value">
+                        <a href="https://wa.me/${vehicle.ownerWhatsApp.replace(/\D/g, '')}" target="_blank" class="whatsapp-link">
+                            ${vehicle.ownerWhatsApp}
+                        </a>
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🌎 Ubicación:</span>
+                    <span class="info-value">${vehicle.location}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">📅 Fecha Publicación:</span>
+                    <span class="info-value">${new Date(vehicle.publishDate).toLocaleDateString()}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">📊 Estado:</span>
+                    <span class="info-value status-${vehicle.publicationStatus}">
+                        ${vehicle.publicationStatus === 'pending' ? '⏳ Pendiente' : 
+                          vehicle.publicationStatus === 'approved' ? '✅ Aprobado' : '❌ Rechazado'}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">📸 Imágenes:</span>
+                    <span class="info-value">${vehicle.images.length} imagen(es)</span>
+                </div>
+                ${vehicle.publicationMessage ? `
+                <div class="info-item">
+                    <span class="info-label">💬 Último mensaje:</span>
+                    <span class="info-value">${vehicle.publicationMessage}</span>
+                </div>
+                ` : ''}
+            `;
+            
+            document.getElementById('publicationVerificationMessage').value = '';
+            document.getElementById('publicationVerificationOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePublicationVerificationModal() {
+            document.getElementById('publicationVerificationOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentPublicationToVerify = null;
+        }
+
+        async function approvePublication() {
+            if (!currentPublicationToVerify) return;
+            
+            const customMessage = document.getElementById('publicationVerificationMessage').value;
+            const defaultMessage = `¡Excelente! Tu publicación del ${currentPublicationToVerify.year} ${currentPublicationToVerify.brand} ${currentPublicationToVerify.model} ha sido aprobada y ya está visible en el catálogo de ${siteConfig.siteName}.`;
+            const finalMessage = customMessage || defaultMessage;
+            
+            const updatedData = {
+                publicationStatus: 'approved',
+                publicationMessage: finalMessage,
+                approvalDate: new Date().toISOString()
+            };
+            
+            try {
+                await updateVehicleInFirebase(currentPublicationToVerify.id, updatedData);
+                sendPublicationWhatsApp(currentPublicationToVerify.ownerWhatsApp, finalMessage, '✅ PUBLICACIÓN APROBADA');
+                closePublicationVerificationModal();
+                loadAdminPublications();
+                renderCatalog();
+                showNotification(`Publicación de ${currentPublicationToVerify.brand} ${currentPublicationToVerify.model} aprobada exitosamente`, 'success');
+            } catch (error) {
+                showNotification('Error al aprobar publicación', 'error');
+            }
+        }
+
+        async function rejectPublication() {
+            if (!currentPublicationToVerify) return;
+            
+            const customMessage = document.getElementById('publicationVerificationMessage').value;
+            let finalMessage = customMessage;
+            
+            if (!customMessage) {
+                const reason = prompt('¿Cuál es el motivo del rechazo?');
+                if (reason) {
+                    finalMessage = `Tu publicación del ${currentPublicationToVerify.year} ${currentPublicationToVerify.brand} ${currentPublicationToVerify.model} ha sido rechazada.\n\nMotivo: ${reason}\n\nPuedes corregir los detalles y volver a publicar, o contactar al administrador para más información.`;
+                } else {
+                    finalMessage = `Tu publicación del ${currentPublicationToVerify.year} ${currentPublicationToVerify.brand} ${currentPublicationToVerify.model} ha sido rechazada. Para más información, contacta al administrador.`;
+                }
+            }
+            
+            const updatedData = {
+                publicationStatus: 'rejected',
+                publicationMessage: finalMessage,
+                rejectionDate: new Date().toISOString()
+            };
+            
+            try {
+                await updateVehicleInFirebase(currentPublicationToVerify.id, updatedData);
+                sendPublicationWhatsApp(currentPublicationToVerify.ownerWhatsApp, finalMessage, '❌ PUBLICACIÓN RECHAZADA');
+                closePublicationVerificationModal();
+                loadAdminPublications();
+                renderCatalog();
+                showNotification(`Publicación de ${currentPublicationToVerify.brand} ${currentPublicationToVerify.model} rechazada`, 'info');
+            } catch (error) {
+                showNotification('Error al rechazar publicación', 'error');
+            }
+        }
+        
+// Funciones rápidas de aprobación/rechazo
+        async function approvePublicationDirect(vehicleId) {
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            if (!vehicle) return;
+            
+            const defaultMessage = `¡Excelente! Tu publicación del ${vehicle.year} ${vehicle.brand} ${vehicle.model} ha sido aprobada y ya está visible en el catálogo de ${siteConfig.siteName}.`;
+            
+            const updatedData = {
+                publicationStatus: 'approved',
+                publicationMessage: defaultMessage,
+                approvalDate: new Date().toISOString()
+            };
+            
+            try {
+                await updateVehicleInFirebase(vehicleId, updatedData);
+                sendPublicationWhatsApp(vehicle.ownerWhatsApp, defaultMessage, '✅ PUBLICACIÓN APROBADA');
+                loadAdminPublications();
+                renderCatalog();
+                showNotification(`Publicación de ${vehicle.brand} ${vehicle.model} aprobada exitosamente`, 'success');
+            } catch (error) {
+                showNotification('Error al aprobar publicación', 'error');
+            }
+        }
+
+        async function rejectPublicationDirect(vehicleId) {
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            if (!vehicle) return;
+            
+            const reason = prompt('¿Cuál es el motivo del rechazo?');
+            if (reason === null) return; // Usuario canceló
+            
+            const finalMessage = reason ? 
+                `Tu publicación del ${vehicle.year} ${vehicle.brand} ${vehicle.model} ha sido rechazada.\n\nMotivo: ${reason}\n\nPuedes corregir los detalles y volver a publicar, o contactar al administrador para más información.` :
+                `Tu publicación del ${vehicle.year} ${vehicle.brand} ${vehicle.model} ha sido rechazada. Para más información, contacta al administrador.`;
+            
+            const updatedData = {
+                publicationStatus: 'rejected',
+                publicationMessage: finalMessage,
+                rejectionDate: new Date().toISOString()
+            };
+            
+            try {
+                await updateVehicleInFirebase(vehicleId, updatedData);
+                sendPublicationWhatsApp(vehicle.ownerWhatsApp, finalMessage, '❌ PUBLICACIÓN RECHAZADA');
+                loadAdminPublications();
+                renderCatalog();
+                showNotification(`Publicación de ${vehicle.brand} ${vehicle.model} rechazada`, 'info');
+            } catch (error) {
+                showNotification('Error al rechazar publicación', 'error');
+            }
+        }
+
+        function sendPublicationWhatsApp(phoneNumber, message, status) {
             const fullMessage = `${status}\n\n${message}\n\n--\n${siteConfig.siteName}`;
             const whatsappUrl = `https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${encodeURIComponent(fullMessage)}`;
             
