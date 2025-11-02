@@ -2771,7 +2771,7 @@
                 <form onsubmit="login(event)">
                     <div class="form-group">
                         <label class="form-label">🆔 RIF:</label>
-                        <input type="text" class="form-input" id="loginRif" placeholder="Ej: J-12345678-9" required>
+                        <input type="text" class="form-input" id="loginRif" placeholder="Ej: J-12345678-9" required oninput="this.value = formatRIF(this.value)" maxlength="13">
                     </div>
                     <div class="form-group">
                         <label class="form-label">🔒 Contraseña:</label>
@@ -2791,20 +2791,20 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">👤 Nombre:</label>
-                            <input type="text" class="form-input" id="registerName" placeholder="Tu nombre" required>
+                            <input type="text" class="form-input" id="registerName" placeholder="Tu nombre" required oninput="this.value = capitalizeFirstLetter(this.value)">
                         </div>
                         <div class="form-group">
                             <label class="form-label">👤 Apellido:</label>
-                            <input type="text" class="form-input" id="registerLastname" placeholder="Tu apellido" required>
+                            <input type="text" class="form-input" id="registerLastname" placeholder="Tu apellido" required oninput="this.value = capitalizeFirstLetter(this.value)">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">🆔 RIF:</label>
-                        <input type="text" class="form-input" id="registerRif" placeholder="Ej: J-12345678-9" required>
+                        <input type="text" class="form-input" id="registerRif" placeholder="Ej: J-12345678-9" required oninput="this.value = formatRIF(this.value)" maxlength="13">
                     </div>
                     <div class="form-group">
                         <label class="form-label">📱 WhatsApp:</label>
-                        <input type="tel" class="form-input" id="registerWhatsapp" placeholder="Ej: +58 412 123 4567" required>
+                        <input type="tel" class="form-input" id="registerWhatsapp" placeholder="Ej: +58 412 123 4567" required oninput="this.value = formatPhoneNumber(this.value)">
                         <small style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px; display: block;">
                             📋 Tu cuenta será verificada por un administrador antes de poder publicar
                         </small>
@@ -2901,18 +2901,18 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">🏭 Marca:</label>
-                        <input type="text" class="form-input" id="vehicleBrand" placeholder="Toyota" required>
+                        <input type="text" class="form-input" id="vehicleBrand" placeholder="Toyota" required oninput="this.value = capitalizeFirstLetter(this.value)">
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">🚗 Modelo:</label>
-                    <input type="text" class="form-input" id="vehicleModel" placeholder="Corolla" required>
+                    <input type="text" class="form-input" id="vehicleModel" placeholder="Corolla" required  oninput="this.value = capitalizeFirstLetter(this.value)">
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">💰 Precio:</label>
-                    <input type="text" class="form-input" id="vehiclePrice" placeholder="$15.500" required>
+                    <input type="text" class="form-input" id="vehiclePrice" placeholder="$15.500" required oninput="this.value = formatPrice(this.value)">
                 </div>
 
                 <div class="separator"></div>
@@ -2947,14 +2947,14 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">🛣️ Recorrido (KM):</label>
-                        <input type="text" class="form-input" id="vehicleMileage" placeholder="85.000 KM" required>
+                        <input type="text" class="form-input" id="vehicleMileage" placeholder="85.000 KM" required oninput="this.value = formatMileage(this.value)">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">🎨 Color:</label>
-                        <input type="text" class="form-input" id="vehicleColor" placeholder="Blanco" required>
+                        <input type="text" class="form-input" id="vehicleColor" placeholder="Blanco" required oninput="this.value = capitalizeFirstLetter(this.value)">
                     </div>
                     <div class="form-group">
                         <label class="form-label">🪪 Dueños:</label>
@@ -2975,7 +2975,7 @@
 
                 <div class="form-group">
                     <label class="form-label">🌎 Ubicación:</label>
-                    <input type="text" class="form-input" id="vehicleLocation" placeholder="Caracas" required>
+                    <input type="text" class="form-input" id="vehicleLocation" placeholder="Caracas" required oninput="this.value = capitalizeFirstLetter(this.value)">
                 </div>
 
                 <div class="form-group">
@@ -3702,14 +3702,144 @@
 			handleSupabaseError(error);
 		}
 	}
-
+	
+		function formatMileage(mileage) {
+		let cleaned = mileage.trim();
+		
+		// Si ya tiene KM, retornar
+		if (cleaned.toUpperCase().includes('KM')) {
+			return cleaned;
+		}
+		
+		// Si solo hay números, agregar KM
+		if (/^\d+$/.test(cleaned.replace(/\./g, '').replace(/,/g, ''))) {
+			return cleaned + ' KM';
+		}
+		
+		return cleaned + ' KM';
+	}
+	
+		function formatRIF(rifInput) {
+		// Limpiar: solo letras y números
+		let cleaned = rifInput.replace(/[^VJvj0-9]/g, '').toUpperCase();
+		
+		// Si empieza con V o J
+		if (cleaned.match(/^[VJ]/)) {
+			let letter = cleaned.charAt(0);
+			let numbers = cleaned.slice(1);
+			
+			// Formatear: V-12345678-9
+			if (numbers.length > 8) {
+				return letter + '-' + numbers.slice(0, 8) + '-' + numbers.slice(8, 9);
+			} else if (numbers.length > 0) {
+				return letter + '-' + numbers;
+			}
+			return letter + '-';
+		}
+		
+		// Si solo hay números, asumir V
+		if (cleaned.match(/^\d/)) {
+			if (cleaned.length > 8) {
+				return 'V-' + cleaned.slice(0, 8) + '-' + cleaned.slice(8, 9);
+			}
+			return 'V-' + cleaned;
+		}
+		
+		return rifInput;
+	}
+		function capitalizeFirstLetter(text) {
+		if (!text) return '';
+		return text.trim()
+			.toLowerCase()
+			.split(' ')
+			.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ');
+	}
+	
+		function formatPhoneNumber(phone) {
+			// Limpiar el número: solo dígitos
+			let cleaned = phone.replace(/\D/g, '');
+			
+			// Códigos de área de Venezuela (3 dígitos)
+			const venezuelaCodes = ['422', '412', '414', '416', '424', '426', '212', '241', '243', '244', '245', '246', '247', '248', '249', '251', '252', '253', '254', '255', '256', '257', '258', '259', '261', '262', '263', '264', '265', '266', '267', '268', '269', '271', '272', '273', '274', '275', '276', '277', '278', '279', '281', '282', '283', '284', '285', '286', '287', '288', '289', '291', '292', '293', '294', '295'];
+			
+			// Si ya está formateado correctamente, retornar
+			if (phone.match(/^\+\d+\s\d{3}\s/)) {
+				return phone;
+			}
+			
+			// Detectar país y formatear
+			if (cleaned.startsWith('58') && cleaned.length > 2) {
+				// Ya tiene código de país de Venezuela
+				cleaned = cleaned.slice(2);
+				if (cleaned.startsWith('0')) cleaned = cleaned.slice(1);
+				return '+58 ' + cleaned.slice(0, 3) + ' ' + cleaned.slice(3);
+			} else if (cleaned.startsWith('0') && venezuelaCodes.some(code => cleaned.slice(1).startsWith(code))) {
+				// Formato 0412... de Venezuela
+				cleaned = cleaned.slice(1);
+				return '+58 ' + cleaned.slice(0, 3) + ' ' + cleaned.slice(3);
+			} else if (venezuelaCodes.some(code => cleaned.startsWith(code)) && cleaned.length >= 10) {
+				// Detectado código venezolano
+				return '+58 ' + cleaned.slice(0, 3) + ' ' + cleaned.slice(3);
+			} else if (cleaned.startsWith('57') && cleaned.length > 2) {
+				// Colombia: +57
+				cleaned = cleaned.slice(2);
+				return '+57 ' + cleaned.slice(0, 3) + ' ' + cleaned.slice(3);
+			} else if (cleaned.startsWith('55') && cleaned.length > 2) {
+				// Brasil: +55
+				cleaned = cleaned.slice(2);
+				return '+55 ' + cleaned.slice(0, 2) + ' ' + cleaned.slice(2);
+			} else if (cleaned.startsWith('1') && cleaned.length === 11) {
+				// USA/Canadá: +1
+				cleaned = cleaned.slice(1);
+				return '+1 ' + cleaned.slice(0, 3) + ' ' + cleaned.slice(3, 6) + ' ' + cleaned.slice(6);
+			} else if (cleaned.length >= 10) {
+				// Asumir Venezuela por defecto
+				return '+58 ' + cleaned.slice(0, 3) + ' ' + cleaned.slice(3);
+			}
+			
+			return phone;
+		}
+	
 	async function register(event) {
 		event.preventDefault();
 		
-		const name = document.getElementById('registerName').value;
-		const lastname = document.getElementById('registerLastname').value;
-		const rif = document.getElementById('registerRif').value;
-		const whatsapp = document.getElementById('registerWhatsapp').value;
+		const name = capitalizeFirstLetter(document.getElementById('registerName').value);
+		const lastname = capitalizeFirstLetter(document.getElementById('registerLastname').value);
+		let rif = document.getElementById('registerRif').value.trim().toUpperCase();
+
+// Función para formatear RIF
+function formatRIF(rifInput) {
+    // Limpiar: solo letras y números
+    let cleaned = rifInput.replace(/[^VJvj0-9]/g, '').toUpperCase();
+    
+    // Si empieza con V o J
+    if (cleaned.match(/^[VJ]/)) {
+        let letter = cleaned.charAt(0);
+        let numbers = cleaned.slice(1);
+        
+        // Formatear: V-12345678-9
+        if (numbers.length > 8) {
+            return letter + '-' + numbers.slice(0, 8) + '-' + numbers.slice(8);
+        } else if (numbers.length > 0) {
+            return letter + '-' + numbers;
+        }
+        return letter + '-';
+    }
+    
+    // Si solo hay números, asumir V
+    if (cleaned.match(/^\d/)) {
+        if (cleaned.length > 8) {
+            return 'V-' + cleaned.slice(0, 8) + '-' + cleaned.slice(8);
+        }
+        return 'V-' + cleaned;
+    }
+    
+    return rifInput;
+}
+
+rif = formatRIF(rif);	
+		const whatsapp = formatPhoneNumber(document.getElementById('registerWhatsapp').value);
 		const password = document.getElementById('registerPassword').value;
 		
 		if (password.length < 6) {
@@ -4668,6 +4798,21 @@
             container.innerHTML = '';
             detailPoints.forEach(point => renderDetailPointConfig(point));
         }
+				
+		function formatPrice(price) {
+			// Limpiar el precio: remover símbolos y espacios
+			let cleaned = price.replace(/[^0-9.,]/g, '');
+			
+			// Reemplazar coma por punto si existe
+			cleaned = cleaned.replace(',', '.');
+			
+			// Si ya tiene $, devolverlo formateado
+			if (!price.includes('$')) {
+				return '$' + cleaned;
+			}
+			
+			return '$' + cleaned;
+		}
 
         async function publishVehicle(event) {
             event.preventDefault();
@@ -4683,21 +4828,30 @@
             
             const newVehicle = {
                 year: parseInt(document.getElementById('vehicleYear').value),
-                brand: document.getElementById('vehicleBrand').value,
-                model: document.getElementById('vehicleModel').value,
-                price: document.getElementById('vehiclePrice').value,
+                brand: capitalizeFirstLetter(document.getElementById('vehicleBrand').value),
+                model: capitalizeFirstLetter(document.getElementById('vehicleModel').value),
+                price: formatPrice(document.getElementById('vehiclePrice').value),
                 sold: false,
                 featured: false,
                 images: [...uploadedImages],
                 transmission: document.getElementById('vehicleTransmission').value,
                 ac: document.getElementById('vehicleAC').value,
                 radio: document.getElementById('vehicleRadio').value,
-                mileage: document.getElementById('vehicleMileage').value,
-                color: document.getElementById('vehicleColor').value,
+                mileage: formatMileage(document.getElementById('vehicleMileage').value),
+                color: capitalizeFirstLetter(document.getElementById('vehicleColor').value),
                 owners: document.getElementById('vehicleOwners').value,
                 keys: parseInt(document.getElementById('vehicleKeys').value),
-                tires: document.getElementById('vehicleTires').value,
-                location: document.getElementById('vehicleLocation').value,
+                tires: (() => {
+					let tires = document.getElementById('vehicleTires').value.trim();
+					// Capitalizar primera letra
+					tires = tires.charAt(0).toUpperCase() + tires.slice(1);
+					// Agregar % si no existe
+					if (!tires.includes('%')) {
+						tires = tires.replace(/(\d+)/, '$1%');
+					}
+					return tires;
+				})(),
+                location: capitalizeFirstLetter(document.getElementById('vehicleLocation').value),
                 extras: document.getElementById('vehicleExtras').value || 'Ninguno',
                 notes: document.getElementById('vehicleNotes').value || 'Sin notas adicionales',
                 owner: currentUser.rif,
@@ -4924,18 +5078,25 @@
             
             const updatedData = {
                 year: parseInt(document.getElementById('editVehicleYear').value),
-                brand: document.getElementById('editVehicleBrand').value,
-                model: document.getElementById('editVehicleModel').value,
+                brand: capitalizeFirstLetter(document.getElementById('editVehicleBrand').value),
+                model: capitalizeFirstLetter(document.getElementById('editVehicleModel').value),
                 price: document.getElementById('editVehiclePrice').value,
                 transmission: document.getElementById('editVehicleTransmission').value,
                 ac: document.getElementById('editVehicleAC').value,
                 radio: document.getElementById('editVehicleRadio').value,
-                mileage: document.getElementById('editVehicleMileage').value,
-                color: document.getElementById('editVehicleColor').value,
+                mileage: formatMileage(document.getElementById('editVehicleMileage').value),
+                color: capitalizeFirstLetter(document.getElementById('editVehicleColor').value),
                 owners: document.getElementById('editVehicleOwners').value,
                 keys: parseInt(document.getElementById('editVehicleKeys').value),
-                tires: document.getElementById('editVehicleTires').value,
-                location: document.getElementById('editVehicleLocation').value,
+                tires: (() => {
+					let tires = document.getElementById('editVehicleTires').value.trim();
+					tires = tires.charAt(0).toUpperCase() + tires.slice(1);
+					if (!tires.includes('%')) {
+						tires = tires.replace(/(\d+)/, '$1%');
+					}
+					return tires;
+				})(),
+                location: capitalizeFirstLetter(document.getElementById('editVehicleLocation').value),
                 extras: document.getElementById('editVehicleExtras').value,
                 notes: document.getElementById('editVehicleNotes').value
             };
@@ -5837,7 +5998,8 @@
                 applySiteConfig();
                 
                 hideLoading();
-                showNotification('🚗 AutoVentas con Vista 360° cargado exitosamente', 'success');
+				// Aplicación cargada - notificación deshabilitada
+                //showNotification('🚗 AutoVentas con Vista 360° cargado exitosamente', 'success');
                 
             } catch (error) {
                 console.error('Error initializing app:', error);
