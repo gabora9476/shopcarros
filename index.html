@@ -16,36 +16,22 @@
 <!-- Color del tema para navegadores móviles -->
 <meta name="theme-color" content="#00d4ff">
     
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, onSnapshot, query, orderBy, where, limit } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js';
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // Tu configuración de Supabase (reemplazar con tus credenciales)
+    const supabaseUrl = 'https://ufdrsuhwtqidboixtkym.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmZHJzdWh3dHFpZGJvaXh0a3ltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwOTg0OTQsImV4cCI6MjA3NzY3NDQ5NH0.e5u37hrtPO38eyAfvIdvkrOBOY_RGEHTrC9vzByWquY';
 
-        // Tu configuración de Firebase (reemplazar con tus credenciales)
-  const firebaseConfig = {
-    apiKey: "AIzaSyBXeCPK4QMMD87BcbVlWp_D2rzusKTxEso",
-    authDomain: "autoventas-c9168.firebaseapp.com",
-    projectId: "autoventas-c9168",
-    storageBucket: "autoventas-c9168.firebasestorage.app",
-    messagingSenderId: "939292107035",
-    appId: "1:939292107035:web:7bd26de7951b225c9773be",
-    measurementId: "G-SXWF2M105G"
-  };
+    // Importar la función createClient
+    const { createClient } = window.supabase;
 
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
+    // Inicializar Supabase
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-        // Hacer disponibles globalmente
-        window.db = db;
-        window.storage = storage;
-        window.firebaseModules = {
-            collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, onSnapshot, query, orderBy, where, limit,
-            ref, uploadBytes, getDownloadURL
-        };
-    </script>
+    // Hacer disponible globalmente
+    window.supabase = supabase;
+</script>
 
     <style>
         :root {
@@ -2690,11 +2676,11 @@
                             </div>
                             <div class="customization-section">
                                 <h4>🔄 Backup Firebase</h4>
-                                <button class="form-btn secondary" onclick="backupFirebaseData()">🔄 Crear Backup</button>
-                                <button class="form-btn secondary" onclick="clearFirebaseData()">🗑️ Limpiar Firebase</button>
+                                <button class="form-btn secondary" onclick="backupSupabaseData()">🔄 Crear Backup</button>
+                                <button class="form-btn secondary" onclick="clearSupabaseData()">🗑️ Limpiar Supabase</button>
                                 <p style="color: var(--warning-color); font-size: 0.9rem; margin-top: 10px;">
-                                    ⚠️ La limpieza de Firebase eliminará todos los datos permanentemente.
-                                </p>
+									⚠️ La limpieza de Supabase eliminará todos los datos permanentemente.
+								</p>	
                             </div>
                         </div>
                     </div>
@@ -3213,221 +3199,290 @@
                 tiktok: ""
             }
         };
-        // Funciones de utilidad Firebase
-        function showLoading() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-        }
+		// Funciones de utilidad Supabase
+		function showLoading() {
+			document.getElementById('loadingOverlay').style.display = 'flex';
+		}
 
-        function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
-        }
+		function hideLoading() {
+			document.getElementById('loadingOverlay').style.display = 'none';
+		}
 
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
+		function showNotification(message, type = 'info') {
+			const notification = document.createElement('div');
+			notification.className = `notification ${type}`;
+			notification.textContent = message;
+			document.body.appendChild(notification);
 
-            setTimeout(() => {
-                notification.remove();
-            }, 5000);
-        }
+			setTimeout(() => {
+				notification.remove();
+			}, 5000);
+		}
 
-        // Funciones Firebase para vehículos
-        async function loadVehiclesFromFirebase() {
-            try {
-                showLoading();
-                const { collection, getDocs, query, orderBy } = window.firebaseModules;
-                const vehiclesRef = collection(window.db, 'vehicles');
-                const q = query(vehiclesRef, orderBy('publishDate', 'desc'));
-                const querySnapshot = await getDocs(q);
-                
-                vehicles = [];
-                querySnapshot.forEach((doc) => {
-                    vehicles.push({ id: doc.id, ...doc.data() });
-                });
-                
-                updateFilterOptions();
-                renderCatalog();
-                hideLoading();
-            } catch (error) {
-                console.error('Error loading vehicles:', error);
-                hideLoading();
-                showNotification('Error al cargar vehículos', 'error');
-            }
-        }
+		// Función para manejar errores de Supabase
+		function handleSupabaseError(error) {
+			console.error('Error de Supabase:', error);
+			showNotification(error.message || 'Ha ocurrido un error', 'error');
+		}
 
-        async function saveVehicleToFirebase(vehicleData) {
-            try {
-                showLoading();
-                const { collection, addDoc } = window.firebaseModules;
-                const docRef = await addDoc(collection(window.db, 'vehicles'), vehicleData);
-                
-                vehicleData.id = docRef.id;
-                vehicles.push(vehicleData);
-                
-                updateFilterOptions();
-                hideLoading();
-                showNotification('Vehículo publicado exitosamente. Será revisado por un administrador.', 'success');
-                return docRef.id;
-            } catch (error) {
-                console.error('Error saving vehicle:', error);
-                hideLoading();
-                showNotification('Error al publicar vehículo', 'error');
-                throw error;
-            }
-        }
+		// Funciones Supabase para vehículos
+		async function loadVehiclesFromSupabase() {
+			try {
+				showLoading();
+				const { data, error } = await window.supabase
+					.from('vehicles')
+					.select('*')
+					.order('publishDate', { ascending: false });
+				
+				if (error) throw error;
+				
+				// Parsear view360Data de JSON a objeto
+				vehicles = (data || []).map(vehicle => ({
+					...vehicle,
+					view360Data: vehicle.view360Data ? 
+						(typeof vehicle.view360Data === 'string' ? JSON.parse(vehicle.view360Data) : vehicle.view360Data) 
+						: null
+				}));
+				updateFilterOptions();
+				renderCatalog();
+				hideLoading();
+			} catch (error) {
+				handleSupabaseError(error);
+				hideLoading();
+			}
+		}
 
-        async function updateVehicleInFirebase(vehicleId, updatedData) {
-            try {
-                showLoading();
-                const { doc, updateDoc } = window.firebaseModules;
-                const vehicleRef = doc(window.db, 'vehicles', vehicleId);
-                await updateDoc(vehicleRef, updatedData);
-                
-                const vehicleIndex = vehicles.findIndex(v => v.id === vehicleId);
-                if (vehicleIndex !== -1) {
-                    vehicles[vehicleIndex] = { ...vehicles[vehicleIndex], ...updatedData };
-                }
-                
-                updateFilterOptions();
-                hideLoading();
-                showNotification('Vehículo actualizado exitosamente', 'success');
-            } catch (error) {
-                console.error('Error updating vehicle:', error);
-                hideLoading();
-                showNotification('Error al actualizar vehículo', 'error');
-                throw error;
-            }
-        }
+		async function saveVehicleToSupabase(vehicleData) {
+			try {
+				showLoading();
+				
+				// Generar ID único
+				const vehicleId = 'VEH_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+				
+				// Asegurar que view360Data sea JSON válido
+				const cleanedData = {
+					...vehicleData,
+					id: vehicleId,
+					view360Data: vehicleData.view360Data ? JSON.stringify(vehicleData.view360Data) : null
+				};
+				
+				const { data, error } = await window.supabase
+					.from('vehicles')
+					.insert([cleanedData])
+					.select();
+				
+				if (error) throw error;
+				
+				if (data && data.length > 0) {
+					const newVehicle = data[0];
+					vehicles.push(newVehicle);
+					updateFilterOptions();
+					hideLoading();
+					showNotification('Vehículo publicado exitosamente. Será revisado por un administrador.', 'success');
+					return newVehicle.id;
+				}
+			} catch (error) {
+				handleSupabaseError(error);
+				hideLoading();
+				throw error;
+			}
+		}
 
-        async function deleteVehicleFromFirebase(vehicleId) {
-            try {
-                showLoading();
-                const { doc, deleteDoc } = window.firebaseModules;
-                await deleteDoc(doc(window.db, 'vehicles', vehicleId));
-                
-                vehicles = vehicles.filter(v => v.id !== vehicleId);
-                
-                updateFilterOptions();
-                hideLoading();
-                showNotification('Vehículo eliminado exitosamente', 'success');
-            } catch (error) {
-                console.error('Error deleting vehicle:', error);
-                hideLoading();
-                showNotification('Error al eliminar vehículo', 'error');
-                throw error;
-            }
-        }
+		async function updateVehicleInSupabase(vehicleId, updatedData) {
+			try {
+				showLoading();
+				
+				// Convertir view360Data a JSON si existe
+				if (updatedData.view360Data) {
+					updatedData.view360Data = JSON.stringify(updatedData.view360Data);
+				}
+				
+				const { data, error } = await window.supabase
+					.from('vehicles')
+					.update(updatedData)
+					.eq('id', vehicleId)
+					.select();
+				
+				if (error) throw error;
+				
+				const vehicleIndex = vehicles.findIndex(v => v.id === vehicleId);
+				if (vehicleIndex !== -1 && data && data.length > 0) {
+					vehicles[vehicleIndex] = { ...vehicles[vehicleIndex], ...data[0] };
+				}
+				
+				updateFilterOptions();
+				hideLoading();
+				showNotification('Vehículo actualizado exitosamente', 'success');
+			} catch (error) {
+				handleSupabaseError(error);
+				hideLoading();
+				throw error;
+			}
+		}
 
-        // Funciones Firebase para usuarios
-        async function loadUsersFromFirebase() {
-            try {
-                const { collection, getDocs, query, orderBy } = window.firebaseModules;
-                const usersRef = collection(window.db, 'users');
-                const q = query(usersRef, orderBy('registrationDate', 'desc'));
-                const querySnapshot = await getDocs(q);
-                
-                users = [];
-                querySnapshot.forEach((doc) => {
-                    users.push({ id: doc.id, ...doc.data() });
-                });
-                
-            } catch (error) {
-                console.error('Error loading users:', error);
-                showNotification('Error al cargar usuarios', 'error');
-            }
-        }
+		async function deleteVehicleFromSupabase(vehicleId) {
+			try {
+				showLoading();
+				const { error } = await window.supabase
+					.from('vehicles')
+					.delete()
+					.eq('id', vehicleId);
+				
+				if (error) throw error;
+				
+				vehicles = vehicles.filter(v => v.id !== vehicleId);
+				updateFilterOptions();
+				hideLoading();
+				showNotification('Vehículo eliminado exitosamente', 'success');
+			} catch (error) {
+				handleSupabaseError(error);
+				hideLoading();
+				throw error;
+			}
+		}
 
-        async function saveUserToFirebase(userData) {
-            try {
-                showLoading();
-                const { collection, addDoc } = window.firebaseModules;
-                const docRef = await addDoc(collection(window.db, 'users'), userData);
-                
-                userData.id = docRef.id;
-                users.push(userData);
-                
-                hideLoading();
-                showNotification('Usuario registrado exitosamente', 'success');
-                return docRef.id;
-            } catch (error) {
-                console.error('Error saving user:', error);
-                hideLoading();
-                showNotification('Error al registrar usuario', 'error');
-                throw error;
-            }
-        }
+        // Funciones Supabase para usuarios
+		async function loadUsersFromSupabase() {
+			try {
+				const { data, error } = await window.supabase
+					.from('users')
+					.select('*')
+					.order('registrationDate', { ascending: false });
+				
+				if (error) throw error;
+				
+				users = data || [];
+			} catch (error) {
+				handleSupabaseError(error);
+			}
+		}
 
-        async function updateUserInFirebase(userId, updatedData) {
-            try {
-                showLoading();
-                const { doc, updateDoc } = window.firebaseModules;
-                const userRef = doc(window.db, 'users', userId);
-                await updateDoc(userRef, updatedData);
-                
-                const userIndex = users.findIndex(u => u.id === userId);
-                if (userIndex !== -1) {
-                    users[userIndex] = { ...users[userIndex], ...updatedData };
-                }
-                
-                hideLoading();
-                showNotification('Usuario actualizado exitosamente', 'success');
-            } catch (error) {
-                console.error('Error updating user:', error);
-                hideLoading();
-                showNotification('Error al actualizar usuario', 'error');
-                throw error;
-            }
-        }
+		async function saveUserToSupabase(userData) {
+			try {
+				showLoading();
+				
+				// Generar ID único
+				const userId = 'USER_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+				
+				const cleanedData = {
+					...userData,
+					id: userId
+				};
+				
+				const { data, error } = await window.supabase
+					.from('users')
+					.insert([cleanedData])
+					.select();
+				
+				if (error) throw error;
+				
+				if (data && data.length > 0) {
+					const newUser = data[0];
+					users.push(newUser);
+					hideLoading();
+					showNotification('Usuario registrado exitosamente', 'success');
+					return newUser.id;
+				}
+			} catch (error) {
+				handleSupabaseError(error);
+				hideLoading();
+				throw error;
+			}
+		}
 
-        async function deleteUserFromFirebase(userId) {
-            try {
-                showLoading();
-                const { doc, deleteDoc } = window.firebaseModules;
-                await deleteDoc(doc(window.db, 'users', userId));
-                
-                users = users.filter(u => u.id !== userId);
-                
-                hideLoading();
-                showNotification('Usuario eliminado exitosamente', 'success');
-            } catch (error) {
-                console.error('Error deleting user:', error);
-                hideLoading();
-                showNotification('Error al eliminar usuario', 'error');
-                throw error;
-            }
-        }
+		async function updateUserInSupabase(userId, updatedData) {
+			try {
+				showLoading();
+				const { data, error } = await window.supabase
+					.from('users')
+					.update(updatedData)
+					.eq('id', userId)
+					.select();
+				
+				if (error) throw error;
+				
+				const userIndex = users.findIndex(u => u.id === userId);
+				if (userIndex !== -1 && data && data.length > 0) {
+					users[userIndex] = { ...users[userIndex], ...data[0] };
+				}
+				
+				hideLoading();
+				showNotification('Usuario actualizado exitosamente', 'success');
+			} catch (error) {
+				handleSupabaseError(error);
+				hideLoading();
+				throw error;
+			}
+		}
 
-        // Funciones Firebase para configuración
-        async function loadConfigFromFirebase() {
-            try {
-                const { collection, getDocs } = window.firebaseModules;
-                const configRef = collection(window.db, 'config');
-                const querySnapshot = await getDocs(configRef);
-                
-                querySnapshot.forEach((doc) => {
-                    if (doc.id === 'siteConfig') {
-                        siteConfig = { ...siteConfig, ...doc.data() };
-                    }
-                });
-                
-                applySiteConfig();
-            } catch (error) {
-                console.error('Error loading config:', error);
-            }
-        }
+		async function deleteUserFromSupabase(userId) {
+			try {
+				showLoading();
+				const { error } = await window.supabase
+					.from('users')
+					.delete()
+					.eq('id', userId);
+				
+				if (error) throw error;
+				
+				users = users.filter(u => u.id !== userId);
+				hideLoading();
+				showNotification('Usuario eliminado exitosamente', 'success');
+			} catch (error) {
+				handleSupabaseError(error);
+				hideLoading();
+				throw error;
+			}
+		}
 
-        async function saveConfigToFirebase() {
-            try {
-                const { doc, setDoc } = window.firebaseModules;
-                await setDoc(doc(window.db, 'config', 'siteConfig'), siteConfig);
-                showNotification('Configuración guardada exitosamente', 'success');
-            } catch (error) {
-                console.error('Error saving config:', error);
-                showNotification('Error al guardar configuración', 'error');
-            }
-        }
+        // Funciones Supabase para configuración
+		async function loadConfigFromSupabase() {
+			try {
+				const { data, error } = await window.supabase
+					.from('config')
+					.select('*')
+					.eq('id', 'siteConfig')
+					.single();
+				
+				if (error && error.code !== 'PGRST116') throw error;
+				
+				if (data) {
+					// Parsear socialLinks de JSON
+					const parsedData = {
+						...data,
+						socialLinks: data.socialLinks ? 
+							(typeof data.socialLinks === 'string' ? JSON.parse(data.socialLinks) : data.socialLinks)
+							: { instagram: "", facebook: "", tiktok: "" }
+					};
+					siteConfig = { ...siteConfig, ...parsedData };
+				}
+				
+				applySiteConfig();
+			} catch (error) {
+				handleSupabaseError(error);
+			}
+		}
+
+		async function saveConfigToSupabase() {
+			try {
+				// Convertir socialLinks a JSON
+				const configData = {
+					id: 'siteConfig',
+					...siteConfig,
+					socialLinks: JSON.stringify(siteConfig.socialLinks)
+				};
+				
+				const { error } = await window.supabase
+					.from('config')
+					.upsert(configData);
+				
+				if (error) throw error;
+				
+				showNotification('Configuración guardada exitosamente', 'success');
+			} catch (error) {
+				handleSupabaseError(error);
+			}
+		}
 
         // Funciones Firebase para imágenes
         // API Key de ImgBB
@@ -3602,86 +3657,106 @@
         }
 
         async function login(event) {
-            event.preventDefault();
-            
-            const rif = document.getElementById('loginRif').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (rif === adminUser.rif && password === adminUser.password) {
-                currentUser = adminUser;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateUserInterface();
-                closeAuthModal();
-                showNotification(`¡Bienvenido ${currentUser.name}! Panel de administración activado.`, 'success');
-                return;
-            }
-            
-            const user = users.find(u => u.rif === rif && u.password === password);
-            
-            if (user) {
-                if (user.verificationStatus === 'pending') {
-                    showNotification('Tu cuenta está pendiente de verificación por un administrador. Por favor espera a que sea procesada.', 'warning');
-                    return;
-                } else if (user.verificationStatus === 'rejected') {
-                    showNotification('Tu cuenta ha sido rechazada. Contacta al administrador para más información.', 'error');
-                    return;
-                }
-                
-                currentUser = user;
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                updateUserInterface();
-                closeAuthModal();
-                showNotification(`¡Bienvenido ${user.name}! Ahora puedes publicar vehículos.`, 'success');
-            } else {
-                showNotification('RIF o contraseña incorrectos', 'error');
-            }
-        }
+		event.preventDefault();
+		
+		const rif = document.getElementById('loginRif').value;
+		const password = document.getElementById('loginPassword').value;
+		
+		if (rif === adminUser.rif && password === adminUser.password) {
+			currentUser = adminUser;
+			localStorage.setItem('currentUser', JSON.stringify(currentUser));
+			updateUserInterface();
+			closeAuthModal();
+			showNotification(`¡Bienvenido ${currentUser.name}! Panel de administración activado.`, 'success');
+			return;
+		}
+		
+		try {
+			const { data, error } = await window.supabase
+				.from('users')
+				.select('*')
+				.eq('rif', rif)
+				.eq('password', password)
+				.single();
+			
+			if (error) throw error;
+			
+			if (data) {
+				if (data.verificationStatus === 'pending') {
+					showNotification('Tu cuenta está pendiente de verificación por un administrador. Por favor espera a que sea procesada.', 'warning');
+					return;
+				} else if (data.verificationStatus === 'rejected') {
+					showNotification('Tu cuenta ha sido rechazada. Contacta al administrador para más información.', 'error');
+					return;
+				}
+				
+				currentUser = data;
+				localStorage.setItem('currentUser', JSON.stringify(currentUser));
+				updateUserInterface();
+				closeAuthModal();
+				showNotification(`¡Bienvenido ${currentUser.name}! Ahora puedes publicar vehículos.`, 'success');
+			} else {
+				showNotification('RIF o contraseña incorrectos', 'error');
+			}
+		} catch (error) {
+			handleSupabaseError(error);
+		}
+	}
 
-        async function register(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('registerName').value;
-            const lastname = document.getElementById('registerLastname').value;
-            const rif = document.getElementById('registerRif').value;
-            const whatsapp = document.getElementById('registerWhatsapp').value;
-            const password = document.getElementById('registerPassword').value;
-            
-            if (password.length < 6) {
-                showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
-                return;
-            }
-            
-            if (rif === adminUser.rif) {
-                showNotification('Este RIF está reservado para el sistema', 'error');
-                return;
-            }
-            
-            if (users.find(u => u.rif === rif)) {
-                showNotification('Ya existe una cuenta con este RIF', 'error');
-                return;
-            }
-            
-            const newUser = {
-                name,
-                lastname,
-                rif,
-                whatsapp,
-                password,
-                isAdmin: false,
-                verified: false,
-                verificationStatus: 'pending',
-                registrationDate: new Date().toISOString(),
-                verificationMessage: ''
-            };
-            
-            try {
-                await saveUserToFirebase(newUser);
-                closeAuthModal();
-                showNotification(`¡Cuenta creada exitosamente, ${name}!\n\nTu cuenta está pendiente de verificación por un administrador. Recibirás una notificación via WhatsApp cuando sea procesada.`, 'success');
-            } catch (error) {
-                showNotification('Error al crear la cuenta', 'error');
-            }
-        }
+	async function register(event) {
+		event.preventDefault();
+		
+		const name = document.getElementById('registerName').value;
+		const lastname = document.getElementById('registerLastname').value;
+		const rif = document.getElementById('registerRif').value;
+		const whatsapp = document.getElementById('registerWhatsapp').value;
+		const password = document.getElementById('registerPassword').value;
+		
+		if (password.length < 6) {
+			showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
+			return;
+		}
+		
+		if (rif === adminUser.rif) {
+			showNotification('Este RIF está reservado para el sistema', 'error');
+			return;
+		}
+		
+		try {
+			// Verificar si ya existe un usuario con este RIF
+			const { data: existingUser, error: checkError } = await window.supabase
+				.from('users')
+				.select('id')
+				.eq('rif', rif)
+				.single();
+			
+			if (checkError && checkError.code !== 'PGRST116') throw checkError;
+			
+			if (existingUser) {
+				showNotification('Ya existe una cuenta con este RIF', 'error');
+				return;
+			}
+			
+			const newUser = {
+				name,
+				lastname,
+				rif,
+				whatsapp,
+				password,
+				isAdmin: false,
+				verified: false,
+				verificationStatus: 'pending',
+				registrationDate: new Date().toISOString(),
+				verificationMessage: ''
+			};
+			
+			await saveUserToSupabase(newUser);
+			closeAuthModal();
+			showNotification(`¡Cuenta creada exitosamente, ${name}!\n\nTu cuenta está pendiente de verificación por un administrador. Recibirás una notificación via WhatsApp cuando sea procesada.`, 'success');
+		} catch (error) {
+			handleSupabaseError(error);
+		}
+	}
 
         function logout() {
             currentUser = null;
@@ -4641,7 +4716,7 @@
             }
             
             try {
-                await saveVehicleToFirebase(newVehicle);
+                await saveVehicleToSupabase(newVehicle);
                 renderCatalog();
                 closePublishModal();
             } catch (error) {
@@ -4662,7 +4737,7 @@
             const confirmPromotion = confirm(`¿Quieres promocionar a ${user.name} ${user.lastname} a usuario PRO?\n\nEsto le dará acceso a crear vistas 360°.`);
             if (confirmPromotion) {
                 try {
-                    await updateUserInFirebase(userId, { isPro: true });
+                    await updateUserInSupabase(userId, { isPro: true });
                     showNotification(`${user.name} ha sido promocionado a usuario PRO`, 'success');
                     loadAdminUsers();
                 } catch (error) {
@@ -4772,7 +4847,7 @@
                 const newSoldStatus = !vehicle.sold;
                 
                 try {
-                    await updateVehicleInFirebase(vehicleId, { sold: newSoldStatus });
+                    await updateVehicleInSupabase(vehicleId, { sold: newSoldStatus });
                     
                     if (currentSection === 'dashboard') {
                         loadUserDashboard();
@@ -4794,7 +4869,7 @@
             if (vehicle && (vehicle.owner === currentUser.rif || currentUser.isAdmin)) {
                 if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
                     try {
-                        await deleteVehicleFromFirebase(vehicleId);
+                        await deleteVehicleFromSupabase(vehicleId);
                         
                         if (currentSection === 'dashboard') {
                             loadUserDashboard();
@@ -4866,7 +4941,7 @@
             };
             
             try {
-                await updateVehicleInFirebase(vehicleId, updatedData);
+                await updateVehicleInSupabase(vehicleId, updatedData);
                 
                 if (currentSection === 'dashboard') {
                     loadUserDashboard();
@@ -4884,7 +4959,7 @@
         async function loadAdminPanel() {
             if (!currentUser?.isAdmin) return;
             
-            await loadUsersFromFirebase();
+            await loadUsersFromSupabase();
             loadAdminUsers();
             loadAdminVehicles();
             loadAdminPublications();
@@ -5102,7 +5177,7 @@
             
             if (confirm(`¿Estás seguro de que quieres eliminar el usuario ${user.name} ${user.lastname}?\n\nEsta acción no se puede deshacer.`)) {
                 try {
-                    await deleteUserFromFirebase(userId);
+                    await deleteUserFromSupabase(userId);
                     loadAdminUsers();
                     showNotification(`Usuario ${user.name} eliminado exitosamente`, 'success');
                 } catch (error) {
@@ -5117,7 +5192,7 @@
             const vehicle = vehicles.find(v => v.id === vehicleId);
             if (vehicle) {
                 try {
-                    await updateVehicleInFirebase(vehicleId, { featured: !vehicle.featured });
+                    await updateVehicleInSupabase(vehicleId, { featured: !vehicle.featured });
                     loadAdminPanel();
                     renderCatalog();
                     showNotification(`Vehículo ${vehicle.featured ? 'removido de' : 'agregado a'} destacados`, 'success');
@@ -5234,7 +5309,7 @@
             };
             
             try {
-                await updateUserInFirebase(currentUserToVerify.id, updatedData);
+                await updateUserInSupabase(currentUserToVerify.id, updatedData);
                 sendVerificationWhatsApp(currentUserToVerify.whatsapp, finalMessage, '✅ CUENTA VERIFICADA');
                 closeVerificationModal();
                 loadAdminUsers();
@@ -5267,7 +5342,7 @@
             };
             
             try {
-                await updateUserInFirebase(currentUserToVerify.id, updatedData);
+                await updateUserInSupabase(currentUserToVerify.id, updatedData);
                 sendVerificationWhatsApp(currentUserToVerify.whatsapp, finalMessage, '❌ CUENTA RECHAZADA');
                 closeVerificationModal();
                 loadAdminUsers();
@@ -5375,7 +5450,7 @@
             };
             
             try {
-                await updateVehicleInFirebase(currentPublicationToVerify.id, updatedData);
+                await updateVehicleInSupabase(currentPublicationToVerify.id, updatedData);
                 sendPublicationWhatsApp(currentPublicationToVerify.ownerWhatsApp, finalMessage, '✅ PUBLICACIÓN APROBADA');
                 closePublicationVerificationModal();
                 loadAdminPublications();
@@ -5408,7 +5483,7 @@
             };
             
             try {
-                await updateVehicleInFirebase(currentPublicationToVerify.id, updatedData);
+                await updateVehicleInSupabase(currentPublicationToVerify.id, updatedData);
                 sendPublicationWhatsApp(currentPublicationToVerify.ownerWhatsApp, finalMessage, '❌ PUBLICACIÓN RECHAZADA');
                 closePublicationVerificationModal();
                 loadAdminPublications();
@@ -5433,7 +5508,7 @@
             };
             
             try {
-                await updateVehicleInFirebase(vehicleId, updatedData);
+                await updateVehicleInSupabase(vehicleId, updatedData);
                 sendPublicationWhatsApp(vehicle.ownerWhatsApp, defaultMessage, '✅ PUBLICACIÓN APROBADA');
                 loadAdminPublications();
                 renderCatalog();
@@ -5461,7 +5536,7 @@
             };
             
             try {
-                await updateVehicleInFirebase(vehicleId, updatedData);
+                await updateVehicleInSupabase(vehicleId, updatedData);
                 sendPublicationWhatsApp(vehicle.ownerWhatsApp, finalMessage, '❌ PUBLICACIÓN RECHAZADA');
                 loadAdminPublications();
                 renderCatalog();
@@ -5587,7 +5662,7 @@
         async function saveCustomization() {
             if (!currentUser?.isAdmin) return;
             try {
-                await saveConfigToFirebase();
+                await saveConfigToSupabase();
             } catch (error) {
                 showNotification('Error al guardar configuración', 'error');
             }
@@ -5635,7 +5710,7 @@
 
         async function loadCustomization() {
             try {
-                await loadConfigFromFirebase();
+                await loadConfigFromSupabase();
                 loadCustomizationPanel();
                 showNotification('Configuración cargada exitosamente', 'success');
             } catch (error) {
@@ -5725,38 +5800,38 @@
             showNotification(`Datos exportados exitosamente: ${filename}`, 'success');
         }
 
-        function backupFirebaseData() {
-            const confirmBackup = confirm('¿Quieres crear un backup completo de todos los datos de Firebase?\n\nEsto descargará un archivo con toda la información.');
-            if (confirmBackup) {
-                exportData('all');
-            }
-        }
+        function backupSupabaseData() {
+			const confirmBackup = confirm('¿Quieres crear un backup completo de todos los datos de Supabase?\n\nEsto descargará un archivo con toda la información.');
+			if (confirmBackup) {
+				exportData('all');
+			}
+		}
 
-        function clearFirebaseData() {
-            const confirmClear = confirm('⚠️ ADVERTENCIA ⚠️\n\n¿Estás ABSOLUTAMENTE SEGURO de que quieres eliminar TODOS los datos de Firebase?\n\nEsta acción es IRREVERSIBLE y eliminará:\n- Todos los usuarios\n- Todos los vehículos\n- Toda la configuración\n\nEscribe "ELIMINAR TODO" para confirmar:');
-            
-            if (confirmClear) {
-                const confirmation = prompt('Escribe exactamente "ELIMINAR TODO" para confirmar:');
-                if (confirmation === 'ELIMINAR TODO') {
-                    showNotification('Esta función está deshabilitada por seguridad. Para limpiar Firebase, hazlo manualmente desde la consola de Firebase.', 'warning');
-                } else {
-                    showNotification('Confirmación incorrecta. Operación cancelada.', 'info');
-                }
-            }
-        }
+        function clearSupabaseData() {
+			const confirmClear = confirm('⚠️ ADVERTENCIA ⚠️\n\n¿Estás ABSOLUTAMENTE SEGURO de que quieres eliminar TODOS los datos de Supabase?\n\nEsta acción es IRREVERSIBLE y eliminará:\n- Todos los usuarios\n- Todos los vehículos\n- Toda la configuración\n\nEscribe "ELIMINAR TODO" para confirmar:');
+			
+			if (confirmClear) {
+				const confirmation = prompt('Escribe exactamente "ELIMINAR TODO" para confirmar:');
+				if (confirmation === 'ELIMINAR TODO') {
+					showNotification('Esta función está deshabilitada por seguridad. Para limpiar Supabase, hazlo manualmente desde la consola de Supabase.', 'warning');
+				} else {
+					showNotification('Confirmación incorrecta. Operación cancelada.', 'info');
+				}
+			}
+		}
 
         // Inicializar aplicación
         async function initApp() {
             try {
                 showLoading();
                 
-                if (!window.db) {
-                    throw new Error('Firebase no está inicializado correctamente');
+                if (!window.supabase) {
+					throw new Error('Supabase no está inicializado correctamente');
                 }
                 
-                await loadConfigFromFirebase();
-                await loadVehiclesFromFirebase();
-                await loadUsersFromFirebase();
+                await loadVehiclesFromSupabase();
+				await loadUsersFromSupabase();
+				await loadConfigFromSupabase();
                 
                 isLoggedIn();
                 applySiteConfig();
@@ -5767,7 +5842,7 @@
             } catch (error) {
                 console.error('Error initializing app:', error);
                 hideLoading();
-                showNotification('Error al cargar la aplicación. Verifica la configuración de Firebase.', 'error');
+                showNotification('Error al cargar la aplicación. Verifica la configuración de Supabase.', 'error');
             }
         }
 
