@@ -6,13 +6,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <title id="siteTitle">AUTOVENTAS</title>
+    <title id="siteTitle">AutoXpert</title>
 
     <!-- Favicon principal -->
     <link rel="icon" type="image/png" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
     <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
     <link rel="apple-touch-icon" href="https://i.ibb.co/CsQzrK0S/favicon-96x96.png">
-    <meta name="theme-color" content="#00d9ff">
+    <meta name="theme-color" content="#E10600">
 
     <!-- Font Awesome para íconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,47 +24,49 @@
 
     <style>
         /* =============================================
-           VARIABLES Y RESET GLOBAL — AUTOVENTAS UI 2.0
+           VARIABLES Y RESET GLOBAL — AUTOXPERT UI 2.1
+           Paleta acorde al logo: Rojo Premium / Negro
+           Profundo / Gris Metálico / Blanco-Plata
         ============================================= */
         :root {
-            --primary: #00d9ff;
-            --primary-refined: #00b8e6;
-            --primary-dim: rgba(0, 217, 255, 0.14);
-            --primary-glow: rgba(0, 217, 255, 0.4);
-            --secondary: #ff6b35;
-            --accent: #ffd700;
-            --pink: #FF9FFC;
+            --primary: #E10600;
+            --primary-refined: #B30500;
+            --primary-dim: rgba(225, 6, 0, 0.14);
+            --primary-glow: rgba(225, 6, 0, 0.4);
+            --secondary: #9E9E9E;
+            --accent: #F5F5F5;
+            --pink: #FFFFFF;
 
-            /* Fondo oscuro con personalidad */
-            --bg-base: #080b11;
-            --bg-card: #0f141c;
-            --bg-surface: #141a24;
-            --bg-elevated: #1a212c;
-            --bg-glass: rgba(15, 20, 28, 0.68);
+            /* Fondo negro profundo, como el logo */
+            --bg-base: #0a0a0a;
+            --bg-card: #131313;
+            --bg-surface: #1a1a1a;
+            --bg-elevated: #212121;
+            --bg-glass: rgba(15, 15, 15, 0.7);
 
             /* Bordes / cristal */
-            --border: rgba(0, 217, 255, 0.16);
+            --border: rgba(225, 6, 0, 0.18);
             --border-light: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(0, 217, 255, 0.55);
+            --border-hover: rgba(225, 6, 0, 0.55);
             --glass-stroke: rgba(255, 255, 255, 0.09);
 
             /* Textos */
-            --text: #edf2f8;
-            --text-muted: #6b7690;
-            --text-secondary: #9aa7bf;
+            --text: #f2f2f2;
+            --text-muted: #7a7a7a;
+            --text-secondary: #b0b0b0;
 
-            /* Estados */
+            /* Estados (convención universal, independiente de marca) */
             --success: #00e676;
             --warning: #ffca28;
             --error: #ff5252;
             --info: #40c4ff;
 
             /* Sombras */
-            --shadow-sm: 0 4px 16px -4px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
-            --shadow-md: 0 10px 32px -6px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
-            --shadow-lg: 0 24px 64px -12px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
-            --shadow-cyan: 0 0 28px rgba(0, 217, 255, 0.18);
-            --shadow-cyan-lg: 0 0 46px rgba(0, 217, 255, 0.32);
+            --shadow-sm: 0 4px 16px -4px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03);
+            --shadow-md: 0 10px 32px -6px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+            --shadow-lg: 0 24px 64px -12px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.05);
+            --shadow-cyan: 0 0 26px rgba(225, 6, 0, 0.22);
+            --shadow-cyan-lg: 0 0 46px rgba(225, 6, 0, 0.38);
 
             /* Radios */
             --radius-sm: 10px;
@@ -77,7 +79,7 @@
             --transition-fast: all 0.15s ease;
 
             /* Layout helpers */
-            --header-h: 68px;
+            --header-h: 80px;
             --mobile-nav-h: 66px;
             --safe-b: env(safe-area-inset-bottom, 0px);
             --safe-t: env(safe-area-inset-top, 0px);
@@ -85,40 +87,40 @@
 
         /* MODO CLARO */
         body.light-mode {
-            --primary: #0099bb;
-            --primary-refined: #007e9c;
-            --primary-dim: rgba(0, 153, 187, 0.10);
-            --primary-glow: rgba(0, 153, 187, 0.3);
-            --secondary: #e55a25;
-            --accent: #e6a800;
-            --pink: #cc44cc;
-            --bg-base: #eef2f7;
+            --primary: #C40500;
+            --primary-refined: #9c0400;
+            --primary-dim: rgba(196, 5, 0, 0.08);
+            --primary-glow: rgba(196, 5, 0, 0.28);
+            --secondary: #6e6e6e;
+            --accent: #1a1a1a;
+            --pink: #6e6e6e;
+            --bg-base: #f5f5f5;
             --bg-card: #ffffff;
-            --bg-surface: #e7edf5;
-            --bg-elevated: #dde4ee;
+            --bg-surface: #eeeeee;
+            --bg-elevated: #e2e2e2;
             --bg-glass: rgba(255, 255, 255, 0.78);
-            --border: rgba(0, 153, 187, 0.18);
+            --border: rgba(196, 5, 0, 0.18);
             --border-light: rgba(0, 0, 0, 0.07);
-            --border-hover: rgba(0, 153, 187, 0.5);
+            --border-hover: rgba(196, 5, 0, 0.5);
             --glass-stroke: rgba(0, 0, 0, 0.06);
-            --text: #16202f;
-            --text-muted: #6b7a94;
-            --text-secondary: #48566c;
-            --shadow-sm: 0 4px 16px -4px rgba(20,30,50,0.08);
-            --shadow-md: 0 10px 30px -6px rgba(20,30,50,0.12);
-            --shadow-lg: 0 20px 50px -10px rgba(20,30,50,0.16);
-            --shadow-cyan: 0 0 20px rgba(0, 153, 187, 0.14);
-            --shadow-cyan-lg: 0 0 38px rgba(0, 153, 187, 0.22);
+            --text: #181818;
+            --text-muted: #6e6e6e;
+            --text-secondary: #454545;
+            --shadow-sm: 0 4px 16px -4px rgba(20,20,20,0.08);
+            --shadow-md: 0 10px 30px -6px rgba(20,20,20,0.12);
+            --shadow-lg: 0 20px 50px -10px rgba(20,20,20,0.16);
+            --shadow-cyan: 0 0 20px rgba(196, 5, 0, 0.14);
+            --shadow-cyan-lg: 0 0 36px rgba(196, 5, 0, 0.22);
         }
 
         body.light-mode { background:
-            radial-gradient(ellipse 120% 70% at 50% -10%, rgba(0, 153, 187, 0.07) 0%, transparent 60%),
-            linear-gradient(180deg, #eef2f7 0%, #e7edf5 100%);
+            radial-gradient(ellipse 120% 70% at 50% -10%, rgba(196, 5, 0, 0.06) 0%, transparent 60%),
+            linear-gradient(180deg, #f5f5f5 0%, #eeeeee 100%);
         }
 
-        body.light-mode .header { background: rgba(255, 255, 255, 0.82); }
-        body.light-mode .search-filter-section { background: rgba(238, 242, 247, 0.92); }
-        body.light-mode .search-toggle-btn { background: linear-gradient(90deg, rgba(0,153,187,0.07), rgba(204,68,204,0.05)); color: var(--text); }
+        body.light-mode .header { background: rgba(255, 255, 255, 0.85); }
+        body.light-mode .search-filter-section { background: rgba(245, 245, 245, 0.93); }
+        body.light-mode .search-toggle-btn { background: linear-gradient(90deg, rgba(196,5,0,0.06), rgba(110,110,110,0.05)); color: var(--text); }
         body.light-mode .vehicle-card,
         body.light-mode .dashboard-card,
         body.light-mode .stat-card,
@@ -174,8 +176,8 @@
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg-base);
-            background: radial-gradient(ellipse 120% 70% at 50% -10%, rgba(0, 217, 255, 0.07) 0%, transparent 60%),
-                        radial-gradient(ellipse 70% 50% at 85% 85%, rgba(255, 107, 53, 0.05) 0%, transparent 55%),
+            background: radial-gradient(ellipse 120% 70% at 50% -10%, rgba(225, 6, 0, 0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse 70% 50% at 85% 85%, rgba(158, 158, 158, 0.05) 0%, transparent 55%),
                         linear-gradient(180deg, #080b11 0%, #0a0e15 100%);
             background-attachment: fixed;
             color: var(--text);
@@ -247,7 +249,7 @@
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0, 217, 255, 0.10) 0%, transparent 65%),
+                radial-gradient(ellipse 70% 60% at 50% 40%, rgba(225, 6, 0, 0.12) 0%, transparent 65%),
                 rgba(6, 9, 14, 0.98);
             display: flex;
             flex-direction: column;
@@ -301,7 +303,7 @@
         .loading-overlay .loading-badge i {
             font-size: 1.7rem;
             color: var(--primary);
-            filter: drop-shadow(0 0 10px rgba(0,217,255,0.6));
+            filter: drop-shadow(0 0 10px rgba(225,6,0,0.65));
             animation: loadingCarBounce 1.4s ease-in-out infinite;
         }
 
@@ -352,7 +354,7 @@
             border-radius: 50%;
             animation: spin 0.9s linear infinite;
             margin-bottom: 18px;
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            box-shadow: 0 0 20px rgba(225, 6, 0, 0.3);
         }
         /* =============================================
            HEADER — glass, sticky, app-like
@@ -393,12 +395,12 @@
         .logo-container { display: flex; align-items: center; gap: 11px; flex-shrink: 0; }
 
         .logo-image {
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            object-fit: cover;
+            height: 58px;
+            width: auto;
+            max-width: 220px;
+            object-fit: contain;
             display: none;
-            border: 2px solid var(--primary);
-            box-shadow: var(--shadow-cyan);
+            filter: drop-shadow(0 3px 10px rgba(0,0,0,0.5));
         }
 
         .logo {
@@ -410,11 +412,11 @@
         }
 
         /* Banner styles (personalizables desde admin) */
-        .header.banner-style-1 { background: linear-gradient(135deg, rgba(0,217,255,0.85), rgba(255,107,53,0.85)); }
+        .header.banner-style-1 { background: linear-gradient(135deg, rgba(225,6,0,0.88), rgba(158,158,158,0.75)); }
         .header.banner-style-2 { background: var(--bg-card); border-bottom: 2px solid var(--primary); }
-        .header.banner-style-3 { background: linear-gradient(90deg, var(--bg-base), rgba(0,217,255,0.2), var(--bg-base)); }
+        .header.banner-style-3 { background: linear-gradient(90deg, var(--bg-base), rgba(225,6,0,0.22), var(--bg-base)); }
         .header.banner-style-4 { background: rgba(4,6,10,0.96); box-shadow: 0 0 24px var(--primary-glow); }
-        .header.banner-style-5 { background: linear-gradient(45deg, #161d29, #212a38); border-bottom: 2px solid var(--secondary); }
+        .header.banner-style-5 { background: linear-gradient(45deg, #232323, #3a3a3a); border-bottom: 2px solid var(--secondary); }
 
         .user-info {
             display: flex;
@@ -465,20 +467,20 @@
             border: 1px solid var(--border);
         }
 
-        .nav-btn.secondary:hover { background: rgba(0, 217, 255, 0.22); border-color: var(--primary); }
+        .nav-btn.secondary:hover { background: rgba(225, 6, 0, 0.22); border-color: var(--primary); }
 
         .nav-btn.admin {
-            background: rgba(255,107,53,0.1);
+            background: rgba(158,158,158,0.12);
             color: var(--secondary);
-            border: 1px solid rgba(255,107,53,0.3);
+            border: 1px solid rgba(158,158,158,0.35);
         }
-        .nav-btn.admin:hover { background: rgba(255,107,53,0.2); box-shadow: 0 4px 18px rgba(255,107,53,0.25); }
+        .nav-btn.admin:hover { background: rgba(158,158,158,0.22); box-shadow: 0 4px 18px rgba(158,158,158,0.25); }
         .nav-btn.admin.secondary { background: linear-gradient(135deg, var(--secondary), #c94d1a); color: #fff; border-color: transparent; }
 
         .publish-btn {
             background: linear-gradient(135deg, var(--primary), var(--pink));
-            color: #04141a;
-            box-shadow: 0 4px 16px rgba(0, 217, 255, 0.3);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(225, 6, 0, 0.35);
             position: relative;
             overflow: hidden;
             font-weight: 800;
@@ -489,7 +491,7 @@
             transition: 0.5s;
         }
         .publish-btn:hover::before { left: 100%; }
-        .publish-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0, 217, 255, 0.45); }
+        .publish-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(225, 6, 0, 0.5); }
 
         .logout-btn {
             background: rgba(255, 82, 82, 0.08);
@@ -576,8 +578,8 @@
 
         .clear-search-btn {
             padding: 12px 18px;
-            background: rgba(255, 107, 53, 0.1);
-            border: 1px solid rgba(255, 107, 53, 0.35);
+            background: rgba(158, 158, 158, 0.12);
+            border: 1px solid rgba(158, 158, 158, 0.4);
             border-radius: 50px;
             color: var(--secondary);
             cursor: pointer;
@@ -586,7 +588,7 @@
             font-size: 0.85rem;
             white-space: nowrap;
         }
-        .clear-search-btn:hover { background: rgba(255, 107, 53, 0.2); transform: translateY(-1px); }
+        .clear-search-btn:hover { background: rgba(158, 158, 158, 0.22); transform: translateY(-1px); }
 
         .filter-controls {
             display: grid;
@@ -627,7 +629,7 @@
             font-size: 0.76rem;
             white-space: nowrap;
         }
-        .sort-btn.active { background: var(--primary); color: #04141a; border-color: var(--primary); box-shadow: 0 0 14px rgba(0, 217, 255, 0.4); }
+        .sort-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); box-shadow: 0 0 14px rgba(225, 6, 0, 0.45); }
         .sort-btn:hover:not(.active) { background: var(--primary-dim); color: var(--primary); border-color: var(--border-hover); }
 
         .search-stats {
@@ -687,17 +689,17 @@
             border-color: var(--border-hover);
         }
 
-        .vehicle-card.featured { border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 0 22px rgba(255, 215, 0, 0.16); }
+        .vehicle-card.featured { border: 1px solid rgba(225, 6, 0, 0.4); box-shadow: 0 0 22px rgba(225, 6, 0, 0.18); }
         .vehicle-card.featured::before {
             content: "\f005  DESTACADO";
             font-family: "Font Awesome 6 Free"; font-weight: 900;
             position: absolute; top: 12px; left: 12px;
-            background: linear-gradient(45deg, var(--accent), #ff8c00);
-            color: #241800; padding: 4px 11px; border-radius: 20px;
+            background: linear-gradient(45deg, var(--accent), #ffffff);
+            color: #141414; padding: 4px 11px; border-radius: 20px;
             font-size: 0.68rem; letter-spacing: 0.3px;
             z-index: 10; animation: glow 2s ease-in-out infinite alternate;
         }
-        @keyframes glow { from { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);} to { box-shadow: 0 0 15px rgba(255, 215, 0, 0.9);} }
+        @keyframes glow { from { box-shadow: 0 0 5px rgba(225, 6, 0, 0.5);} to { box-shadow: 0 0 15px rgba(225, 6, 0, 0.9);} }
 
         .vehicle-card.sold .vehicle-image { filter: grayscale(65%) brightness(0.6); }
         .vehicle-card.sold:hover { transform: translateY(-3px); }
@@ -721,14 +723,14 @@
             background: linear-gradient(45deg, var(--secondary), var(--accent));
             color: white; padding: 5px 12px; border-radius: 20px;
             font-size: 0.7rem; font-weight: 800; z-index: 5;
-            box-shadow: 0 3px 12px rgba(255,107,53,0.5);
+            box-shadow: 0 3px 12px rgba(158,158,158,0.4);
         }
 
         .badge-360 {
             position: absolute; top: 12px; left: 12px;
             background: rgba(6,9,14,0.75); backdrop-filter: blur(6px);
             color: var(--accent); padding: 4px 10px; border-radius: 20px;
-            font-size: 0.66rem; font-weight: 800; border: 1px solid rgba(255,215,0,0.4);
+            font-size: 0.66rem; font-weight: 800; border: 1px solid rgba(158,158,158,0.4);
             z-index: 5;
         }
 
@@ -807,7 +809,7 @@
         }
         .notification.success { background: linear-gradient(135deg, rgba(0,230,118,0.92), rgba(0,176,90,0.92)); border-left: 4px solid var(--success); }
         .notification.error { background: linear-gradient(135deg, rgba(255,82,82,0.92), rgba(198,40,40,0.92)); border-left: 4px solid var(--error); }
-        .notification.info { background: linear-gradient(135deg, rgba(0,217,255,0.92), rgba(0,160,200,0.92)); border-left: 4px solid var(--primary); color: #04141a; }
+        .notification.info { background: linear-gradient(135deg, rgba(64,196,255,0.92), rgba(20,140,210,0.92)); border-left: 4px solid var(--info); color: #04141a; }
         .notification.warning { background: linear-gradient(135deg, rgba(255,202,40,0.94), rgba(255,160,0,0.94)); border-left: 4px solid var(--warning); color: #241800; }
 
         @keyframes slideInNotif { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -863,20 +865,20 @@
 
         /* Button sizes / action buttons */
         .btn-small { padding: 7px 13px; border: none; border-radius: 50px; font-size: 0.78rem; cursor: pointer; transition: var(--transition); font-weight: 700; white-space: nowrap; }
-        .btn-edit { background: rgba(0,217,255,0.1); color: var(--primary); border: 1px solid rgba(0,217,255,0.35); }
-        .btn-edit:hover { background: rgba(0,217,255,0.2); transform: translateY(-1px); }
+        .btn-edit { background: rgba(225,6,0,0.1); color: var(--primary); border: 1px solid rgba(225,6,0,0.35); }
+        .btn-edit:hover { background: rgba(225,6,0,0.2); transform: translateY(-1px); }
         .btn-delete { background: rgba(255,82,82,0.1); color: var(--error); border: 1px solid rgba(255,82,82,0.35); }
         .btn-delete:hover { background: rgba(255,82,82,0.2); transform: translateY(-1px); }
-        .btn-sold { background: rgba(255,215,0,0.1); color: var(--accent); border: 1px solid rgba(255,215,0,0.35); }
-        .btn-sold:hover { background: rgba(255,215,0,0.2); transform: translateY(-1px); }
-        .btn-sold.active { background: linear-gradient(45deg, var(--secondary), var(--accent)); color: white; border-color: var(--accent); }
+        .btn-sold { background: rgba(158,158,158,0.14); color: var(--accent); border: 1px solid rgba(158,158,158,0.4); }
+        .btn-sold:hover { background: rgba(158,158,158,0.24); transform: translateY(-1px); }
+        .btn-sold.active { background: linear-gradient(45deg, var(--secondary), var(--accent)); color: #141414; border-color: var(--accent); }
         .btn-approve { background: rgba(0,230,118,0.1); color: var(--success); border: 1px solid rgba(0,230,118,0.35); }
         .btn-approve:hover { background: rgba(0,230,118,0.2); transform: translateY(-1px); }
         .btn-reject { background: rgba(255,82,82,0.1); color: var(--error); border: 1px solid rgba(255,82,82,0.35); }
         .btn-reject:hover { background: rgba(255,82,82,0.2); transform: translateY(-1px); }
-        .btn-featured { background: rgba(255,215,0,0.1); color: var(--accent); border: 1px solid rgba(255,215,0,0.35); }
-        .btn-featured:hover { background: rgba(255,215,0,0.2); transform: translateY(-1px); }
-        .btn-featured.active { background: linear-gradient(45deg, var(--accent), #ff8c00); color: white; border-color: var(--accent); }
+        .btn-featured { background: rgba(158,158,158,0.14); color: var(--accent); border: 1px solid rgba(158,158,158,0.4); }
+        .btn-featured:hover { background: rgba(158,158,158,0.24); transform: translateY(-1px); }
+        .btn-featured.active { background: linear-gradient(45deg, var(--accent), #ffffff); color: #141414; border-color: var(--accent); }
 
         /* =============================================
            ADMIN PANEL
@@ -909,7 +911,7 @@
         .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius-md); border: 1px solid var(--glass-stroke); }
         .data-table { width: 100%; border-collapse: collapse; background: var(--bg-surface); min-width: 640px; }
         .data-table th, .data-table td { padding: 12px 12px; text-align: left; border-bottom: 1px solid var(--glass-stroke); vertical-align: middle; font-size: 0.84rem; }
-        .data-table th { background: rgba(0,217,255,0.06); color: var(--primary); font-weight: 800; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .data-table th { background: rgba(225,6,0,0.07); color: var(--primary); font-weight: 800; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
         .data-table tr:hover { background: rgba(255,255,255,0.025); }
         .data-table tr:last-child td { border-bottom: none; }
         .admin-actions { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -972,7 +974,7 @@
             transition: var(--transition);
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
-        .image-nav:hover { background: var(--primary); color: #04141a; }
+        .image-nav:hover { background: var(--primary); color: #ffffff; }
         .prev { left: 0; border-radius: 0 var(--radius-md) var(--radius-md) 0; }
         .next { right: 0; border-radius: var(--radius-md) 0 0 var(--radius-md); }
 
@@ -1019,7 +1021,7 @@
             border-radius: 50px; color: var(--text-secondary); cursor: pointer; transition: var(--transition);
             font-weight: 700; text-align: center; font-size: 0.84rem;
         }
-        .view-switch-btn.active { background: var(--primary); color: #04141a; border-color: var(--primary); }
+        .view-switch-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
         .view-switch-btn:hover:not(.active) { background: var(--primary-dim); color: var(--primary); }
 
         .view-360-container { width: 100%; height: 100%; position: relative; background: #000; overflow: hidden; cursor: grab; user-select: none; }
@@ -1032,18 +1034,18 @@
             border-radius: 50px; backdrop-filter: blur(10px);
         }
         .view-360-btn { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 7px 12px; border-radius: 20px; cursor: pointer; transition: var(--transition); font-size: 0.78rem; font-weight: 700; }
-        .view-360-btn:hover { background: var(--primary); border-color: var(--primary); color: #04141a; }
-        .view-360-btn.active { background: var(--primary); border-color: var(--primary); color: #04141a; }
+        .view-360-btn:hover { background: var(--primary); border-color: var(--primary); color: #ffffff; }
+        .view-360-btn.active { background: var(--primary); border-color: var(--primary); color: #ffffff; }
 
         /* Detail Points */
         .detail-point {
             position: absolute; width: 20px; height: 20px; background: var(--primary);
             border: 3px solid white; border-radius: 50%; cursor: pointer;
             transform: translate(-50%, -50%); animation: pulsePoint 2s infinite;
-            box-shadow: 0 0 15px rgba(0,217,255,0.6); z-index: 10;
+            box-shadow: 0 0 15px rgba(225,6,0,0.6); z-index: 10;
         }
         .detail-point:hover { transform: translate(-50%, -50%) scale(1.3); animation: none; }
-        @keyframes pulsePoint { 0% { box-shadow: 0 0 15px rgba(0,217,255,0.5);} 50% { box-shadow: 0 0 30px rgba(0,217,255,0.9);} 100% { box-shadow: 0 0 15px rgba(0,217,255,0.5);} }
+        @keyframes pulsePoint { 0% { box-shadow: 0 0 15px rgba(225,6,0,0.5);} 50% { box-shadow: 0 0 30px rgba(225,6,0,0.9);} 100% { box-shadow: 0 0 15px rgba(225,6,0,0.5);} }
 
         .detail-point-label {
             position: absolute; top: -34px; left: 50%; transform: translateX(-50%);
@@ -1088,11 +1090,11 @@
 
         .form-btn {
             width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--primary-refined));
-            border: none; border-radius: var(--radius-md); color: #04141a; font-size: 1rem;
+            border: none; border-radius: var(--radius-md); color: #ffffff; font-size: 1rem;
             font-weight: 800; cursor: pointer; transition: var(--transition); margin-bottom: 12px;
-            box-shadow: 0 6px 18px rgba(0,217,255,0.28); letter-spacing: 0.2px;
+            box-shadow: 0 6px 18px rgba(225,6,0,0.3); letter-spacing: 0.2px;
         }
-        .form-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,217,255,0.42); }
+        .form-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(225,6,0,0.45); }
         .form-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
         .form-btn.secondary { background: var(--bg-surface); border: 1px solid var(--glass-stroke); color: var(--text-secondary); box-shadow: none; }
@@ -1170,11 +1172,11 @@
         .loading-360-spinner { width: 44px; height: 44px; border: 3px solid var(--glass-stroke); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px; }
 
         /* Pro badge */
-        .pro-badge { background: linear-gradient(45deg, var(--accent), #ff8c00); color: #241800; padding: 3px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; box-shadow: 0 3px 10px rgba(255,215,0,0.35); animation: glowPro 2s ease-in-out infinite alternate; }
-        @keyframes glowPro { from { box-shadow: 0 3px 10px rgba(255,215,0,0.3);} to { box-shadow: 0 3px 20px rgba(255,215,0,0.7);} }
+        .pro-badge { background: linear-gradient(45deg, var(--accent), #ffffff); color: #141414; padding: 3px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; box-shadow: 0 3px 10px rgba(225,6,0,0.3); animation: glowPro 2s ease-in-out infinite alternate; }
+        @keyframes glowPro { from { box-shadow: 0 3px 10px rgba(225,6,0,0.25);} to { box-shadow: 0 3px 20px rgba(225,6,0,0.65);} }
         /* =============================================
-           JSONBIN FORMAT NOTE (comentario, sin efecto)
-           Bin 1: vehicles | Bin 2: users | Bin 3: config
+           SUPABASE (comentario, sin efecto)
+           Tabla 1: vehicles | Tabla 2: users | Tabla 3: site_config
         ============================================= */
 
         /* =============================================
@@ -1184,8 +1186,9 @@
         ============================================= */
         @media (max-width: 768px) {
             .header { position: sticky; }
-            .header-content { padding: 10px 16px; gap: 8px; justify-content: center; min-height: 56px; }
+            .header-content { padding: 8px 16px; gap: 8px; justify-content: center; min-height: 64px; }
             .logo { font-size: 1.2rem; }
+            .logo-image { height: 44px; max-width: 175px; }
             #userWelcome { display: none !important; }
 
             .user-info {
@@ -1209,26 +1212,29 @@
             .nav-btn, .publish-btn {
                 flex-direction: column;
                 justify-content: center;
-                gap: 2px;
-                padding: 7px 6px;
-                border-radius: 14px;
-                font-size: 0.62rem;
-                font-weight: 700;
-                min-width: 52px;
+                gap: 3px;
+                padding: 6px 5px;
+                border-radius: var(--radius-sm);
+                font-size: 0.58rem;
+                font-weight: 600;
+                letter-spacing: 0.1px;
+                min-width: 48px;
             }
-            .nav-btn i, .publish-btn i { display: block; font-size: 1.15rem; margin: 0 auto; }
+            .nav-btn i, .publish-btn i { display: block; font-size: 1.05rem; margin: 0 auto; }
             .publish-btn { background: transparent; color: var(--primary); box-shadow: none; }
             .publish-btn::before { display: none; }
             .publish-btn:hover { transform: none; box-shadow: none; }
             .nav-btn.secondary { background: var(--primary-dim); }
-            .nav-btn.admin.secondary { background: rgba(255,107,53,0.15); color: var(--secondary); }
+            .nav-btn.admin.secondary { background: rgba(158,158,158,0.2); color: var(--secondary); }
 
-            .theme-toggle, .logout-btn { width: 44px; height: 44px; }
+            .theme-toggle, .logout-btn { width: 42px; height: 42px; }
+            .logout-btn::before { font-size: 0.85rem; }
+            .theme-toggle { font-size: 0.85rem; }
 
             body { padding-bottom: calc(var(--mobile-nav-h) + var(--safe-b)); }
 
             /* Search */
-            .search-filter-section { top: 56px; }
+            .search-filter-section { top: 64px; }
             .search-content.expanded { max-height: 750px; }
             .search-bar { flex-direction: column; }
             .search-input { min-width: auto; }
@@ -1307,8 +1313,8 @@
             .vehicle-price { font-size: 1.05rem; }
             .dashboard-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
             .stat-number { font-size: 1.55rem; }
-            .nav-btn, .publish-btn { min-width: 44px; font-size: 0.56rem; padding: 6px 4px; }
-            .nav-btn i, .publish-btn i { font-size: 1.05rem; }
+            .nav-btn, .publish-btn { min-width: 42px; font-size: 0.52rem; padding: 5px 3px; }
+            .nav-btn i, .publish-btn i { font-size: 0.95rem; }
         }
 
         @media (min-width: 769px) and (max-width: 1024px) {
@@ -1330,7 +1336,7 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0,217,255,0.5); }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(225,6,0,0.5); }
     </style>
 </head>
 <body>
@@ -1343,7 +1349,7 @@
                 <div class="ring ring-2"></div>
                 <i class="fas fa-car-side"></i>
             </div>
-            <div class="loading-brand gradient-text">AUTOVENTAS</div>
+            <div class="loading-brand gradient-text">AutoXpert</div>
             <div class="loading-text">Cargando tu experiencia premium…</div>
             <div class="loading-dots"><span></span><span></span><span></span></div>
         </div>
@@ -1353,8 +1359,8 @@
     <header class="header" id="headerElement">
         <div class="header-content">
             <div class="logo-container">
-                <img id="logoImage" class="logo-image" src="" alt="Logo">
-                <h1 class="logo" id="logoText">AUTOVENTAS</h1>
+                <img id="logoImage" class="logo-image" src="https://i.ibb.co/9mjRJBcb/Logo.png" alt="AutoXpert" style="display:block;">
+                <h1 class="logo" id="logoText" style="display:none;">AutoXpert</h1>
             </div>
             <div class="user-info">
                 <span id="userWelcome"></span>
@@ -1615,11 +1621,11 @@
                                 <div class="color-controls">
                                     <div class="form-group">
                                         <label class="form-label">Color Primario:</label>
-                                        <input type="color" class="form-input" id="primaryColor" value="#00d9ff" onchange="updateColors()">
+                                        <input type="color" class="form-input" id="primaryColor" value="#E10600" onchange="updateColors()">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Color Secundario:</label>
-                                        <input type="color" class="form-input" id="secondaryColor" value="#ff6b35" onchange="updateColors()">
+                                        <input type="color" class="form-input" id="secondaryColor" value="#9E9E9E" onchange="updateColors()">
                                     </div>
                                     <button class="form-btn secondary" onclick="resetColors()"><i class="fas fa-sync-alt"></i> Restablecer Colores</button>
                                 </div>
@@ -1628,7 +1634,7 @@
                                 <h4><i class="fas fa-tag"></i> Información del Sitio</h4>
                                 <div class="form-group">
                                     <label class="form-label">Nombre del Sitio:</label>
-                                    <input type="text" class="form-input" id="siteName" placeholder="AUTOVENTAS" onchange="updateSiteName()">
+                                    <input type="text" class="form-input" id="siteName" placeholder="AutoXpert" onchange="updateSiteName()">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Logo del Sitio:</label>
@@ -1639,33 +1645,33 @@
                             <div class="customization-section">
                                 <h4><i class="fas fa-masks-theater"></i> Estilo de Banner</h4>
                                 <div class="banner-styles">
-                                    <button class="banner-option active" onclick="setBannerStyle(0)" data-style="0">
+                                    <button class="banner-option" onclick="setBannerStyle(0)" data-style="0">
                                         <div class="banner-preview" style="background: rgba(8,12,18,0.95);">
                                             <div class="banner-option-label" style="color:white;">Clásico</div>
                                         </div>
                                     </button>
                                     <button class="banner-option" onclick="setBannerStyle(1)" data-style="1">
-                                        <div class="banner-preview" style="background: linear-gradient(135deg, #00d9ff, #ff6b35);">
-                                            <div class="banner-option-label">Gradiente</div>
+                                        <div class="banner-preview" style="background: linear-gradient(135deg, #E10600, #9E9E9E);">
+                                            <div class="banner-option-label" style="color:white;">Gradiente</div>
                                         </div>
                                     </button>
                                     <button class="banner-option" onclick="setBannerStyle(2)" data-style="2">
-                                        <div class="banner-preview" style="background: #0e1420; border-bottom: 2px solid #00d9ff;">
+                                        <div class="banner-preview" style="background: #131313; border-bottom: 2px solid #E10600;">
                                             <div class="banner-option-label" style="color:white;">Línea</div>
                                         </div>
                                     </button>
                                     <button class="banner-option" onclick="setBannerStyle(3)" data-style="3">
-                                        <div class="banner-preview" style="background: linear-gradient(90deg, #080c12, rgba(0,217,255,0.3), #080c12);">
+                                        <div class="banner-preview" style="background: linear-gradient(90deg, #0a0a0a, rgba(225,6,0,0.4), #0a0a0a);">
                                             <div class="banner-option-label" style="color:white;">Destello</div>
                                         </div>
                                     </button>
-                                    <button class="banner-option" onclick="setBannerStyle(4)" data-style="4">
-                                        <div class="banner-preview" style="background: rgba(0,0,0,0.95); box-shadow: 0 0 10px #00d9ff;">
-                                            <div class="banner-option-label" style="color:#00d9ff;">Neón</div>
+                                    <button class="banner-option active" onclick="setBannerStyle(4)" data-style="4">
+                                        <div class="banner-preview" style="background: rgba(0,0,0,0.95); box-shadow: 0 0 10px #E10600;">
+                                            <div class="banner-option-label" style="color:#E10600;">Neón</div>
                                         </div>
                                     </button>
                                     <button class="banner-option" onclick="setBannerStyle(5)" data-style="5">
-                                        <div class="banner-preview" style="background: linear-gradient(45deg, #1a2436, #253040);">
+                                        <div class="banner-preview" style="background: linear-gradient(45deg, #232323, #3a3a3a);">
                                             <div class="banner-option-label" style="color:white;">Metálico</div>
                                         </div>
                                     </button>
@@ -1697,7 +1703,7 @@
 
                     <!-- DATOS -->
                     <div id="adminData" class="admin-content">
-                        <h3><i class="fas fa-save"></i> Gestión de Datos (JSONBin)</h3>
+                        <h3><i class="fas fa-save"></i> Gestión de Datos (Supabase)</h3>
                         <div class="customization-grid">
                             <div class="customization-section">
                                 <h4><i class="fas fa-upload"></i> Exportar Datos</h4>
@@ -1706,20 +1712,20 @@
                                 <button class="form-btn" onclick="exportData('all')"><i class="fas fa-upload"></i> Exportar Todo</button>
                             </div>
                             <div class="customization-section">
-                                <h4><i class="fas fa-sync-alt"></i> Backup JSONBin</h4>
+                                <h4><i class="fas fa-sync-alt"></i> Backup y Limpieza</h4>
                                 <button class="form-btn secondary" onclick="backupData()"><i class="fas fa-sync-alt"></i> Crear Backup Local</button>
-                                <button class="form-btn secondary" onclick="clearJsonBinData()"><i class="fas fa-trash"></i> Limpiar Datos</button>
+                                <button class="form-btn secondary" onclick="clearSupabaseData()"><i class="fas fa-trash"></i> Limpiar Datos</button>
                                 <p style="color: var(--warning); font-size: 0.82rem; margin-top: 10px; line-height: 1.4;">
                                     <i class="fas fa-exclamation-triangle"></i> La limpieza eliminará todos los datos permanentemente.
                                 </p>
                             </div>
                             <div class="customization-section">
-                                <h4>ℹ️ Info JSONBin</h4>
+                                <h4>ℹ️ Info Supabase</h4>
                                 <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;">
-                                    Datos almacenados en JSONBin.io con 3 bins:<br>
-                                    <i class="fas fa-box"></i> <strong>Bin Vehículos</strong> - vehicles<br>
-                                    <i class="fas fa-users"></i> <strong>Bin Usuarios</strong> - users<br>
-                                    <i class="fas fa-cog"></i> <strong>Bin Config</strong> - siteConfig
+                                    Datos almacenados en Supabase (PostgreSQL) en 3 tablas:<br>
+                                    <i class="fas fa-box"></i> <strong>vehicles</strong> - vehículos<br>
+                                    <i class="fas fa-users"></i> <strong>users</strong> - usuarios<br>
+                                    <i class="fas fa-cog"></i> <strong>site_config</strong> - configuración del sitio
                                 </p>
                                 <div id="binStatusDisplay" style="margin-top: 12px; font-size: 0.8rem; color: var(--text-muted);"></div>
                             </div>
@@ -1734,7 +1740,7 @@
     <div class="social-section" id="socialSection" style="display: none;">
         <div class="social-container">
             <h3 class="social-title">Síguenos en redes sociales</h3>
-            <span class="social-handle">@autoventas</span>
+            <span class="social-handle">@autoxpert</span>
             <div class="social-links" id="socialLinks"></div>
         </div>
     </div>
@@ -1742,7 +1748,7 @@
     <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
-            <p>© 2025 GStar INK — Todos los derechos reservados | AUTOVENTAS</p>
+            <p>© 2025 GStar INK — Todos los derechos reservados | AutoXpert</p>
         </div>
     </footer>
 
@@ -2155,44 +2161,23 @@
         </div>
     </div>
 
+    <!-- ===== SUPABASE SDK ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- ===== JAVASCRIPT ===== -->
     <script>
     /* ==========================================================
-       CONFIGURACIÓN JSONBIN.IO
-       
-       INSTRUCCIONES PARA CREAR LOS BINS:
-       1. Ve a https://jsonbin.io y regístrate/inicia sesión
-       2. Ve a "Bins" → "Create a Bin"
-       3. Crea 3 bins con el siguiente contenido:
-       
-       BIN 1 - VEHICLES: pega exactamente esto:
-       []
-       
-       BIN 2 - USERS: pega exactamente esto:
-       []
-       
-       BIN 3 - CONFIG: pega exactamente esto:
-       {"siteName":"AUTOVENTAS","primaryColor":"#00d9ff","secondaryColor":"#ff6b35","logoUrl":"","bannerStyle":0,"socialLinks":{"instagram":"","facebook":"","tiktok":""}}
-       
-       4. Copia el ID de cada bin (lo ves en la URL: jsonbin.io/b/AQUI_EL_ID)
-       5. Pégalo abajo en BIN_VEHICLES_ID, BIN_USERS_ID, BIN_CONFIG_ID
-       
-       NOTA: La Master Key ya está configurada abajo.
+       CONFIGURACIÓN SUPABASE
+
+       Las tablas, políticas RLS y la fila inicial de configuración
+       se crean UNA sola vez pegando el contenido de setup.sql en
+       el SQL Editor de tu proyecto (Supabase → SQL Editor → New
+       query → pegar → Run). Proyecto: byqwdkpezhopinayhcpx
     ============================================================= */
 
-        const JSONBIN_MASTER_KEY   = '$2a$10$dA7EJL7AkWBNkHLyVflDme6uxH4jSuGjdywTiOQuICg9GFJDUWkcK';
-        const JSONBIN_BASE_URL     = 'https://api.jsonbin.io/v3/b';
-
-        // ⬇⬇⬇ REEMPLAZA ESTAS IDs CON LAS DE TUS BINS ⬇⬇⬇
-        const BIN_VEHICLES_ID      = '699e4de443b1c97be99b19b9';
-        const BIN_USERS_ID         = '699e4dd5ae596e708f46e78f';
-        const BIN_CONFIG_ID        = '699e4db7d0ea881f40d6822b';
-        // ⬆⬆⬆ REEMPLAZA ESTAS IDs CON LAS DE TUS BINS ⬆⬆⬆
-
-        const JSONBIN_HEADERS = {
-            'Content-Type': 'application/json',
-            'X-Master-Key': JSONBIN_MASTER_KEY
-        };
+        const SUPABASE_URL = 'https://byqwdkpezhopinayhcpx.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_rIQycAzWYChxXCJuxLjyEA_1_gTMbyG';
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         /* ===================================================
            VARIABLES GLOBALES
@@ -2244,11 +2229,11 @@
 
         // Config del sitio
         let siteConfig = {
-            siteName: "AUTOVENTAS",
-            primaryColor: "#00d9ff",
-            secondaryColor: "#ff6b35",
-            logoUrl: "",
-            bannerStyle: 0,
+            siteName: "AutoXpert",
+            primaryColor: "#E10600",
+            secondaryColor: "#9E9E9E",
+            logoUrl: "https://i.ibb.co/9mjRJBcb/Logo.png",
+            bannerStyle: 4,
             socialLinks: { instagram: "", facebook: "", tiktok: "" }
         };
 
@@ -2282,74 +2267,71 @@
         }
 
         /* ===================================================
-           JSONBIN.IO - FUNCIONES DE DATOS
+           SUPABASE - FUNCIONES DE DATOS
+           Cada función traduce entre los nombres camelCase que
+           usa el resto de la app (v.ownerWhatsApp, v.view360Data...)
+           y las columnas snake_case de las tablas de Postgres
+           (owner_whatsapp, view_360_data...).
         ==================================================== */
 
-        // Leer un bin
-        async function readBin(binId) {
-            const response = await fetch(`${JSONBIN_BASE_URL}/${binId}/latest`, {
-                method: 'GET',
-                headers: JSONBIN_HEADERS
-            });
-            if (!response.ok) {
-                const err = await response.json().catch(() => ({}));
-                throw new Error(`JSONBin Error ${response.status}: ${err.message || 'Unknown error'}`);
-            }
-            const data = await response.json();
-            return data.record;
-        }
-
-        // Actualizar un bin (reemplaza todo el contenido)
-        async function writeBin(binId, content) {
-            const response = await fetch(`${JSONBIN_BASE_URL}/${binId}`, {
-                method: 'PUT',
-                headers: JSONBIN_HEADERS,
-                body: JSON.stringify(content)
-            });
-            if (!response.ok) {
-                const err = await response.json().catch(() => ({}));
-                throw new Error(`JSONBin Error ${response.status}: ${err.message || 'Unknown error'}`);
-            }
-            const data = await response.json();
-            return data.record;
-        }
-
         /* ---- VEHICLES ---- */
-        async function loadVehiclesFromJsonBin() {
+
+        // Columnas snake_case (tabla public.vehicles) <-> claves camelCase (app)
+        const VEHICLE_FIELD_MAP = {
+            year: 'year', brand: 'brand', model: 'model', price: 'price',
+            sold: 'sold', featured: 'featured', images: 'images',
+            transmission: 'transmission', ac: 'ac', radio: 'radio',
+            mileage: 'mileage', color: 'color', owners: 'owners', keys: 'keys',
+            tires: 'tires', location: 'location', extras: 'extras', notes: 'notes',
+            owner: 'owner', ownerWhatsApp: 'owner_whatsapp',
+            publishDate: 'publish_date', publicationStatus: 'publication_status',
+            publicationMessage: 'publication_message', view360Data: 'view_360_data',
+            approvalDate: 'approval_date', rejectionDate: 'rejection_date'
+        };
+
+        function vehicleRowToApp(row) {
+            const v = { id: row.id };
+            Object.keys(VEHICLE_FIELD_MAP).forEach(appKey => { v[appKey] = row[VEHICLE_FIELD_MAP[appKey]]; });
+            v.images = v.images || [];
+            v.view360Data = v.view360Data || null;
+            return v;
+        }
+
+        function vehicleAppToRow(v) {
+            const row = {};
+            Object.keys(v).forEach(appKey => {
+                if (appKey === 'id') { row.id = v.id; return; }
+                const col = VEHICLE_FIELD_MAP[appKey];
+                if (col) row[col] = v[appKey];
+            });
+            return row;
+        }
+
+        async function loadVehiclesFromSupabase() {
             try {
                 showLoading();
-                const data = await readBin(BIN_VEHICLES_ID);
-                // Acepta array directo o wrapper {vehicles:[...]}
-                const rawList = Array.isArray(data) ? data : (data && Array.isArray(data.vehicles) ? data.vehicles : []);
-                vehicles = rawList.map(v => ({
-                    ...v,
-                    view360Data: v.view360Data
-                        ? (typeof v.view360Data === 'string' ? (() => { try { return JSON.parse(v.view360Data); } catch(e){ return null; } })() : v.view360Data)
-                        : null
-                }));
+                const { data, error } = await db.from('vehicles').select('*').order('publish_date', { ascending: false });
+                if (error) throw error;
+                vehicles = (data || []).map(vehicleRowToApp);
                 updateFilterOptions();
                 renderCatalog();
                 hideLoading();
             } catch (error) {
                 console.error('Error cargando vehículos:', error);
-                showNotification('Error al cargar vehículos de JSONBin. Verifica la configuración de los bins.', 'error');
+                showNotification('Error al cargar vehículos de Supabase. Verifica la configuración.', 'error');
                 vehicles = [];
                 hideLoading();
             }
         }
 
-        async function saveVehicleToJsonBin(vehicleData) {
+        async function saveVehicleToSupabase(vehicleData) {
             showLoading();
             const vehicleId = 'VEH_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             const newVehicle = { ...vehicleData, id: vehicleId };
             vehicles.push(newVehicle);
             try {
-                await writeBin(BIN_VEHICLES_ID, vehicles.map(v => ({
-                    ...v,
-                    view360Data: v.view360Data
-                        ? (typeof v.view360Data === 'object' ? JSON.stringify(v.view360Data) : v.view360Data)
-                        : null
-                })));
+                const { error } = await db.from('vehicles').insert(vehicleAppToRow(newVehicle));
+                if (error) throw error;
                 updateFilterOptions();
                 hideLoading();
                 showNotification('Vehículo publicado exitosamente. Será revisado por un administrador.', 'success');
@@ -2357,130 +2339,152 @@
             } catch (error) {
                 vehicles.pop(); // revertir
                 hideLoading();
-                showNotification('Error al guardar vehículo en JSONBin.', 'error');
+                showNotification('Error al guardar vehículo en Supabase.', 'error');
                 throw error;
             }
         }
 
-        async function updateVehicleInJsonBin(vehicleId, updatedData) {
+        async function updateVehicleInSupabase(vehicleId, updatedData) {
             showLoading();
             const idx = vehicles.findIndex(v => v.id === vehicleId);
             if (idx === -1) { hideLoading(); return; }
             const prev = { ...vehicles[idx] };
             vehicles[idx] = { ...vehicles[idx], ...updatedData };
             try {
-                await writeBin(BIN_VEHICLES_ID, vehicles.map(v => ({
-                    ...v,
-                    view360Data: v.view360Data
-                        ? (typeof v.view360Data === 'object' ? JSON.stringify(v.view360Data) : v.view360Data)
-                        : null
-                })));
+                const { error } = await db.from('vehicles').update(vehicleAppToRow(updatedData)).eq('id', vehicleId);
+                if (error) throw error;
                 updateFilterOptions();
                 hideLoading();
                 showNotification('Vehículo actualizado exitosamente', 'success');
             } catch (error) {
                 vehicles[idx] = prev; // revertir
                 hideLoading();
-                showNotification('Error al actualizar vehículo en JSONBin.', 'error');
+                showNotification('Error al actualizar vehículo en Supabase.', 'error');
                 throw error;
             }
         }
 
-        async function deleteVehicleFromJsonBin(vehicleId) {
+        async function deleteVehicleFromSupabase(vehicleId) {
             showLoading();
             const prev = [...vehicles];
             vehicles = vehicles.filter(v => v.id !== vehicleId);
             try {
-                await writeBin(BIN_VEHICLES_ID, vehicles.map(v => ({
-                    ...v,
-                    view360Data: v.view360Data
-                        ? (typeof v.view360Data === 'object' ? JSON.stringify(v.view360Data) : v.view360Data)
-                        : null
-                })));
+                const { error } = await db.from('vehicles').delete().eq('id', vehicleId);
+                if (error) throw error;
                 updateFilterOptions();
                 hideLoading();
                 showNotification('Vehículo eliminado exitosamente', 'success');
             } catch (error) {
                 vehicles = prev;
                 hideLoading();
-                showNotification('Error al eliminar vehículo en JSONBin.', 'error');
+                showNotification('Error al eliminar vehículo en Supabase.', 'error');
                 throw error;
             }
         }
 
         /* ---- USERS ---- */
-        async function loadUsersFromJsonBin() {
+
+        // Columnas snake_case (tabla public.users) <-> claves camelCase (app)
+        const USER_FIELD_MAP = {
+            name: 'name', lastname: 'lastname', rif: 'rif', whatsapp: 'whatsapp',
+            password: 'password', isAdmin: 'is_admin', verified: 'verified',
+            verificationStatus: 'verification_status', registrationDate: 'registration_date',
+            verificationMessage: 'verification_message', isPro: 'is_pro',
+            verificationDate: 'verification_date'
+        };
+
+        function userRowToApp(row) {
+            const u = { id: row.id };
+            Object.keys(USER_FIELD_MAP).forEach(appKey => { u[appKey] = row[USER_FIELD_MAP[appKey]]; });
+            return u;
+        }
+
+        function userAppToRow(u) {
+            const row = {};
+            Object.keys(u).forEach(appKey => {
+                if (appKey === 'id') { row.id = u.id; return; }
+                const col = USER_FIELD_MAP[appKey];
+                if (col) row[col] = u[appKey];
+            });
+            return row;
+        }
+
+        async function loadUsersFromSupabase() {
             try {
-                const data = await readBin(BIN_USERS_ID);
-                users = Array.isArray(data) ? data : (data && Array.isArray(data.users) ? data.users : []);
+                const { data, error } = await db.from('users').select('*');
+                if (error) throw error;
+                users = (data || []).map(userRowToApp);
             } catch (error) {
                 console.error('Error cargando usuarios:', error);
-                showNotification('Error al cargar usuarios de JSONBin.', 'error');
+                showNotification('Error al cargar usuarios de Supabase.', 'error');
                 users = [];
             }
         }
 
-        async function saveUserToJsonBin(userData) {
+        async function saveUserToSupabase(userData) {
             showLoading();
             const userId = 'USER_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             const newUser = { ...userData, id: userId };
             users.push(newUser);
             try {
-                await writeBin(BIN_USERS_ID, users);
+                const { error } = await db.from('users').insert(userAppToRow(newUser));
+                if (error) throw error;
                 hideLoading();
                 showNotification('Usuario registrado exitosamente', 'success');
                 return userId;
             } catch (error) {
                 users.pop();
                 hideLoading();
-                showNotification('Error al guardar usuario en JSONBin.', 'error');
+                showNotification('Error al guardar usuario en Supabase.', 'error');
                 throw error;
             }
         }
 
-        async function updateUserInJsonBin(userId, updatedData) {
+        async function updateUserInSupabase(userId, updatedData) {
             showLoading();
             const idx = users.findIndex(u => u.id === userId);
             if (idx === -1) { hideLoading(); return; }
             const prev = { ...users[idx] };
             users[idx] = { ...users[idx], ...updatedData };
             try {
-                await writeBin(BIN_USERS_ID, users);
+                const { error } = await db.from('users').update(userAppToRow(updatedData)).eq('id', userId);
+                if (error) throw error;
                 hideLoading();
                 showNotification('Usuario actualizado exitosamente', 'success');
             } catch (error) {
                 users[idx] = prev;
                 hideLoading();
-                showNotification('Error al actualizar usuario en JSONBin.', 'error');
+                showNotification('Error al actualizar usuario en Supabase.', 'error');
                 throw error;
             }
         }
 
-        async function deleteUserFromJsonBin(userId) {
+        async function deleteUserFromSupabase(userId) {
             showLoading();
             const prev = [...users];
             users = users.filter(u => u.id !== userId);
             try {
-                await writeBin(BIN_USERS_ID, users);
+                const { error } = await db.from('users').delete().eq('id', userId);
+                if (error) throw error;
                 hideLoading();
                 showNotification('Usuario eliminado exitosamente', 'success');
             } catch (error) {
                 users = prev;
                 hideLoading();
-                showNotification('Error al eliminar usuario en JSONBin.', 'error');
+                showNotification('Error al eliminar usuario en Supabase.', 'error');
                 throw error;
             }
         }
 
         /* ---- CONFIG ---- */
-        async function loadConfigFromJsonBin() {
+        // public.site_config guarda una única fila (id = 1) con toda la
+        // configuración del sitio en la columna jsonb "data".
+        async function loadConfigFromSupabase() {
             try {
-                const data = await readBin(BIN_CONFIG_ID);
-                if (data && typeof data === 'object') {
-                    if (data.socialLinks && typeof data.socialLinks === 'string') {
-                        data.socialLinks = JSON.parse(data.socialLinks);
-                    }
-                    siteConfig = { ...siteConfig, ...data };
+                const { data, error } = await db.from('site_config').select('data').eq('id', 1).single();
+                if (error) throw error;
+                if (data && data.data && typeof data.data === 'object') {
+                    siteConfig = { ...siteConfig, ...data.data };
                 }
                 applySiteConfig();
             } catch (error) {
@@ -2489,20 +2493,21 @@
             }
         }
 
-        async function saveConfigToJsonBin() {
+        async function saveConfigToSupabase() {
             try {
                 const configData = { ...siteConfig };
-                await writeBin(BIN_CONFIG_ID, configData);
+                const { error } = await db.from('site_config').update({ data: configData }).eq('id', 1);
+                if (error) throw error;
                 showNotification('Configuración guardada exitosamente', 'success');
             } catch (error) {
-                showNotification('Error al guardar configuración en JSONBin.', 'error');
+                showNotification('Error al guardar configuración en Supabase.', 'error');
             }
         }
 
         /* ===================================================
            ImgBB - UPLOAD DE IMÁGENES
         ==================================================== */
-        const IMGBB_API_KEY = "176862903123d1f89cd3223a4d330174";
+        const IMGBB_API_KEY = "10e555afdb5460b888d8625e85e439ec";
 
         async function uploadImageToImgBB(file) {
             showLoading();
@@ -2640,7 +2645,7 @@
                 return;
             }
 
-            // Buscar en JSONBin
+            // Buscar en la lista de usuarios cargada desde Supabase
             const found = users.find(u => u.rif === rif && u.password === password);
             if (!found) {
                 showNotification('RIF o contraseña incorrectos', 'error');
@@ -2696,7 +2701,7 @@
             };
 
             try {
-                await saveUserToJsonBin(newUser);
+                await saveUserToSupabase(newUser);
                 closeAuthModal();
                 showNotification(`¡Cuenta creada exitosamente, ${name}! Pendiente de verificación.`, 'success');
             } catch (error) {
@@ -3074,7 +3079,7 @@
             container.innerHTML = `
                 <h2 class="vehicle-title">${currentVehicle.year} • ${currentVehicle.brand} ${currentVehicle.model}</h2>
                 ${currentVehicle.sold ? `<div style="text-align:center;padding:12px;background:linear-gradient(45deg,var(--secondary),var(--accent));border-radius:var(--radius-md);margin-bottom:16px;font-weight:800;"><i class="fas fa-trophy"></i> VEHÍCULO VENDIDO</div>` : ''}
-                ${has360 ? `<div style="text-align:center;padding:10px;background:linear-gradient(45deg,var(--accent),#ff8c00);border-radius:var(--radius-md);margin-bottom:16px;font-weight:800;color:white;"><i class="fas fa-sync-alt"></i> ¡Vista 360° Disponible!</div>` : ''}
+                ${has360 ? `<div style="text-align:center;padding:10px;background:linear-gradient(45deg,var(--accent),#ffffff);border-radius:var(--radius-md);margin-bottom:16px;font-weight:800;color:#141414;"><i class="fas fa-sync-alt"></i> ¡Vista 360° Disponible!</div>` : ''}
                 <div class="detail-item"><span class="detail-icon"><i class="fas fa-flag-checkered"></i></span><span class="detail-label">Transmisión:</span><div class="detail-dots"></div><span class="detail-value">${currentVehicle.transmission}</span></div>
                 <div class="detail-item"><span class="detail-icon"><i class="fas fa-snowflake"></i>️</span><span class="detail-label">A/A:</span><div class="detail-dots"></div><span class="detail-value">${currentVehicle.ac}</span></div>
                 <div class="detail-item"><span class="detail-icon"><i class="fas fa-sliders-h"></i></span><span class="detail-label">Radio:</span><div class="detail-dots"></div><span class="detail-value">${currentVehicle.radio}</span></div>
@@ -3521,7 +3526,7 @@
             }
 
             try {
-                await saveVehicleToJsonBin(newVehicle);
+                await saveVehicleToSupabase(newVehicle);
                 renderCatalog();
                 closePublishModal();
             } catch {
@@ -3594,7 +3599,7 @@
             };
 
             try {
-                await updateVehicleInJsonBin(vehicleId, updated);
+                await updateVehicleInSupabase(vehicleId, updated);
                 if (currentSection === 'dashboard') loadUserDashboard();
                 else if (currentSection === 'admin') loadAdminPanel();
                 renderCatalog();
@@ -3686,7 +3691,7 @@
 
             const newStatus = !v.sold;
             try {
-                await updateVehicleInJsonBin(vehicleId, { sold: newStatus });
+                await updateVehicleInSupabase(vehicleId, { sold: newStatus });
                 if (currentSection === 'dashboard') loadUserDashboard();
                 else if (currentSection === 'admin') loadAdminPanel();
                 renderCatalog();
@@ -3702,7 +3707,7 @@
             if (!confirm('¿Estás seguro de que quieres eliminar esta publicación?')) return;
 
             try {
-                await deleteVehicleFromJsonBin(vehicleId);
+                await deleteVehicleFromSupabase(vehicleId);
                 if (currentSection === 'dashboard') loadUserDashboard();
                 else if (currentSection === 'admin') loadAdminPanel();
                 renderCatalog();
@@ -3718,7 +3723,7 @@
 
             if (confirm(`¿Promocionar a ${u.name} ${u.lastname} a usuario PRO?\n\nTendrá acceso a crear vistas 360°.`)) {
                 try {
-                    await updateUserInJsonBin(userId, { isPro: true });
+                    await updateUserInSupabase(userId, { isPro: true });
                     showNotification(`${u.name} ha sido promocionado a usuario PRO`, 'success');
                     loadAdminUsers();
                 } catch {
@@ -3732,7 +3737,7 @@
         ==================================================== */
         async function loadAdminPanel() {
             if (!currentUser?.isAdmin) return;
-            await loadUsersFromJsonBin();
+            await loadUsersFromSupabase();
             loadAdminUsers();
             loadAdminVehicles();
             loadAdminPublications();
@@ -3746,7 +3751,7 @@
             el.innerHTML = `
                 <div><i class="fas fa-box"></i> Vehículos: ${vehicles.length} registros</div>
                 <div><i class="fas fa-users"></i> Usuarios: ${users.length} registros</div>
-                <div style="margin-top:6px;color:var(--success);"><i class="fas fa-check-circle"></i> JSONBin conectado</div>
+                <div style="margin-top:6px;color:var(--success);"><i class="fas fa-check-circle"></i> Supabase conectado</div>
             `;
         }
 
@@ -3821,7 +3826,7 @@
                 const has360 = v.view360Data?.images?.length > 0;
                 const row    = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${v.year} ${v.brand} ${v.model} ${has360 ? '<span style="background:linear-gradient(45deg,var(--accent),#ff8c00);color:white;padding:1px 5px;border-radius:6px;font-size:0.65rem;margin-left:4px;"><i class="fas fa-sync-alt"></i></span>' : ''}</td>
+                    <td>${v.year} ${v.brand} ${v.model} ${has360 ? '<span style="background:linear-gradient(45deg,var(--accent),#ffffff);color:#141414;padding:1px 5px;border-radius:6px;font-size:0.65rem;margin-left:4px;"><i class="fas fa-sync-alt"></i></span>' : ''}</td>
                     <td>${v.price}</td>
                     <td>${v.owner}</td>
                     <td style="color:${v.sold ? 'var(--accent)' : 'var(--success)'};">${v.sold ? '<i class="fas fa-trophy"></i> VENDIDO' : '<i class="fas fa-car"></i> ACTIVO'}</td>
@@ -3909,7 +3914,7 @@
             if (!u) return;
             if (!confirm(`¿Eliminar usuario ${u.name} ${u.lastname}?\n\nEsta acción no se puede deshacer.`)) return;
             try {
-                await deleteUserFromJsonBin(userId);
+                await deleteUserFromSupabase(userId);
                 loadAdminUsers();
             } catch {
                 showNotification('Error al eliminar usuario', 'error');
@@ -3921,7 +3926,7 @@
             const v = vehicles.find(x => x.id === vehicleId);
             if (!v) return;
             try {
-                await updateVehicleInJsonBin(vehicleId, { featured: !v.featured });
+                await updateVehicleInSupabase(vehicleId, { featured: !v.featured });
                 loadAdminPanel();
                 renderCatalog();
                 showNotification(`Vehículo ${v.featured ? 'removido de' : 'agregado a'} destacados`, 'success');
@@ -3970,7 +3975,7 @@
             const msg = customMsg || `¡Felicidades! Tu cuenta en ${siteConfig.siteName} ha sido verificada exitosamente. Ya puedes iniciar sesión y publicar tus vehículos.`;
 
             try {
-                await updateUserInJsonBin(currentUserToVerify.id, {
+                await updateUserInSupabase(currentUserToVerify.id, {
                     verificationStatus: 'verified', verified: true,
                     verificationMessage: msg, verificationDate: new Date().toISOString()
                 });
@@ -3995,7 +4000,7 @@
             }
 
             try {
-                await updateUserInJsonBin(currentUserToVerify.id, {
+                await updateUserInSupabase(currentUserToVerify.id, {
                     verificationStatus: 'rejected', verified: false,
                     verificationMessage: finalMsg, verificationDate: new Date().toISOString()
                 });
@@ -4053,7 +4058,7 @@
             const finalMsg   = customMsg || defaultMsg;
 
             try {
-                await updateVehicleInJsonBin(currentPublicationToVerify.id, {
+                await updateVehicleInSupabase(currentPublicationToVerify.id, {
                     publicationStatus: 'approved', publicationMessage: finalMsg,
                     approvalDate: new Date().toISOString()
                 });
@@ -4079,7 +4084,7 @@
             }
 
             try {
-                await updateVehicleInJsonBin(currentPublicationToVerify.id, {
+                await updateVehicleInSupabase(currentPublicationToVerify.id, {
                     publicationStatus: 'rejected', publicationMessage: finalMsg,
                     rejectionDate: new Date().toISOString()
                 });
@@ -4098,7 +4103,7 @@
             if (!v) return;
             const msg = `¡Excelente! Tu publicación del ${v.year} ${v.brand} ${v.model} ha sido aprobada y ya está visible en el catálogo de ${siteConfig.siteName}.`;
             try {
-                await updateVehicleInJsonBin(vehicleId, { publicationStatus:'approved', publicationMessage:msg, approvalDate: new Date().toISOString() });
+                await updateVehicleInSupabase(vehicleId, { publicationStatus:'approved', publicationMessage:msg, approvalDate: new Date().toISOString() });
                 sendPublicationWhatsApp(v.ownerWhatsApp, msg, '<i class="fas fa-check-circle"></i> PUBLICACIÓN APROBADA');
                 loadAdminPublications();
                 renderCatalog();
@@ -4117,7 +4122,7 @@
                 ? `Tu publicación del ${v.year} ${v.brand} ${v.model} ha sido rechazada.\n\nMotivo: ${reason}`
                 : `Tu publicación ha sido rechazada. Contacta al administrador.`;
             try {
-                await updateVehicleInJsonBin(vehicleId, { publicationStatus:'rejected', publicationMessage:msg, rejectionDate: new Date().toISOString() });
+                await updateVehicleInSupabase(vehicleId, { publicationStatus:'rejected', publicationMessage:msg, rejectionDate: new Date().toISOString() });
                 sendPublicationWhatsApp(v.ownerWhatsApp, msg, '<i class="fas fa-times-circle"></i> PUBLICACIÓN RECHAZADA');
                 loadAdminPublications();
                 renderCatalog();
@@ -4213,7 +4218,7 @@
         }
 
         function updateSiteName() {
-            siteConfig.siteName = document.getElementById('siteName').value || 'AUTOVENTAS';
+            siteConfig.siteName = document.getElementById('siteName').value || 'AutoXpert';
             document.getElementById('logoText').textContent   = `<i class="fas fa-car-side"></i> ${siteConfig.siteName}`;
             document.getElementById('siteTitle').textContent  = `${siteConfig.siteName} - Vehículos Premium`;
         }
@@ -4227,18 +4232,18 @@
 
         async function saveCustomization() {
             if (!currentUser?.isAdmin) return;
-            await saveConfigToJsonBin();
+            await saveConfigToSupabase();
         }
 
         async function loadCustomization() {
-            await loadConfigFromJsonBin();
+            await loadConfigFromSupabase();
             loadCustomizationPanel();
             showNotification('Configuración cargada exitosamente', 'success');
         }
 
         function resetColors() {
-            siteConfig.primaryColor   = '#00d9ff';
-            siteConfig.secondaryColor = '#ff6b35';
+            siteConfig.primaryColor   = '#E10600';
+            siteConfig.secondaryColor = '#9E9E9E';
             document.getElementById('primaryColor').value  = siteConfig.primaryColor;
             document.getElementById('secondaryColor').value= siteConfig.secondaryColor;
             applySiteConfig();
@@ -4248,8 +4253,8 @@
         function resetCustomization() {
             if (!confirm('¿Restablecer toda la configuración?\n\nEsto incluye colores, logo, nombre y redes sociales.')) return;
             siteConfig = {
-                siteName: 'AUTOVENTAS', primaryColor: '#00d9ff', secondaryColor: '#ff6b35',
-                logoUrl: '', bannerStyle: 0,
+                siteName: 'AutoXpert', primaryColor: '#E10600', secondaryColor: '#9E9E9E',
+                logoUrl: 'https://i.ibb.co/9mjRJBcb/Logo.png', bannerStyle: 4,
                 socialLinks: { instagram:'', facebook:'', tiktok:'' }
             };
             loadCustomizationPanel();
@@ -4297,7 +4302,7 @@
                         fecha_registro: new Date(u.registrationDate).toLocaleDateString(),
                         vehiculos: vehicles.filter(v => v.owner === u.rif).length
                     }));
-                    filename = 'usuarios_autoventas.json';
+                    filename = 'usuarios_autoxpert.json';
                     break;
                 case 'vehicles':
                     data = vehicles.map(v => ({
@@ -4308,11 +4313,11 @@
                         vista_360: v.view360Data?.images?.length > 0 ? 'Sí' : 'No',
                         fecha: new Date(v.publishDate).toLocaleDateString()
                     }));
-                    filename = 'vehiculos_autoventas.json';
+                    filename = 'vehiculos_autoxpert.json';
                     break;
                 default:
                     data = { usuarios: users, vehiculos: vehicles, configuracion: siteConfig, fecha: new Date().toISOString() };
-                    filename = 'backup_autoventas.json';
+                    filename = 'backup_autoxpert.json';
             }
 
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -4332,11 +4337,11 @@
             }
         }
 
-        function clearJsonBinData() {
-            if (!confirm('<i class="fas fa-exclamation-triangle"></i> ADVERTENCIA <i class="fas fa-exclamation-triangle"></i>\n\n¿Eliminar TODOS los datos de JSONBin?\n\nEsta acción es IRREVERSIBLE.')) return;
+        function clearSupabaseData() {
+            if (!confirm('<i class="fas fa-exclamation-triangle"></i> ADVERTENCIA <i class="fas fa-exclamation-triangle"></i>\n\n¿Eliminar TODOS los datos de Supabase?\n\nEsta acción es IRREVERSIBLE.')) return;
             const confirmation = prompt('Escribe exactamente "ELIMINAR TODO" para confirmar:');
             if (confirmation === 'ELIMINAR TODO') {
-                showNotification('Para limpiar los datos, hazlo directamente en tu cuenta de jsonbin.io', 'warning');
+                showNotification('Para limpiar los datos, hazlo desde el Table Editor o el SQL Editor de tu proyecto de Supabase', 'warning');
             } else {
                 showNotification('Confirmación incorrecta. Operación cancelada.', 'info');
             }
@@ -4381,9 +4386,9 @@
                 showLoading();
 
                 await Promise.all([
-                    loadVehiclesFromJsonBin(),
-                    loadUsersFromJsonBin(),
-                    loadConfigFromJsonBin()
+                    loadVehiclesFromSupabase(),
+                    loadUsersFromSupabase(),
+                    loadConfigFromSupabase()
                 ]);
 
                 isLoggedIn();
@@ -4393,7 +4398,7 @@
             } catch (error) {
                 console.error('Error inicializando app:', error);
                 hideLoading();
-                showNotification('Error al cargar la aplicación. Verifica la configuración de JSONBin.', 'error');
+                showNotification('Error al cargar la aplicación. Verifica la configuración de Supabase.', 'error');
                 vehicles = [];
                 users    = [];
                 isLoggedIn();
