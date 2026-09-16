@@ -169,6 +169,14 @@
     .spec-row .label { color: var(--text-secondary); flex-shrink: 0; }
     .spec-row .value { margin-left: auto; text-align: right; font-weight: 600; }
 
+    .social-row { display: flex; justify-content: center; gap: 12px; margin: 6px 0 4px; }
+    .social-link {
+        width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-secondary);
+        font-size: 1rem; text-decoration: none; transition: all 0.2s ease;
+    }
+    .social-link:hover { background: var(--primary-dim); border-color: var(--border); color: var(--primary); transform: translateY(-2px); }
+
     .footer-note { text-align: center; color: var(--text-muted); font-size: 0.72rem; padding: 10px 20px 0; line-height: 1.6; }
 
     @media (min-width: 760px) {
@@ -182,7 +190,7 @@
 <body>
 
 <div class="topbar">
-    <img src="https://i.ibb.co/9mjRJBcb/Logo.png" alt="AutoXpert">
+    <img src="https://i.ibb.co/9mjRJBcb/Logo.png" alt="AutoXpert" referrerpolicy="no-referrer" onerror="this.style.display='none'">
     <span>AutoXpert</span>
     <span class="tag"><i class="fas fa-qrcode"></i> Ficha QR</span>
 </div>
@@ -207,7 +215,16 @@
 ============================================================= */
 const SUPABASE_URL = 'https://byqwdkpezhopinayhcpx.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_rIQycAzWYChxXCJuxLjyEA_1_gTMbyG';
-const CATALOG_URL  = 'https://tu-dominio.com/autoventas.html'; // <-- EDITA ESTO
+const CATALOG_URL  = 'https://autoxpertshop.vercel.app';
+
+// Redes sociales: pega aquí tus enlaces reales. El ícono de cada red
+// solo aparece en la ficha si su enlace no está vacío.
+const SOCIAL_LINKS = {
+    instagram: '',  // <-- ej: 'https://instagram.com/tuusuario'
+    facebook:  '',  // <-- ej: 'https://facebook.com/tupagina'
+    tiktok:    '',  // <-- ej: 'https://tiktok.com/@tuusuario'
+    whatsapp:  ''   // <-- ej: 'https://wa.me/584121234567' (canal o número general, distinto al del vehículo)
+};
 
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -361,9 +378,23 @@ function renderVehicle() {
                 ${specRow('fa-pencil-alt', 'Nota', vehicle.notes)}
             </div>
 
+            ${renderSocialRow()}
             <div class="footer-note">Ficha generada automáticamente desde la calcomanía QR del vehículo · AutoXpert</div>
         </div>
     `;
+}
+
+function renderSocialRow() {
+    const items = [
+        { key: 'instagram', icon: 'fa-instagram' },
+        { key: 'facebook',  icon: 'fa-facebook' },
+        { key: 'tiktok',    icon: 'fa-tiktok' },
+        { key: 'whatsapp',  icon: 'fa-whatsapp' }
+    ].filter(i => SOCIAL_LINKS[i.key]);
+    if (!items.length) return '';
+    return `<div class="social-row">${items.map(i =>
+        `<a class="social-link" href="${SOCIAL_LINKS[i.key]}" target="_blank" rel="noopener"><i class="fab ${i.icon}"></i></a>`
+    ).join('')}</div>`;
 }
 
 function specRow(icon, label, value) {
