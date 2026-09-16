@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AutoXpert · Ficha del vehículo</title>
+<meta name="description" content="Ficha del vehículo — AutoXpert">
+<link rel="icon" type="image/png" href="https://i.ibb.co/gbNsQLyv/Chat-GPT-Image-14-ago-2026-09-00-26-p-m.png">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    /* =============================================
+       Mismos tokens visuales que autoventas.html
+       (rojo premium / negro profundo) para que la
+       ficha se sienta parte del mismo sitio.
+    ============================================= */
+    :root {
+        --primary: #E10600;
+        --primary-dim: rgba(225, 6, 0, 0.14);
+        --primary-glow: rgba(225, 6, 0, 0.4);
+        --secondary: #9E9E9E;
+        --accent: #F5F5F5;
+
+        --bg-base: #0a0a0a;
+        --bg-card: #131313;
+        --bg-surface: #1a1a1a;
+        --bg-elevated: #212121;
+
+        --border: rgba(225, 6, 0, 0.18);
+        --border-light: rgba(255, 255, 255, 0.08);
+
+        --text: #f2f2f2;
+        --text-muted: #7a7a7a;
+        --text-secondary: #b0b0b0;
+
+        --success: #00e676;
+        --error: #ff5252;
+
+        --shadow-md: 0 10px 32px -6px rgba(0,0,0,0.55);
+        --shadow-lg: 0 24px 64px -12px rgba(0,0,0,0.65);
+
+        --radius-sm: 10px;
+        --radius-md: 16px;
+        --radius-lg: 22px;
+
+        --safe-b: env(safe-area-inset-bottom, 0px);
+        --safe-t: env(safe-area-inset-top, 0px);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+        font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg-base);
+        color: var(--text);
+        min-height: 100vh;
+        padding-bottom: calc(24px + var(--safe-b));
+    }
+
+    /* ---- Topbar ---- */
+    .topbar {
+        display: flex; align-items: center; gap: 10px;
+        padding: calc(14px + var(--safe-t)) 18px 14px;
+        background: rgba(10,10,10,0.9);
+        border-bottom: 1px solid var(--border-light);
+        position: sticky; top: 0; z-index: 20;
+        backdrop-filter: blur(10px);
+    }
+    .topbar img { height: 30px; width: 30px; border-radius: 8px; object-fit: cover; }
+    .topbar span { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; }
+    .topbar .tag {
+        margin-left: auto; font-size: 0.7rem; font-weight: 700; color: var(--primary);
+        background: var(--primary-dim); padding: 5px 10px; border-radius: 20px;
+        display: flex; align-items: center; gap: 6px;
+    }
+
+    .wrap { max-width: 900px; margin: 0 auto; padding: 0 0 20px; }
+
+    /* ---- Estados: cargando / error ---- */
+    .state-screen {
+        min-height: 70vh; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; text-align: center;
+        padding: 40px 24px; gap: 14px;
+    }
+    .spinner {
+        width: 42px; height: 42px; border-radius: 50%;
+        border: 3px solid var(--border-light); border-top-color: var(--primary);
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .state-icon { font-size: 2.6rem; color: var(--primary); opacity: 0.85; }
+    .state-title { font-size: 1.15rem; font-weight: 800; }
+    .state-text { color: var(--text-secondary); font-size: 0.92rem; max-width: 340px; line-height: 1.5; }
+
+    /* ---- Galería ---- */
+    .gallery { position: relative; background: var(--bg-card); }
+    .main-image-box {
+        position: relative; width: 100%; aspect-ratio: 4 / 3;
+        background: var(--bg-surface); overflow: hidden;
+    }
+    .main-image-box img {
+        width: 100%; height: 100%; object-fit: cover; display: block;
+        animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0.3; } to { opacity: 1; } }
+    .gallery-arrow {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        width: 38px; height: 38px; border-radius: 50%;
+        background: rgba(10,10,10,0.55); border: 1px solid var(--border-light);
+        color: #fff; display: flex; align-items: center; justify-content: center;
+        font-size: 0.95rem; cursor: pointer; z-index: 5;
+    }
+    .gallery-arrow.prev { left: 10px; } .gallery-arrow.next { right: 10px; }
+    .sold-ribbon {
+        position: absolute; top: 14px; left: 14px; z-index: 5;
+        background: linear-gradient(45deg, var(--secondary), var(--accent));
+        color: #141414; font-weight: 800; font-size: 0.75rem;
+        padding: 6px 12px; border-radius: 8px; letter-spacing: 0.02em;
+    }
+    .thumbnails {
+        display: flex; gap: 8px; padding: 10px 14px; overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .thumbnails::-webkit-scrollbar { display: none; }
+    .thumb {
+        width: 58px; height: 58px; border-radius: 10px; object-fit: cover;
+        flex-shrink: 0; cursor: pointer; opacity: 0.5; border: 2px solid transparent;
+        transition: all 0.2s ease;
+    }
+    .thumb.active { opacity: 1; border-color: var(--primary); }
+
+    /* ---- Contenido ---- */
+    .content { padding: 18px; }
+    .veh-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .veh-location { color: var(--text-secondary); font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
+    .price-box {
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-radius: var(--radius-md); padding: 16px; text-align: center;
+        font-size: 1.6rem; font-weight: 900; color: var(--primary);
+        margin-bottom: 14px;
+    }
+    .price-box.sold { color: var(--secondary); }
+    .price-box .label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+
+    .btn { display: flex; align-items: center; justify-content: center; gap: 9px;
+        width: 100%; padding: 15px; border-radius: var(--radius-md); border: none;
+        font-family: inherit; font-weight: 700; font-size: 0.98rem; cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.15s ease; text-decoration: none;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-whatsapp { background: #25D366; color: #fff; margin-bottom: 10px; }
+    .btn-whatsapp:disabled { background: var(--bg-elevated); color: var(--text-muted); cursor: not-allowed; }
+    .btn-outline {
+        background: transparent; color: var(--text); border: 1.5px solid var(--border-light);
+        margin-bottom: 22px;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    .specs { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 20px; }
+    .spec-row {
+        display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+        border-bottom: 1px solid var(--border-light); font-size: 0.9rem;
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-row .icon { width: 20px; text-align: center; color: var(--primary); }
+    .spec-row .label { color: var(--text-secondary); flex-shrink: 0; }
+    .spec-row .value { margin-left: auto; text-align: right; font-weight: 600; }
+
+    .footer-note { text-align: center; color: var(--text-muted); font-size: 0.72rem; padding: 10px 20px 0; line-height: 1.6; }
+
+    @media (min-width: 760px) {
+        .wrap { padding-top: 24px; }
+        .gallery { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-light); }
+        .main-image-box { aspect-ratio: 16 / 10; }
+        .content { padding: 22px 4px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <img src="https://i.ibb.co/9mjRJBcb/Logo.png" alt="AutoXpert">
+    <span>AutoXpert</span>
+    <span class="tag"><i class="fas fa-qrcode"></i> Ficha QR</span>
+</div>
+
+<div class="wrap" id="app">
+    <!-- El contenido se genera por JavaScript según el estado -->
+</div>
+
+<!-- ===== SUPABASE SDK ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+/* ==========================================================
+   CONFIGURACIÓN — edita estas 2 líneas si cambian
+
+   SUPABASE_URL / SUPABASE_KEY: las mismas que usa
+   autoventas.html (mismo proyecto, misma data, mismas fotos).
+
+   CATALOG_URL: la URL pública donde queda alojado
+   autoventas.html (el catálogo completo). El botón
+   "Ver más vehículos" de esta ficha abre esa URL.
+============================================================= */
+const SUPABASE_URL = 'https://byqwdkpezhopinayhcpx.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_rIQycAzWYChxXCJuxLjyEA_1_gTMbyG';
+const CATALOG_URL  = 'https://tu-dominio.com/autoventas.html'; // <-- EDITA ESTO
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ===================================================
+   VEHICLE_FIELD_MAP — igual que en autoventas.html,
+   para traducir columnas snake_case -> claves camelCase
+==================================================== */
+const VEHICLE_FIELD_MAP = {
+    year: 'year', brand: 'brand', model: 'model', price: 'price',
+    sold: 'sold', featured: 'featured', images: 'images',
+    transmission: 'transmission', ac: 'ac', radio: 'radio',
+    mileage: 'mileage', color: 'color', owners: 'owners', keys: 'keys',
+    tires: 'tires', location: 'location', extras: 'extras', notes: 'notes',
+    owner: 'owner', ownerWhatsApp: 'owner_whatsapp',
+    publishDate: 'publish_date', publicationStatus: 'publication_status'
+};
+function vehicleRowToApp(row) {
+    const v = { id: row.id };
+    Object.keys(VEHICLE_FIELD_MAP).forEach(k => { v[k] = row[VEHICLE_FIELD_MAP[k]]; });
+    v.images = v.images || [];
+    return v;
+}
+
+let vehicle = null;
+let currentImageIndex = 0;
+
+function getSerialFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return (params.get('s') || params.get('serial') || '').trim();
+}
+
+async function init() {
+    const serial = getSerialFromUrl();
+    if (!serial) { renderState('invalid'); return; }
+
+    renderState('loading');
+
+    try {
+        const { data: qr, error: qrError } = await db
+            .from('vehicle_qr_codes')
+            .select('*')
+            .eq('serial', serial)
+            .eq('status', 'active')
+            .maybeSingle();
+
+        if (qrError) throw qrError;
+        if (!qr) { renderState('invalid'); return; }
+
+        const { data: vRow, error: vError } = await db
+            .from('vehicles')
+            .select('*')
+            .eq('id', qr.vehicle_id)
+            .maybeSingle();
+
+        if (vError) throw vError;
+        if (!vRow) { renderState('notfound'); return; }
+
+        vehicle = vehicleRowToApp(vRow);
+        renderVehicle();
+        logScan(serial); // no bloquea el render, no importa si falla
+    } catch (err) {
+        console.error('Error cargando la ficha:', err);
+        renderState('error');
+    }
+}
+
+function logScan(serial) {
+    db.from('vehicle_qr_scans').insert({
+        serial: serial,
+        user_agent: navigator.userAgent,
+        referrer: document.referrer || null
+    }).then(() => {}).catch(() => {});
+}
+
+/* ===================================================
+   ESTADOS (cargando / inválido / no encontrado / error)
+==================================================== */
+function renderState(type) {
+    const app = document.getElementById('app');
+    const states = {
+        loading: {
+            icon: '<div class="spinner"></div>', title: 'Cargando ficha…',
+            text: 'Estamos buscando los datos del vehículo.'
+        },
+        invalid: {
+            icon: '<i class="fas fa-qrcode state-icon"></i>', title: 'Código no válido',
+            text: 'Este enlace no corresponde a ninguna calcomanía activa. Si acabas de escanearlo, puede que el código esté incompleto.'
+        },
+        notfound: {
+            icon: '<i class="fas fa-car-side state-icon"></i>', title: 'Vehículo no disponible',
+            text: 'Esta ficha ya no está disponible. Puede que el vehículo haya sido retirado del catálogo.'
+        },
+        error: {
+            icon: '<i class="fas fa-triangle-exclamation state-icon"></i>', title: 'No pudimos cargar la ficha',
+            text: 'Ocurrió un problema de conexión. Intenta de nuevo en unos segundos.'
+        }
+    };
+    const s = states[type] || states.error;
+    app.innerHTML = `
+        <div class="state-screen">
+            ${s.icon}
+            <div class="state-title">${s.title}</div>
+            <div class="state-text">${s.text}</div>
+            ${type !== 'loading' ? `<a class="btn btn-outline" style="width:auto;padding:12px 22px;margin-top:6px;" href="${CATALOG_URL}"><i class="fas fa-arrow-right"></i> Ver todos los vehículos</a>` : ''}
+        </div>
+    `;
+}
+
+/* ===================================================
+   FICHA DEL VEHÍCULO
+==================================================== */
+function renderVehicle() {
+    const app = document.getElementById('app');
+    const images = vehicle.images.length ? vehicle.images : ['https://placehold.co/800x600/131313/7a7a7a?text=Sin+foto'];
+
+    app.innerHTML = `
+        <div class="gallery">
+            <div class="main-image-box">
+                ${vehicle.sold ? '<div class="sold-ribbon"><i class="fas fa-trophy"></i> VENDIDO</div>' : ''}
+                ${images.length > 1 ? '<div class="gallery-arrow prev" onclick="prevImage()"><i class="fas fa-chevron-left"></i></div><div class="gallery-arrow next" onclick="nextImage()"><i class="fas fa-chevron-right"></i></div>' : ''}
+                <img id="mainImage" src="${images[0]}" alt="${vehicle.brand} ${vehicle.model}">
+            </div>
+            ${images.length > 1 ? `<div class="thumbnails" id="thumbnails">${images.map((img, i) => `<img class="thumb ${i === 0 ? 'active' : ''}" src="${img}" onclick="setImage(${i})">`).join('')}</div>` : ''}
+        </div>
+
+        <div class="content">
+            <div class="veh-title">${vehicle.year} • ${vehicle.brand} ${vehicle.model}</div>
+            ${vehicle.location ? `<div class="veh-location"><i class="fas fa-map-marker-alt"></i> ${vehicle.location}</div>` : ''}
+
+            <div class="price-box ${vehicle.sold ? 'sold' : ''}">
+                <span class="label">${vehicle.sold ? 'Vehículo vendido' : 'Precio'}</span>
+                ${vehicle.price || 'Consultar'}
+            </div>
+
+            ${vehicle.sold
+                ? `<button class="btn btn-whatsapp" disabled><i class="fas fa-check-circle"></i> Este vehículo ya fue vendido</button>`
+                : `<button class="btn btn-whatsapp" onclick="contactOwner()"><i class="fab fa-whatsapp"></i> Contactar por WhatsApp</button>`
+            }
+            <a class="btn btn-outline" href="${CATALOG_URL}"><i class="fas fa-th-large"></i> Ver más vehículos</a>
+
+            <div class="specs">
+                ${specRow('fa-flag-checkered', 'Transmisión', vehicle.transmission)}
+                ${specRow('fa-snowflake', 'A/A', vehicle.ac)}
+                ${specRow('fa-sliders-h', 'Radio', vehicle.radio)}
+                ${specRow('fa-road', 'Recorrido', vehicle.mileage)}
+                ${specRow('fa-palette', 'Color', vehicle.color)}
+                ${specRow('fa-key', 'Dueños', vehicle.owners)}
+                ${specRow('fa-key', 'Llaves', vehicle.keys)}
+                ${specRow('fa-circle-dot', 'Cauchos', vehicle.tires)}
+                ${specRow('fa-cog', 'Extras', vehicle.extras)}
+                ${specRow('fa-pencil-alt', 'Nota', vehicle.notes)}
+            </div>
+
+            <div class="footer-note">Ficha generada automáticamente desde la calcomanía QR del vehículo · AutoXpert</div>
+        </div>
+    `;
+}
+
+function specRow(icon, label, value) {
+    if (value === undefined || value === null || value === '') return '';
+    return `<div class="spec-row"><span class="icon"><i class="fas ${icon}"></i></span><span class="label">${label}</span><span class="value">${value}</span></div>`;
+}
+
+function setImage(i) {
+    currentImageIndex = i;
+    document.getElementById('mainImage').src = vehicle.images[i];
+    document.querySelectorAll('.thumb').forEach((t, idx) => t.classList.toggle('active', idx === i));
+}
+function prevImage() { setImage((currentImageIndex - 1 + vehicle.images.length) % vehicle.images.length); }
+function nextImage() { setImage((currentImageIndex + 1) % vehicle.images.length); }
+
+// Deslizar con el dedo para cambiar de foto (móvil)
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+document.addEventListener('touchend', e => {
+    if (!vehicle || vehicle.images.length < 2) return;
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 50) dx < 0 ? nextImage() : prevImage();
+}, { passive: true });
+
+function contactOwner() {
+    if (!vehicle) return;
+    const wp = vehicle.ownerWhatsApp || '+58 000 000 0000';
+    const msg = `¡Hola! Vi el aviso "SE VENDE" en el vehículo ${vehicle.year} ${vehicle.brand} ${vehicle.model} (${vehicle.price}). ¿Podríamos hablar?`;
+    window.open(`https://wa.me/${wp.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+init();
+</script>
+</body>
+</html>
