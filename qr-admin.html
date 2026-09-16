@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoXpert · Admin de calcomanías QR</title>
+<link rel="icon" type="image/png" href="https://i.ibb.co/gbNsQLyv/Chat-GPT-Image-14-ago-2026-09-00-26-p-m.png">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #E10600; --primary-dim: rgba(225,6,0,0.14); --primary-glow: rgba(225,6,0,0.4);
+        --secondary: #9E9E9E; --accent: #F5F5F5;
+        --bg-base: #0a0a0a; --bg-card: #131313; --bg-surface: #1a1a1a; --bg-elevated: #212121;
+        --border: rgba(225,6,0,0.18); --border-light: rgba(255,255,255,0.08);
+        --text: #f2f2f2; --text-muted: #7a7a7a; --text-secondary: #b0b0b0;
+        --success: #00e676; --warning: #ffca28; --error: #ff5252;
+        --radius-sm: 10px; --radius-md: 16px; --radius-lg: 22px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg-base); color: var(--text); height: 100vh; overflow: hidden; }
+    button, input, select { font-family: inherit; }
+
+    /* ---- Login gate ---- */
+    #loginScreen {
+        position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;
+        background: var(--bg-base);
+    }
+    .login-card { width: 100%; max-width: 340px; padding: 32px 28px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); text-align: center; }
+    .login-card img { width: 52px; height: 52px; border-radius: 12px; margin-bottom: 14px; }
+    .login-card h1 { font-size: 1.1rem; margin-bottom: 4px; }
+    .login-card p { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 18px; }
+    .login-card input {
+        width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);
+        background: var(--bg-surface); color: var(--text); margin-bottom: 12px; font-size: 0.95rem;
+    }
+    .login-card input:focus { outline: none; border-color: var(--primary); }
+    .login-error { color: var(--error); font-size: 0.78rem; margin-bottom: 10px; display: none; }
+
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 11px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer;
+        font-weight: 700; font-size: 0.88rem; transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--primary); color: #fff; width: 100%; }
+    .btn-primary:hover { box-shadow: 0 0 18px var(--primary-glow); }
+    .btn-secondary { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border-light); }
+    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-danger { background: rgba(255,82,82,0.12); color: var(--error); border: 1px solid rgba(255,82,82,0.35); }
+    .btn-sm { padding: 8px 12px; font-size: 0.78rem; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ---- App shell ---- */
+    #app { display: none; height: 100vh; flex-direction: column; }
+    .topbar {
+        display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+        background: rgba(10,10,10,0.95); border-bottom: 1px solid var(--border-light); flex-shrink: 0;
+    }
+    .topbar img { width: 30px; height: 30px; border-radius: 8px; }
+    .topbar .title { font-weight: 800; }
+    .topbar .subtitle { color: var(--text-muted); font-size: 0.75rem; }
+    .topbar .spacer { flex: 1; }
+
+    .layout { flex: 1; display: flex; overflow: hidden; }
+
+    /* ---- Lista de vehículos ---- */
+    .list-pane { width: 380px; flex-shrink: 0; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; background: var(--bg-card); }
+    .list-search { padding: 14px; border-bottom: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px; }
+    .search-input {
+        width: 100%; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);
+        background: var(--bg-surface); color: var(--text); font-size: 0.88rem;
+    }
+    .search-input:focus { outline: none; border-color: var(--primary); }
+    .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+        padding: 5px 11px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer;
+        background: var(--bg-surface); color: var(--text-secondary); border: 1px solid transparent;
+    }
+    .chip.active { background: var(--primary-dim); color: var(--primary); border-color: var(--border); }
+
+    .vehicle-list { flex: 1; overflow-y: auto; }
+    .vehicle-row {
+        display: flex; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border-light);
+        cursor: pointer; transition: background 0.15s ease;
+    }
+    .vehicle-row:hover { background: var(--bg-surface); }
+    .vehicle-row.selected { background: var(--primary-dim); border-left: 3px solid var(--primary); }
+    .vehicle-row img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: var(--bg-elevated); }
+    .vehicle-row .info { min-width: 0; flex: 1; }
+    .vehicle-row .name { font-weight: 700; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vehicle-row .meta { color: var(--text-muted); font-size: 0.74rem; margin-top: 2px; }
+    .badges { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+    .badge { font-size: 0.62rem; font-weight: 800; padding: 2px 7px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .badge-approved { background: rgba(0,230,118,0.14); color: var(--success); }
+    .badge-pending  { background: rgba(255,202,40,0.14); color: var(--warning); }
+    .badge-rejected { background: rgba(255,82,82,0.14); color: var(--error); }
+    .badge-sold     { background: rgba(158,158,158,0.18); color: var(--secondary); }
+    .badge-qr-active  { background: rgba(225,6,0,0.16); color: var(--primary); }
+    .badge-qr-none    { background: var(--bg-elevated); color: var(--text-muted); }
+
+    .empty-hint { padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+
+    /* ---- Panel de detalle ---- */
+    .detail-pane { flex: 1; overflow-y: auto; padding: 26px; }
+    .detail-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-muted); }
+    .detail-empty i { font-size: 2.4rem; opacity: 0.4; }
+
+    .back-btn { display: none; margin-bottom: 14px; }
+
+    .veh-header { display: flex; gap: 16px; align-items: center; margin-bottom: 22px; }
+    .veh-header img { width: 84px; height: 84px; border-radius: 14px; object-fit: cover; background: var(--bg-elevated); }
+    .veh-header h2 { font-size: 1.2rem; margin-bottom: 4px; }
+    .veh-header .price { color: var(--primary); font-weight: 800; }
+
+    .card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 20px; margin-bottom: 18px; }
+    .card h3 { font-size: 0.95rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .card h3 i { color: var(--primary); }
+
+    .qr-status-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .serial-box {
+        display: flex; align-items: center; gap: 10px; background: var(--bg-surface); border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm); padding: 10px 14px; font-family: monospace; font-size: 0.95rem; letter-spacing: 0.06em;
+    }
+    .link-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+    .link-row .url-display {
+        flex: 1; min-width: 200px; padding: 9px 12px; background: var(--bg-surface); border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm); font-size: 0.78rem; color: var(--text-secondary); overflow-x: auto; white-space: nowrap;
+    }
+    .stat-line { display: flex; gap: 18px; margin-top: 14px; color: var(--text-secondary); font-size: 0.82rem; }
+    .stat-line b { color: var(--text); }
+
+    .field-row { display: flex; gap: 12px; margin-bottom: 14px; }
+    .field { flex: 1; }
+    .field label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+    .field input {
+        width: 100%; padding: 9px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);
+        background: var(--bg-surface); color: var(--text); font-size: 0.88rem;
+    }
+    .field input:focus { outline: none; border-color: var(--primary); }
+
+    .decal-preview-wrap { display: flex; justify-content: center; padding: 18px; border-radius: var(--radius-md);
+        background-image: repeating-conic-gradient(#242424 0% 25%, #1a1a1a 0% 50%); background-size: 16px 16px;
+        margin-bottom: 16px; min-height: 200px; align-items: center;
+    }
+    .decal-preview-wrap svg { max-width: 100%; height: auto; max-height: 420px; background: transparent; }
+    .decal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .decal-note { font-size: 0.76rem; color: var(--text-muted); margin-top: 12px; line-height: 1.6; display: flex; gap: 8px; }
+    .decal-note i { color: var(--primary); margin-top: 2px; }
+
+    .toast {
+        position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+        background: var(--bg-elevated); border: 1px solid var(--border-light); padding: 11px 20px;
+        border-radius: 40px; font-size: 0.85rem; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        display: flex; align-items: center; gap: 8px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+    }
+    .toast.show { opacity: 1; }
+    .toast.error { color: var(--error); }
+    .toast.success i { color: var(--success); }
+
+    @media (max-width: 880px) {
+        .list-pane { width: 100%; border-right: none; }
+        .layout.showing-detail .list-pane { display: none; }
+        .layout:not(.showing-detail) .detail-pane { display: none; }
+        .back-btn { display: inline-flex; }
+        .detail-pane { padding: 18px; }
+    }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+    <div class="login-card">
+        <img src="https://i.ibb.co/9mjRJBcb/Logo.png" alt="AutoXpert">
+        <h1>Admin de calcomanías QR</h1>
+        <p>Panel independiente de autoventas.html · misma base de datos</p>
+        <div class="login-error" id="loginError">Contraseña incorrecta.</div>
+        <input type="password" id="loginPass" placeholder="Contraseña" onkeydown="if(event.key==='Enter') doLogin()">
+        <button class="btn btn-primary" onclick="doLogin()"><i class="fas fa-unlock"></i> Entrar</button>
+    </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app">
+    <div class="topbar">
+        <img src="https://i.ibb.co/9mjRJBcb/Logo.png" alt="AutoXpert">
+        <div>
+            <div class="title">Admin de calcomanías QR</div>
+            <div class="subtitle">Genera el serial, el QR y el vector para plotter de cada vehículo</div>
+        </div>
+        <div class="spacer"></div>
+        <button class="btn btn-secondary btn-sm" onclick="loadVehicles()"><i class="fas fa-rotate"></i> Recargar</button>
+    </div>
+
+    <div class="layout" id="layout">
+        <div class="list-pane">
+            <div class="list-search">
+                <input class="search-input" id="searchInput" placeholder="Buscar por marca, modelo o año…" oninput="renderList()">
+                <div class="filter-chips" id="filterChips">
+                    <div class="chip active" data-filter="all" onclick="setFilter('all')">Todos</div>
+                    <div class="chip" data-filter="approved" onclick="setFilter('approved')">Aprobados</div>
+                    <div class="chip" data-filter="no-qr" onclick="setFilter('no-qr')">Sin QR</div>
+                    <div class="chip" data-filter="with-qr" onclick="setFilter('with-qr')">Con QR</div>
+                </div>
+            </div>
+            <div class="vehicle-list" id="vehicleList">
+                <div class="empty-hint"><i class="fas fa-spinner fa-spin"></i><br>Cargando vehículos…</div>
+            </div>
+        </div>
+
+        <div class="detail-pane" id="detailPane">
+            <div class="detail-empty">
+                <i class="fas fa-qrcode"></i>
+                <div>Selecciona un vehículo para generar su calcomanía</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== LIBRERÍAS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-svg@1.1.0/lib/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js"></script>
+
+<script>
+/* ==========================================================
+   CONFIGURACIÓN — revisa/edita estas líneas
+
+   SUPABASE_URL / SUPABASE_KEY: las mismas que usa
+   autoventas.html — este panel lee y escribe sobre el mismo
+   proyecto, no es una base de datos aparte.
+
+   FICHA_BASE_URL: dónde vas a alojar ficha.html. El QR de cada
+   calcomanía codifica FICHA_BASE_URL + "?s=" + serial.
+
+   ADMIN_PASSWORD: contraseña simple para entrar a este panel
+   (igual de nivel de seguridad que el admin de autoventas.html:
+   vive en el código fuente, cualquiera con el archivo puede
+   leerla. Para algo más serio, migra esto a Supabase Auth).
+============================================================= */
+const SUPABASE_URL   = 'https://byqwdkpezhopinayhcpx.supabase.co';
+const SUPABASE_KEY   = 'sb_publishable_rIQycAzWYChxXCJuxLjyEA_1_gTMbyG';
+const FICHA_BASE_URL = 'https://tu-dominio.com/ficha.html'; // <-- EDITA ESTO
+const ADMIN_PASSWORD = 'autoxpert2026';                      // <-- EDITA ESTO
+const DECAL_FONT_URL = 'https://raw.githubusercontent.com/google/fonts/main/ofl/archivoblack/ArchivoBlack-Regular.ttf';
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ===================================================
+   AUTENTICACIÓN (simple, ver nota arriba)
+==================================================== */
+function doLogin() {
+    const val = document.getElementById('loginPass').value;
+    if (val === ADMIN_PASSWORD) {
+        sessionStorage.setItem('qrAdminAuth', '1');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        loadVehicles();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+}
+if (sessionStorage.getItem('qrAdminAuth') === '1') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    window.addEventListener('DOMContentLoaded', loadVehicles);
+}
+
+/* ===================================================
+   ESTADO
+==================================================== */
+let vehicles = [];      // vehículos crudos desde Supabase
+let qrByVehicle = {};   // vehicle_id -> fila activa de vehicle_qr_codes
+let selectedId = null;
+let currentFilter = 'all';
+
+function toast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-triangle-exclamation'}"></i> ${msg}`;
+    t.className = `toast show ${type}`;
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ===================================================
+   CARGA DE DATOS
+==================================================== */
+async function loadVehicles() {
+    document.getElementById('vehicleList').innerHTML = '<div class="empty-hint"><i class="fas fa-spinner fa-spin"></i><br>Cargando vehículos…</div>';
+    try {
+        const { data: vData, error: vErr } = await db
+            .from('vehicles')
+            .select('id, year, brand, model, price, images, sold, publication_status')
+            .order('publish_date', { ascending: false });
+        if (vErr) throw vErr;
+        vehicles = vData || [];
+
+        const { data: qData, error: qErr } = await db
+            .from('vehicle_qr_codes')
+            .select('*')
+            .eq('status', 'active');
+        if (qErr) throw qErr;
+
+        qrByVehicle = {};
+        (qData || []).forEach(row => {
+            // por si hubiera más de uno activo, nos quedamos con el más reciente
+            if (!qrByVehicle[row.vehicle_id] || row.created_at > qrByVehicle[row.vehicle_id].created_at) {
+                qrByVehicle[row.vehicle_id] = row;
+            }
+        });
+
+        renderList();
+        if (selectedId) selectVehicle(selectedId);
+    } catch (err) {
+        console.error(err);
+        document.getElementById('vehicleList').innerHTML = '<div class="empty-hint">Error al cargar. Revisa la configuración de Supabase.</div>';
+    }
+}
+
+function setFilter(f) {
+    currentFilter = f;
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+    renderList();
+}
+
+/* ===================================================
+   LISTA DE VEHÍCULOS
+==================================================== */
+function renderList() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const container = document.getElementById('vehicleList');
+
+    let list = vehicles.filter(v => {
+        if (q) {
+            const hay = `${v.brand} ${v.model} ${v.year}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+        }
+        const hasQr = !!qrByVehicle[v.id];
+        if (currentFilter === 'approved' && v.publication_status !== 'approved') return false;
+        if (currentFilter === 'no-qr' && hasQr) return false;
+        if (currentFilter === 'with-qr' && !hasQr) return false;
+        return true;
+    });
+
+    if (list.length === 0) {
+        container.innerHTML = '<div class="empty-hint">No hay vehículos que coincidan.</div>';
+        return;
+    }
+
+    container.innerHTML = list.map(v => {
+        const qr = qrByVehicle[v.id];
+        const img = (v.images && v.images[0]) || 'https://placehold.co/100x100/1a1a1a/7a7a7a?text=%20';
+        const statusBadge = v.publication_status === 'approved' ? '<span class="badge badge-approved">Aprobado</span>'
+            : v.publication_status === 'pending' ? '<span class="badge badge-pending">Pendiente</span>'
+            : v.publication_status === 'rejected' ? '<span class="badge badge-rejected">Rechazado</span>' : '';
+        return `
+            <div class="vehicle-row ${v.id === selectedId ? 'selected' : ''}" onclick="selectVehicle('${v.id}')">
+                <img src="${img}" alt="">
+                <div class="info">
+                    <div class="name">${v.year} ${v.brand} ${v.model}</div>
+                    <div class="meta">${v.price || ''}</div>
+                    <div class="badges">
+                        ${statusBadge}
+                        ${v.sold ? '<span class="badge badge-sold">Vendido</span>' : ''}
+                        ${qr ? '<span class="badge badge-qr-active"><i class="fas fa-qrcode"></i> ' + qr.serial + '</span>' : '<span class="badge badge-qr-none">Sin QR</span>'}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/* ===================================================
+   SELECCIÓN Y PANEL DE DETALLE
+==================================================== */
+function selectVehicle(id) {
+    selectedId = id;
+    document.getElementById('layout').classList.add('showing-detail');
+    renderList();
+    renderDetail();
+}
+
+function backToList() {
+    document.getElementById('layout').classList.remove('showing-detail');
+}
+
+async function renderDetail() {
+    const v = vehicles.find(x => x.id === selectedId);
+    const pane = document.getElementById('detailPane');
+    if (!v) { pane.innerHTML = '<div class="detail-empty"><i class="fas fa-qrcode"></i><div>Selecciona un vehículo</div></div>'; return; }
+
+    const qr = qrByVehicle[v.id];
+    const img = (v.images && v.images[0]) || 'https://placehold.co/200x200/1a1a1a/7a7a7a?text=%20';
+    const fichaUrl = qr ? `${FICHA_BASE_URL}?s=${qr.serial}` : '';
+
+    pane.innerHTML = `
+        <button class="btn btn-secondary btn-sm back-btn" onclick="backToList()"><i class="fas fa-arrow-left"></i> Volver a la lista</button>
+
+        <div class="veh-header">
+            <img src="${img}" alt="">
+            <div>
+                <h2>${v.year} ${v.brand} ${v.model}</h2>
+                <div class="price">${v.price || ''}</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-qrcode"></i> Calcomanía / serial</h3>
+            <div id="qrStatusArea">Cargando…</div>
+        </div>
+
+        <div class="card" id="decalCard" style="${qr ? '' : 'display:none;'}">
+            <h3><i class="fas fa-vector-square"></i> Vector para plotter</h3>
+            <div class="field-row">
+                <div class="field"><label>Ancho (mm)</label><input type="number" id="decalWidth" value="100" min="60" max="300" onchange="updatePreview()"></div>
+                <div class="field"><label>Alto (mm)</label><input type="number" id="decalHeight" value="140" min="60" max="300" onchange="updatePreview()"></div>
+            </div>
+            <div class="decal-preview-wrap" id="decalPreview">
+                <span style="color:var(--text-muted);font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Generando vista previa…</span>
+            </div>
+            <div class="decal-actions">
+                <button class="btn btn-primary" onclick="downloadDecal()"><i class="fas fa-download"></i> Descargar SVG</button>
+            </div>
+            <div class="decal-note">
+                <i class="fas fa-circle-info"></i>
+                <span>El texto "SE VENDE", el año y el QR ya están convertidos a rutas vectoriales reales (no son texto editable), listos para enviar directo al software de tu plotter — no hace falta convertir a contornos. Antes de cortar en vinilo, verifica que el tamaño del QR quede legible (recomendado: no menos de ~25mm de lado) y recuerda que un fondo con buen contraste detrás del vidrio ayuda a que escanee mejor.</span>
+            </div>
+        </div>
+    `;
+
+    renderQrStatusArea(v, qr, fichaUrl);
+    if (qr) updatePreview();
+}
+
+async function renderQrStatusArea(v, qr, fichaUrl) {
+    const area = document.getElementById('qrStatusArea');
+    if (!qr) {
+        area.innerHTML = `
+            <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:14px;">
+                Este vehículo todavía no tiene una calcomanía generada.
+            </p>
+            <button class="btn btn-primary" onclick="handleGenerate('${v.id}')"><i class="fas fa-plus"></i> Generar serial y QR</button>
+        `;
+        return;
+    }
+
+    area.innerHTML = `
+        <div class="qr-status-row">
+            <div class="serial-box"><i class="fas fa-hashtag"></i> ${qr.serial}</div>
+            <button class="btn btn-secondary btn-sm" onclick="handleRegenerate('${v.id}','${qr.serial}')"><i class="fas fa-rotate"></i> Regenerar</button>
+        </div>
+        <div class="link-row">
+            <div class="url-display" id="fichaUrlDisplay">${fichaUrl}</div>
+            <button class="btn btn-secondary btn-sm" onclick="copyLink('${fichaUrl}')"><i class="fas fa-copy"></i> Copiar</button>
+            <a class="btn btn-secondary btn-sm" href="${fichaUrl}" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Abrir ficha</a>
+        </div>
+        <div class="stat-line">
+            <span>Creado: <b>${new Date(qr.created_at).toLocaleDateString('es-VE')}</b></span>
+            <span>Escaneos: <b id="scanCount">…</b></span>
+        </div>
+    `;
+    loadScanCount(qr.serial);
+}
+
+async function loadScanCount(serial) {
+    try {
+        const { count, error } = await db.from('vehicle_qr_scans').select('*', { count: 'exact', head: true }).eq('serial', serial);
+        if (error) throw error;
+        const el = document.getElementById('scanCount');
+        if (el) el.textContent = count ?? 0;
+    } catch (err) {
+        const el = document.getElementById('scanCount');
+        if (el) el.textContent = '—';
+    }
+}
+
+function copyLink(url) {
+    navigator.clipboard.writeText(url).then(() => toast('Enlace copiado')).catch(() => toast('No se pudo copiar', 'error'));
+}
+
+/* ===================================================
+   GENERAR / REGENERAR SERIAL
+==================================================== */
+function generateSerial(len = 8) {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sin 0/O/1/I para evitar ambigüedad
+    const bytes = new Uint8Array(len);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, b => chars[b % chars.length]).join('');
+}
+
+async function createQrForVehicle(vehicleId) {
+    for (let attempt = 0; attempt < 6; attempt++) {
+        const serial = generateSerial();
+        const { data: existing, error: checkErr } = await db.from('vehicle_qr_codes').select('id').eq('serial', serial).limit(1);
+        if (checkErr) throw checkErr;
+        if (existing && existing.length > 0) continue; // colisión rarísima, reintenta
+        const { data, error } = await db.from('vehicle_qr_codes').insert({ vehicle_id: vehicleId, serial }).select().single();
+        if (error) throw error;
+        return data;
+    }
+    throw new Error('No se pudo generar un serial único, intenta de nuevo.');
+}
+
+async function handleGenerate(vehicleId) {
+    try {
+        const qr = await createQrForVehicle(vehicleId);
+        qrByVehicle[vehicleId] = qr;
+        toast('Serial y QR generados');
+        renderList();
+        renderDetail();
+    } catch (err) {
+        console.error(err);
+        toast('Error al generar el QR', 'error');
+    }
+}
+
+async function handleRegenerate(vehicleId, oldSerial) {
+    if (!confirm('Esto invalida la calcomanía actual (el QR físico dejará de abrir la ficha) y genera una nueva. ¿Continuar?')) return;
+    try {
+        const { error } = await db.from('vehicle_qr_codes').update({ status: 'revoked', revoked_at: new Date().toISOString() }).eq('serial', oldSerial);
+        if (error) throw error;
+        const qr = await createQrForVehicle(vehicleId);
+        qrByVehicle[vehicleId] = qr;
+        toast('Nuevo serial generado, el anterior fue revocado');
+        renderList();
+        renderDetail();
+    } catch (err) {
+        console.error(err);
+        toast('Error al regenerar el QR', 'error');
+    }
+}
+
+/* ===================================================
+   GENERADOR DE VECTOR PARA PLOTTER
+   (texto -> rutas reales vía opentype.js, QR -> ruta
+   única vía qrcode-svg, todo en un único SVG a escala
+   real en milímetros)
+==================================================== */
+let _fontPromise = null;
+function loadDecalFont() {
+    if (!_fontPromise) {
+        _fontPromise = new Promise((resolve, reject) => {
+            opentype.load(DECAL_FONT_URL, (err, font) => err ? reject(err) : resolve(font));
+        });
+    }
+    return _fontPromise;
+}
+
+// opentype.js tiene un bug numérico poco frecuente: en ciertas escalas
+// exactas genera coordenadas NaN en la curva de algunas letras, lo que
+// corrompe el resto del contorno a partir de ese punto. Se detecta y se
+// corrige con un empujón mínimo de tamaño (imperceptible visualmente)
+// hasta obtener un contorno limpio.
+function safeGetPath(font, text, x, y, fontSize, maxTries = 25) {
+    let fs2 = fontSize;
+    for (let i = 0; i < maxTries; i++) {
+        const path = font.getPath(text, x, y, fs2);
+        const d = path.toPathData(2);
+        if (!d.includes('NaN')) return { path, d };
+        fs2 = fontSize * (1 + (i + 1) * 0.0007 * (i % 2 === 0 ? 1 : -1));
+    }
+    throw new Error('No se pudo generar un contorno válido para "' + text + '"');
+}
+
+// Convierte un texto a "d" de <path>, ya posicionado y centrado en mm,
+// respetando además un ancho máximo (para que "SE VENDE" no se salga
+// de calcomanías angostas).
+function textToPathData(font, text, capHeightMm, centerXMm, baselineYMm, maxWidthMm) {
+    const probe = font.getPath(text, 0, 0, 100).getBoundingBox();
+    const probeHeight = probe.y2 - probe.y1;
+    const probeWidth = probe.x2 - probe.x1;
+    let fontSize = probeHeight > 0 ? (capHeightMm / probeHeight) * 100 : capHeightMm;
+    if (maxWidthMm && probeWidth > 0) {
+        fontSize = Math.min(fontSize, (maxWidthMm / probeWidth) * 100);
+    }
+    const p1 = safeGetPath(font, text, 0, 0, fontSize);
+    const bb = p1.path.getBoundingBox();
+    const width = bb.x2 - bb.x1;
+    const x0 = centerXMm - width / 2 - bb.x1;
+    return safeGetPath(font, text, x0, baselineYMm, fontSize).d;
+}
+
+async function buildDecalSVG(vehicle, qr, widthMm, heightMm) {
+    const font = await loadDecalFont();
+    const fichaUrl = `${FICHA_BASE_URL}?s=${qr.serial}`;
+
+    const margin = Math.max(5, widthMm * 0.05);
+    const seVendeHeight = Math.min(20, widthMm * 0.15);
+    const yearHeight = Math.min(16, widthMm * 0.11);
+    const gap = Math.max(4, widthMm * 0.05);
+
+    const seVendeBaselineY = margin + seVendeHeight;
+    const yearBaselineY = heightMm - margin;
+
+    const qrTop = seVendeBaselineY + gap;
+    const qrBottom = yearBaselineY - yearHeight - gap;
+    let qrSize = Math.min(widthMm - margin * 2, qrBottom - qrTop);
+    qrSize = Math.max(qrSize, 10); // evita tamaños negativos si el layout no entra
+    const qrX = (widthMm - qrSize) / 2;
+    const qrY = qrTop + Math.max(0, (qrBottom - qrTop - qrSize) / 2);
+
+    const maxTextWidth = widthMm - margin * 2;
+    const sePath = textToPathData(font, 'SE VENDE', seVendeHeight, widthMm / 2, seVendeBaselineY, maxTextWidth);
+    const yearPath = textToPathData(font, String(vehicle.year || ''), yearHeight, widthMm / 2, yearBaselineY, maxTextWidth);
+
+    const qrObj = new QRCode({
+        content: fichaUrl, padding: 1, width: qrSize, height: qrSize,
+        color: '#000000', background: 'none', ecl: 'Q', join: true,
+        container: 'g', xmlDeclaration: false, pretty: false
+    });
+    const qrFragment = qrObj.svg();
+    const pathMatch = qrFragment.match(/<path[\s\S]*?\/>/);
+    const qrPathTag = pathMatch ? pathMatch[0] : '';
+
+    const warnSmallQr = qrSize < 25;
+
+    const svg =
+`<?xml version="1.0" standalone="yes"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${widthMm}mm" height="${heightMm}mm" viewBox="0 0 ${widthMm} ${heightMm}">
+  <!-- Guía visual del área de la calcomanía (referencia, no es línea de corte) -->
+  <rect x="0.3" y="0.3" width="${widthMm - 0.6}" height="${heightMm - 0.6}" fill="none" stroke="#cccccc" stroke-width="0.15" stroke-dasharray="1.5,1.5"/>
+  <!-- "SE VENDE" convertido a vector -->
+  <path d="${sePath}" fill="#000000"/>
+  <!-- Código QR -> ${fichaUrl} -->
+  <g transform="translate(${qrX}, ${qrY})">${qrPathTag}</g>
+  <!-- Año del vehículo convertido a vector -->
+  <path d="${yearPath}" fill="#000000"/>
+</svg>`;
+
+    return { svg, qrSize, warnSmallQr };
+}
+
+let _previewTimer = null;
+function updatePreview() {
+    clearTimeout(_previewTimer);
+    _previewTimer = setTimeout(async () => {
+        const v = vehicles.find(x => x.id === selectedId);
+        const qr = qrByVehicle[selectedId];
+        if (!v || !qr) return;
+        const widthMm = parseFloat(document.getElementById('decalWidth').value) || 100;
+        const heightMm = parseFloat(document.getElementById('decalHeight').value) || 140;
+        const preview = document.getElementById('decalPreview');
+        try {
+            const { svg, warnSmallQr } = await buildDecalSVG(v, qr, widthMm, heightMm);
+            preview.innerHTML = svg;
+            if (warnSmallQr) toast('El QR quedó muy pequeño para este tamaño de calcomanía, agranda el ancho', 'error');
+        } catch (err) {
+            console.error(err);
+            preview.innerHTML = '<span style="color:var(--error);font-size:0.85rem;">No se pudo generar la vista previa (revisa tu conexión).</span>';
+        }
+    }, 300);
+}
+
+async function downloadDecal() {
+    const v = vehicles.find(x => x.id === selectedId);
+    const qr = qrByVehicle[selectedId];
+    if (!v || !qr) return;
+    const widthMm = parseFloat(document.getElementById('decalWidth').value) || 100;
+    const heightMm = parseFloat(document.getElementById('decalHeight').value) || 140;
+    try {
+        const { svg } = await buildDecalSVG(v, qr, widthMm, heightMm);
+        const blob = new Blob([svg], { type: 'image/svg+xml' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `calcomania_${qr.serial}.svg`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        toast('SVG descargado');
+    } catch (err) {
+        console.error(err);
+        toast('Error al generar el archivo', 'error');
+    }
+}
+</script>
+</body>
+</html>
